@@ -1,0 +1,34 @@
+{
+    "name": "Instagram downloader",
+    "description": "Download Photos from Instagram Post",
+    "version": "1.0",
+    "manifest_version": 3,
+    "icons": {
+        "16": "Instagram_Logo.png",
+        "32": "Instagram_Logo.png",
+        "48": "Instagram_Logo.png",
+        "128": "Instagram_Logo.png"
+    },
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://www.instagram.com/*"
+    ],
+    "action": {
+        "default_icon": "Instagram_Logo.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.instagram.com/*"
+            ],
+            "js": [
+                "main.js"
+            ],
+            "css": [
+                "style/style.css"
+            ]
+        }
+    ]
+}

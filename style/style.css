@@ -1,0 +1,82 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#Download-Display {
+    background-color: white;
+    width: 300px;
+    height: 500px;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    position: fixed;
+    bottom: 60px;
+    right: 20px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+    overflow: scroll;
+}
+#Photos-Display {
+    width: inherit; height: inherit;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.Hide {
+    display: none;
+}
+
+.Show {
+    display: block;
+}
+
+#ESC-Button {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+    position: fixed;
+    right: 10px;
+    bottom: 550px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+    text-align: center;
+    cursor: pointer;
+}
+
+#ESC-Button:hover {
+    background-color: rgb(243, 9, 9);
+}
+
+.DisplayToDownload {
+    width: 275px;
+    margin: 10px;
+    cursor: pointer;
+}
+
+#Download-Display::-webkit-scrollbar {
+    display: none;
+}
+
+#Download-Button {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    width: 120px;
+    height: 30px;
+    background-color: blueviolet;
+    color: white;
+    outline: none;
+    font-size: large;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    z-index: 20;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    text-align: center;
+}
