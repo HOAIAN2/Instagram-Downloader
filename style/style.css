@@ -4,6 +4,13 @@
     box-sizing: border-box;
 }
 
+:root {
+    --red: rgb(255, 0, 0);
+    --dark-red: rgb(243, 9, 9);
+    --gray: rgb(228, 228, 228);
+    --shadow-black: rgba(0, 0, 0, 0.3);
+}
+
 #Download-Display {
     background-color: white;
     width: 300px;
@@ -14,15 +21,21 @@
     position: fixed;
     bottom: 60px;
     right: 20px;
-    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
-    overflow: scroll;
+    box-shadow: 0px 0px 5px var(--shadow-black);
 }
+
 #Photos-Display {
-    width: inherit; height: inherit;
+    width: inherit;
+    height: inherit;
     padding: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: scroll;
+}
+
+#Photos-Display::-webkit-scrollbar {
+    display: none;
 }
 
 .Hide {
@@ -36,30 +49,33 @@
 #ESC-Button {
     width: 20px;
     height: 20px;
-    background-color: red;
-    position: fixed;
-    right: 10px;
-    bottom: 550px;
+    background-color: var(--red);
+    position: absolute;
+    right: -10px;
+    top: -10px;
     font-weight: bold;
     border: none;
     outline: none;
     border-radius: 15px;
-    text-align: center;
+    color: white;
     cursor: pointer;
 }
 
+#ESC-Child {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    left: 5px;
+}
+
 #ESC-Button:hover {
-    background-color: rgb(243, 9, 9);
+    background-color: var(--dark-red);
 }
 
 .DisplayToDownload {
     width: 275px;
     margin: 10px;
     cursor: pointer;
-}
-
-#Download-Display::-webkit-scrollbar {
-    display: none;
 }
 
 #Download-Button {
@@ -73,10 +89,18 @@
     font-weight: bold;
     border: none;
     border-radius: 15px;
-    cursor: pointer;
+    ;
     z-index: 20;
     position: fixed;
     bottom: 20px;
     right: 20px;
     text-align: center;
+}
+
+.Download {
+    cursor: pointer;
+}
+
+.Downloading {
+    cursor: default;
 }

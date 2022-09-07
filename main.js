@@ -27,6 +27,7 @@ async function Post_Photos_Downloader() {
     const Download_Button = document.querySelector('#Download-Button')
     const ESC = document.querySelector('#ESC-Button')
     Download_Button.textContent = "Loading..."
+    Download_Button.className = "Downloading"
     Download_Button.disabled = true
     ESC.className = "Show"
     Display_Div.className = "Show"
@@ -34,12 +35,12 @@ async function Post_Photos_Downloader() {
     Postshortcode = CutString()
     let Post_URL = `https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
-    if('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
+    if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
         // Post have Multi Photo
         const Photos_Array = JsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
         const Photo_Array_Length = Photos_Array.length
         for (let i = 0; i < Photo_Array_Length; i++) {
-            if(Photos_Array[i].node.is_video == true) {
+            if (Photos_Array[i].node.is_video == true) {
                 const video = document.createElement('video')
                 video.className = "DisplayToDownload"
                 video.id = `${Postshortcode}_${i}`
@@ -66,23 +67,22 @@ async function Post_Photos_Downloader() {
             }
         }
     }
-    else
-    {
+    else {
         // Post have 1 Photo
         const Photo = JsonRespone.data.shortcode_media
-        if(Photo.is_video == true) {
+        if (Photo.is_video == true) {
             const video = document.createElement('video')
-                video.className = "DisplayToDownload"
-                video.id = `${Postshortcode}`
-                video.src = Photo.video_url
-                video.setAttribute('controls', '')
-                video.setAttribute('autoplay', '')
-                video.setAttribute('loop', '')
-                const a = document.createElement('a')
-                Photos_Div.appendChild(a)
-                a.appendChild(video)
-                a.href = video.src
-                a.download = `${Postshortcode}.mp4`
+            video.className = "DisplayToDownload"
+            video.id = `${Postshortcode}`
+            video.src = Photo.video_url
+            video.setAttribute('controls', '')
+            video.setAttribute('autoplay', '')
+            video.setAttribute('loop', '')
+            const a = document.createElement('a')
+            Photos_Div.appendChild(a)
+            a.appendChild(video)
+            a.href = video.src
+            a.download = `${Postshortcode}.mp4`
         }
         else {
             const img = document.createElement('img')
@@ -97,6 +97,7 @@ async function Post_Photos_Downloader() {
         }
     }
     Download_Button.textContent = "Download"
+    Download_Button.className = "Download"
     Download_Button.disabled = false
 }
 async function DownloadPost() {
@@ -106,17 +107,22 @@ function UI_Init() {
     const div = document.createElement('div')
     const div1 = document.createElement('div')
     const button = document.createElement('button')
-    const esc = document.createElement('button')
+    const esc = document.createElement('div')
+    const x = document.createElement('div')
+    div.id = "Download-Display"
+    div.className = "Hide"
+    div1.id = "Photos-Display"
+    button.id = "Download-Button"
+    button.className = "Download"
+    button.textContent = "Download"
     esc.id = "ESC-Button"
     esc.className = "Hide"
-    div.id = "Download-Display"
-    div1.id = "Photos-Display"
-    div.className = "Hide"
-    button.id = "Download-Button"
-    button.textContent = "Download"
+    x.id = "ESC-Child"
+    x.textContent = "×"
     document.body.appendChild(div)
     div.appendChild(div1)
     div.appendChild(esc)
+    esc.appendChild(x)
     document.body.appendChild(button)
 }
 UI_Init()
@@ -125,7 +131,7 @@ const Display_Div = document.querySelector('#Download-Display')
 const Download_Button = document.querySelector('#Download-Button')
 const Photos_Div = document.querySelector('#Photos-Display')
 Download_Button.addEventListener('click', DownloadPost)
-ESC_Button.addEventListener('click', ()=>{
+ESC_Button.addEventListener('click', () => {
     Display_Div.className = "Hide"
     Photos_Div.innerHTML = ""
 })
