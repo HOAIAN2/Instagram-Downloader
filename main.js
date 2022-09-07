@@ -1,5 +1,6 @@
 let Profile_ID = '51963237586'
 let Postshortcode = 'CiHCud-pukl'
+let Lastshortcode
 let current_page = window.location.href
 function CutString() {
     current_page = window.location.href
@@ -22,17 +23,18 @@ async function Fetch_Photos(Photo_URL) {
     return Download_URL
 }
 async function Post_Photos_Downloader() {
+    Postshortcode = CutString()
     const Display_Div = document.querySelector('#Download-Display')
     const Photos_Div = document.querySelector('#Photos-Display')
     const Download_Button = document.querySelector('#Download-Button')
     const ESC = document.querySelector('#ESC-Button')
+    ESC.className = "Show"
+    Display_Div.className = "Show"
+    if(Postshortcode == Lastshortcode) return
     Download_Button.textContent = "Loading..."
     Download_Button.className = "Downloading"
     Download_Button.disabled = true
-    ESC.className = "Show"
-    Display_Div.className = "Show"
     Photos_Div.innerHTML = ""
-    Postshortcode = CutString()
     let Post_URL = `https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
     if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
@@ -96,6 +98,7 @@ async function Post_Photos_Downloader() {
             Photos_Div.appendChild(a)
         }
     }
+    Lastshortcode = Postshortcode
     Download_Button.textContent = "Download"
     Download_Button.className = "Download"
     Download_Button.disabled = false
@@ -133,5 +136,4 @@ const Photos_Div = document.querySelector('#Photos-Display')
 Download_Button.addEventListener('click', DownloadPost)
 ESC_Button.addEventListener('click', () => {
     Display_Div.className = "Hide"
-    Photos_Div.innerHTML = ""
 })

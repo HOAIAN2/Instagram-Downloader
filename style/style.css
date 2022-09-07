@@ -86,11 +86,8 @@
     color: white;
     outline: none;
     font-size: large;
-    font-weight: bold;
     border: none;
     border-radius: 15px;
-    ;
-    z-index: 20;
     position: fixed;
     bottom: 20px;
     right: 20px;
