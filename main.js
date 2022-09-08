@@ -6,8 +6,8 @@ const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=69cba40
 function CutString() {
     current_page = window.location.href
     if (current_page.startsWith('https://www.instagram.com/p/') || current_page.startsWith('https://www.instagram.com/reel/')) {
-        Postshortcode = current_page.replace('https://www.instagram.com/p/', '')
-        Postshortcode = current_page.replace('https://www.instagram.com/reel/', '')
+        if(current_page.startsWith('https://www.instagram.com/p/')) Postshortcode = current_page.replace('https://www.instagram.com/p/', '')
+        else Postshortcode = current_page.replace('https://www.instagram.com/reel/', '')
         current_page = Postshortcode
         Postshortcode = current_page.replace('/', '')
     }
