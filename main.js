@@ -30,7 +30,7 @@ async function Post_Photos_Downloader() {
     const ESC = document.querySelector('#ESC-Button')
     ESC.className = "Show"
     Display_Div.className = "Show"
-    if(Postshortcode == Lastshortcode) return
+    if (Postshortcode == Lastshortcode) return
     Download_Button.textContent = "Loading..."
     Download_Button.className = "Downloading"
     Download_Button.disabled = true
@@ -103,9 +103,6 @@ async function Post_Photos_Downloader() {
     Download_Button.className = "Download"
     Download_Button.disabled = false
 }
-async function DownloadPost() {
-    await Post_Photos_Downloader()
-}
 function UI_Init() {
     const div = document.createElement('div')
     const div1 = document.createElement('div')
@@ -133,7 +130,7 @@ const ESC_Button = document.querySelector('#ESC-Button')
 const Display_Div = document.querySelector('#Download-Display')
 const Download_Button = document.querySelector('#Download-Button')
 const Photos_Div = document.querySelector('#Photos-Display')
-Download_Button.addEventListener('click', DownloadPost)
+Download_Button.addEventListener('click', Post_Photos_Downloader)
 ESC_Button.addEventListener('click', () => {
     Display_Div.className = "Hide"
 })
