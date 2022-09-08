@@ -1,7 +1,8 @@
 let Profile_ID = '51963237586'
-let Postshortcode = 'CiHCud-pukl'
+let Postshortcode
 let Lastshortcode
 let current_page = window.location.href
+const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=69cba40317214236af40e7efa697781d&variables={"id":"${Profile_ID}","first":1}`
 function CutString() {
     current_page = window.location.href
     if (current_page.startsWith("https://www.instagram.com/p/")) {
@@ -10,6 +11,11 @@ function CutString() {
         Postshortcode = current_page.replace('/', '')
     }
     return Postshortcode
+}
+async function Fetch_First_Post(Profile_URL) {
+    const respone = await fetch(Profile_URL)
+    const Json = await respone.json()
+    Postshortcode = Json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
 }
 async function Fetch_Post_Photos(Post_URL) {
     const respone = await fetch(Post_URL)
@@ -38,7 +44,6 @@ async function Post_Photos_Downloader() {
     let Post_URL = `https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
     if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
-        // Post have Multi Photo
         const Photos_Array = JsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
         const Photo_Array_Length = Photos_Array.length
         for (let i = 0; i < Photo_Array_Length; i++) {
@@ -70,7 +75,6 @@ async function Post_Photos_Downloader() {
         }
     }
     else {
-        // Post have 1 Photo
         const Photo = JsonRespone.data.shortcode_media
         if (Photo.is_video == true) {
             const video = document.createElement('video')
@@ -126,6 +130,7 @@ function UI_Init() {
     document.body.appendChild(button)
 }
 UI_Init()
+Fetch_First_Post(Profile_URL)
 const ESC_Button = document.querySelector('#ESC-Button')
 const Display_Div = document.querySelector('#Download-Display')
 const Download_Button = document.querySelector('#Download-Button')
