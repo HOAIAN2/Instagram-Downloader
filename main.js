@@ -5,8 +5,9 @@ let current_page = window.location.href
 const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=69cba40317214236af40e7efa697781d&variables={"id":"${Profile_ID}","first":1}`
 function CutString() {
     current_page = window.location.href
-    if (current_page.startsWith("https://www.instagram.com/p/")) {
+    if (current_page.startsWith('https://www.instagram.com/p/') || current_page.startsWith('https://www.instagram.com/reel/')) {
         Postshortcode = current_page.replace('https://www.instagram.com/p/', '')
+        Postshortcode = current_page.replace('https://www.instagram.com/reel/', '')
         current_page = Postshortcode
         Postshortcode = current_page.replace('/', '')
     }
@@ -63,7 +64,7 @@ async function Post_Photos_Downloader() {
             }
             else {
                 const img = document.createElement('img')
-                img.className = "DisplayToDownload"
+                img.className = 'DisplayToDownload'
                 img.id = `${Postshortcode}_${i}`
                 img.src = Photos_Array[i].node.display_url
                 const a = document.createElement('a')
@@ -78,7 +79,7 @@ async function Post_Photos_Downloader() {
         const Photo = JsonRespone.data.shortcode_media
         if (Photo.is_video == true) {
             const video = document.createElement('video')
-            video.className = "DisplayToDownload"
+            video.className = 'DisplayToDownload'
             video.id = `${Postshortcode}`
             video.src = Photo.video_url
             video.setAttribute('controls', '')
@@ -92,7 +93,7 @@ async function Post_Photos_Downloader() {
         }
         else {
             const img = document.createElement('img')
-            img.className = "DisplayToDownload"
+            img.className = 'DisplayToDownload'
             img.id = `${Postshortcode}`
             img.src = Photo.display_url
             const a = document.createElement('a')
@@ -103,8 +104,8 @@ async function Post_Photos_Downloader() {
         }
     }
     Lastshortcode = Postshortcode
-    Download_Button.textContent = "Download"
-    Download_Button.className = "Download"
+    Download_Button.textContent = 'Download'
+    Download_Button.className = 'Download'
     Download_Button.disabled = false
 }
 function UI_Init() {
@@ -113,16 +114,16 @@ function UI_Init() {
     const button = document.createElement('button')
     const esc = document.createElement('div')
     const x = document.createElement('div')
-    div.id = "Download-Display"
-    div.className = "Hide"
-    div1.id = "Photos-Display"
-    button.id = "Download-Button"
-    button.className = "Download"
-    button.textContent = "Download"
-    esc.id = "ESC-Button"
-    esc.className = "Hide"
-    x.id = "ESC-Child"
-    x.textContent = "×"
+    div.id = 'Download-Display'
+    div.className = 'Hide'
+    div1.id = 'Photos-Display'
+    button.id = 'Download-Button'
+    button.className = 'Download'
+    button.textContent = 'Download'
+    esc.id = 'ESC-Button'
+    esc.className = 'Hide'
+    x.id = 'ESC-Child'
+    x.textContent = '×'
     document.body.appendChild(div)
     div.appendChild(div1)
     div.appendChild(esc)
