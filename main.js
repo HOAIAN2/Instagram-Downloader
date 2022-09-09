@@ -35,13 +35,13 @@ async function Post_Photos_Downloader() {
     const Photos_Div = document.querySelector('#Photos-Display')
     const Download_Button = document.querySelector('#Download-Button')
     const ESC = document.querySelector('#ESC-Button')
-    ESC.className = "Show"
-    Display_Div.className = "Show"
+    ESC.className = 'Show'
+    Display_Div.className = 'Show'
     if (Postshortcode == Lastshortcode) return
-    Download_Button.textContent = "Loading..."
-    Download_Button.className = "Downloading"
+    Download_Button.textContent = 'Loading...'
+    Download_Button.className = 'Downloading'
     Download_Button.disabled = true
-    Photos_Div.innerHTML = ""
+    Photos_Div.innerHTML = ''
     let Post_URL = `https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
     if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
@@ -50,7 +50,7 @@ async function Post_Photos_Downloader() {
         for (let i = 0; i < Photo_Array_Length; i++) {
             if (Photos_Array[i].node.is_video == true) {
                 const video = document.createElement('video')
-                video.className = "DisplayToDownload"
+                video.className = 'DisplayToDownload'
                 video.id = `${Postshortcode}_${i}`
                 video.src = Photos_Array[i].node.video_url
                 video.setAttribute('controls', '')
@@ -138,5 +138,5 @@ const Download_Button = document.querySelector('#Download-Button')
 const Photos_Div = document.querySelector('#Photos-Display')
 Download_Button.addEventListener('click', Post_Photos_Downloader)
 ESC_Button.addEventListener('click', () => {
-    Display_Div.className = "Hide"
+    Display_Div.className = 'Hide'
 })
