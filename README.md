@@ -4,7 +4,6 @@
 This extension should work fine on the following browsers (with fetch(url)):
 * Google Chrome
 * MS Edge
-* Any Browser that support Chrome Extension
 ### Usage ###
 * Enable developer mode chrome extensions
 * Drag and drop to `chrome://extensions/`
