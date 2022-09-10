@@ -1,7 +1,7 @@
 # Instagram-Downloader
 ### Browser compatibility ###
 
-This extension should work fine on the following browsers (with fetch(url)):
+This extension should work fine on the following browsers with `fetch(url)`:
 * Google Chrome
 * MS Edge
 ### Usage ###
