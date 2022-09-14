@@ -7,7 +7,7 @@ const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=${Profi
 function GetShortcode() {
     let Current_page = window.location.pathname
     if (Current_page.startsWith('/p/') || Current_page.startsWith('/reel/') || Current_page.startsWith('/tv/')) {
-        Postshortcode = window.location.pathname.split('/')[2]
+        Postshortcode = Current_page.split('/')[2]
     }
     return Postshortcode
 }
