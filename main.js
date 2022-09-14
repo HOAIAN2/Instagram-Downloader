@@ -4,7 +4,7 @@ let Lastshortcode
 const Profile_hash = '69cba40317214236af40e7efa697781d'
 const Post_hash = '9f8827793ef34641b2fb195d4d41151c'
 const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=${Profile_hash}&variables={"id":"${Profile_ID}","first":1}`
-function CutString() {
+function GetShortcode() {
     let Current_page = window.location.pathname
     if (Current_page.startsWith('/p/') || Current_page.startsWith('/reel/') || Current_page.startsWith('/tv/')) {
         Postshortcode = window.location.pathname.split('/')[2]
@@ -28,7 +28,7 @@ async function Fetch_Photos(Photo_URL) {
     return Download_URL
 }
 async function Post_Photos_Downloader() {
-    Postshortcode = CutString()
+    Postshortcode = GetShortcode()
     const Display_Div = document.querySelector('#Download-Display')
     const Photos_Div = document.querySelector('#Photos-Display')
     const Download_Button = document.querySelector('#Download-Button')
@@ -108,14 +108,14 @@ function UI_Init() {
     const button = document.createElement('button')
     const esc = document.createElement('div')
     const x = document.createElement('div')
-    div.id = 'Download-Display'
     div.className = 'Hide'
+    div.id = 'Download-Display'
     div1.id = 'Photos-Display'
-    button.id = 'Download-Button'
     button.className = 'Download'
+    button.id = 'Download-Button'
     button.textContent = 'Download'
-    esc.id = 'ESC-Button'
     esc.className = 'Hide'
+    esc.id = 'ESC-Button'
     x.id = 'ESC-Child'
     x.textContent = '×'
     document.body.appendChild(div)
