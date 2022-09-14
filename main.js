@@ -1,15 +1,13 @@
 let Profile_ID = '51963237586'
 let Postshortcode
 let Lastshortcode
-let current_page = window.location.href
-const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=69cba40317214236af40e7efa697781d&variables={"id":"${Profile_ID}","first":1}`
+const Profile_hash = '69cba40317214236af40e7efa697781d'
+const Post_hash = '9f8827793ef34641b2fb195d4d41151c'
+const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=${Profile_hash}&variables={"id":"${Profile_ID}","first":1}`
 function CutString() {
-    current_page = window.location.href
-    if (current_page.startsWith('https://www.instagram.com/p/') || current_page.startsWith('https://www.instagram.com/reel/')) {
-        if(current_page.startsWith('https://www.instagram.com/p/')) Postshortcode = current_page.replace('https://www.instagram.com/p/', '')
-        else Postshortcode = current_page.replace('https://www.instagram.com/reel/', '')
-        current_page = Postshortcode
-        Postshortcode = current_page.replace('/', '')
+    let Current_page = window.location.pathname
+    if (Current_page.startsWith('/p/') || Current_page.startsWith('/reel/') || Current_page.startsWith('/tv/')) {
+        Postshortcode = window.location.pathname.split('/')[2]
     }
     return Postshortcode
 }
@@ -42,7 +40,7 @@ async function Post_Photos_Downloader() {
     Download_Button.className = 'Downloading'
     Download_Button.disabled = true
     Photos_Div.innerHTML = ''
-    let Post_URL = `https://www.instagram.com/graphql/query/?query_hash=9f8827793ef34641b2fb195d4d41151c&variables={"shortcode":"${Postshortcode}"}`
+    const Post_URL = `https://www.instagram.com/graphql/query/?query_hash=${Post_hash}&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
     if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
         const Photos_Array = JsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
@@ -54,8 +52,6 @@ async function Post_Photos_Downloader() {
                 video.id = `${Postshortcode}_${i}`
                 video.src = Photos_Array[i].node.video_url
                 video.setAttribute('controls', '')
-                video.setAttribute('autoplay', '')
-                video.setAttribute('loop', '')
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
                 a.appendChild(video)
@@ -83,8 +79,6 @@ async function Post_Photos_Downloader() {
             video.id = `${Postshortcode}`
             video.src = Photo.video_url
             video.setAttribute('controls', '')
-            video.setAttribute('autoplay', '')
-            video.setAttribute('loop', '')
             const a = document.createElement('a')
             Photos_Div.appendChild(a)
             a.appendChild(video)
