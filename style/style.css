@@ -22,12 +22,37 @@
     bottom: 60px;
     right: 20px;
     box-shadow: 0px 0px 5px var(--shadow-black);
+    overflow: hidden;
+}
+
+#Title-Div {
+    width: 300px;
+    height: 40px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 25px;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.95);
+    position: absolute;
+    padding: 10px;
+}
+
+#Title-Div>span:first-child {
+    pointer-events: none;
+    font-size: 22px;
+}
+
+#ESC-Button:hover {
+    opacity: 0.8;
+    cursor: pointer;
 }
 
 #Photos-Display {
     width: inherit;
     height: inherit;
-    padding: 5px;
+    padding-top: 40px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -46,35 +71,9 @@
     display: block;
 }
 
-#ESC-Button {
-    width: 20px;
-    height: 20px;
-    background-color: var(--red);
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    font-weight: bold;
-    border: none;
-    outline: none;
-    border-radius: 15px;
-    color: white;
-    cursor: pointer;
-}
-
-#ESC-Child {
-    width: 10px;
-    height: 10px;
-    position: absolute;
-    left: 5px;
-}
-
-#ESC-Button:hover {
-    background-color: var(--dark-red);
-}
-
 .DisplayToDownload {
     width: 275px;
-    margin: 10px;
+    margin-bottom: 10px;
     cursor: pointer;
 }
 
