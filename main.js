@@ -1,4 +1,4 @@
-let Profile_ID = '51963237586'
+const Profile_ID = '51963237586'
 let Postshortcode
 let Lastshortcode
 const Profile_hash = '69cba40317214236af40e7efa697781d'
@@ -33,11 +33,10 @@ async function Post_Photos_Downloader() {
     const Photos_Div = document.querySelector('#Photos-Display')
     const Download_Button = document.querySelector('#Download-Button')
     const ESC = document.querySelector('#ESC-Button')
-    ESC.className = 'Show'
     Display_Div.className = 'Show'
     if (Postshortcode == Lastshortcode) return
-    Download_Button.textContent = 'Loading...'
     Download_Button.className = 'Downloading'
+    Download_Button.textContent = 'Loading...'
     Download_Button.disabled = true
     Photos_Div.innerHTML = ''
     const Post_URL = `https://www.instagram.com/graphql/query/?query_hash=${Post_hash}&variables={"shortcode":"${Postshortcode}"}`
@@ -51,6 +50,7 @@ async function Post_Photos_Downloader() {
                 video.className = 'DisplayToDownload'
                 video.id = `${Postshortcode}_${i}`
                 video.src = Photos_Array[i].node.video_url
+                video.title = `${Postshortcode}_${i}`
                 video.setAttribute('controls', '')
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
@@ -63,6 +63,7 @@ async function Post_Photos_Downloader() {
                 img.className = 'DisplayToDownload'
                 img.id = `${Postshortcode}_${i}`
                 img.src = Photos_Array[i].node.display_url
+                img.title = `${Postshortcode}_${i}`
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
                 a.appendChild(img)
@@ -78,6 +79,7 @@ async function Post_Photos_Downloader() {
             video.className = 'DisplayToDownload'
             video.id = `${Postshortcode}`
             video.src = Photo.video_url
+            video.title = `${Postshortcode}`
             video.setAttribute('controls', '')
             const a = document.createElement('a')
             Photos_Div.appendChild(a)
@@ -90,6 +92,7 @@ async function Post_Photos_Downloader() {
             img.className = 'DisplayToDownload'
             img.id = `${Postshortcode}`
             img.src = Photo.display_url
+            img.title = `${Postshortcode}`
             const a = document.createElement('a')
             a.appendChild(img)
             a.href = await Fetch_Photos(Photo.display_url)
@@ -105,23 +108,25 @@ async function Post_Photos_Downloader() {
 function UI_Init() {
     const div = document.createElement('div')
     const div1 = document.createElement('div')
+    const div2 = document.createElement('div')
+    const title = document.createElement('span')
+    const esc = document.createElement('span')
     const button = document.createElement('button')
-    const esc = document.createElement('div')
-    const x = document.createElement('div')
     div.className = 'Hide'
     div.id = 'Download-Display'
-    div1.id = 'Photos-Display'
+    div1.id = 'Title-Div'
+    div2.id = 'Photos-Display'
+    title.textContent = 'Photos'
+    esc.id = 'ESC-Button'
+    esc.textContent = '×'
     button.className = 'Download'
     button.id = 'Download-Button'
     button.textContent = 'Download'
-    esc.className = 'Hide'
-    esc.id = 'ESC-Button'
-    x.id = 'ESC-Child'
-    x.textContent = '×'
     document.body.appendChild(div)
     div.appendChild(div1)
-    div.appendChild(esc)
-    esc.appendChild(x)
+    div1.appendChild(title)
+    div1.appendChild(esc)
+    div.appendChild(div2)
     document.body.appendChild(button)
 }
 UI_Init()
