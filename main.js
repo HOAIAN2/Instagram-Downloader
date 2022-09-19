@@ -17,7 +17,10 @@ async function Fetch_First_Post(Profile_URL) {
     Postshortcode = Json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
 }
 async function Fetch_Post_Photos(Post_URL) {
-    const respone = await fetch(Post_URL)
+    const respone = await fetch(Post_URL).catch(error => {
+        return null
+    })
+    if (!respone) return 'Disconnect'
     const Json = await respone.json()
     return Json
 }
@@ -32,15 +35,21 @@ async function Post_Photos_Downloader() {
     const Display_Div = document.querySelector('#Download-Display')
     const Photos_Div = document.querySelector('#Photos-Display')
     const Download_Button = document.querySelector('#Download-Button')
-    const ESC = document.querySelector('#ESC-Button')
+    const Post_URL = `https://www.instagram.com/graphql/query/?query_hash=${Post_hash}&variables={"shortcode":"${Postshortcode}"}`
     Display_Div.className = 'Show'
     if (Postshortcode == Lastshortcode) return
     Download_Button.className = 'Downloading'
     Download_Button.textContent = 'Loading...'
     Download_Button.disabled = true
     Photos_Div.innerHTML = ''
-    const Post_URL = `https://www.instagram.com/graphql/query/?query_hash=${Post_hash}&variables={"shortcode":"${Postshortcode}"}`
     const JsonRespone = await Fetch_Post_Photos(Post_URL)
+    if (JsonRespone == 'Disconnect') {
+        Lastshortcode = Postshortcode
+        Download_Button.textContent = 'Download'
+        Download_Button.className = 'Download'
+        Download_Button.disabled = false
+        return
+    }
     if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
         const Photos_Array = JsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
         const Photo_Array_Length = Photos_Array.length
@@ -50,7 +59,7 @@ async function Post_Photos_Downloader() {
                 video.className = 'DisplayToDownload'
                 video.id = `${Postshortcode}_${i}`
                 video.src = Photos_Array[i].node.video_url
-                video.title = `${Postshortcode}_${i}`
+                video.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}_${i}`
                 video.setAttribute('controls', '')
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
@@ -63,7 +72,7 @@ async function Post_Photos_Downloader() {
                 img.className = 'DisplayToDownload'
                 img.id = `${Postshortcode}_${i}`
                 img.src = Photos_Array[i].node.display_url
-                img.title = `${Postshortcode}_${i}`
+                img.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}_${i}`
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
                 a.appendChild(img)
@@ -79,7 +88,7 @@ async function Post_Photos_Downloader() {
             video.className = 'DisplayToDownload'
             video.id = `${Postshortcode}`
             video.src = Photo.video_url
-            video.title = `${Postshortcode}`
+            video.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}`
             video.setAttribute('controls', '')
             const a = document.createElement('a')
             Photos_Div.appendChild(a)
@@ -92,7 +101,7 @@ async function Post_Photos_Downloader() {
             img.className = 'DisplayToDownload'
             img.id = `${Postshortcode}`
             img.src = Photo.display_url
-            img.title = `${Postshortcode}`
+            img.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}`
             const a = document.createElement('a')
             a.appendChild(img)
             a.href = await Fetch_Photos(Photo.display_url)
