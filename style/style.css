@@ -37,10 +37,11 @@
     background-color: rgba(255, 255, 255, 0.95);
     position: absolute;
     padding: 10px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 #Title-Div>span:first-child {
-    pointer-events: none;
     font-size: 22px;
 }
 
