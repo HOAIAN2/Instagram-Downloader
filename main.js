@@ -64,7 +64,7 @@ async function Post_Photos_Downloader() {
                 const a = document.createElement('a')
                 Photos_Div.appendChild(a)
                 a.appendChild(video)
-                a.href = video.src
+                a.href = await Fetch_Photos(Photos_Array[i].node.video_url)
                 a.download = `${Postshortcode}_${i}.mp4`
             }
             else {
@@ -93,7 +93,7 @@ async function Post_Photos_Downloader() {
             const a = document.createElement('a')
             Photos_Div.appendChild(a)
             a.appendChild(video)
-            a.href = video.src
+            a.href = await Fetch_Photos(Photo.video_url)
             a.download = `${Postshortcode}.mp4`
         }
         else {
