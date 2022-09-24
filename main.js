@@ -1,150 +1,160 @@
-const Profile_ID = '51963237586'
-let Postshortcode
-let Lastshortcode
-const Profile_hash = '69cba40317214236af40e7efa697781d'
-const Post_hash = '9f8827793ef34641b2fb195d4d41151c'
-const Profile_URL = `https://www.instagram.com/graphql/query/?query_hash=${Profile_hash}&variables={"id":"${Profile_ID}","first":1}`
-function GetShortcode() {
-    let Current_page = window.location.pathname
-    if (Current_page.startsWith('/p/') || Current_page.startsWith('/reel/') || Current_page.startsWith('/tv/')) {
-        Postshortcode = Current_page.split('/')[2]
+const PROFILE_ID = '51963237586'
+let postShortcode
+let lastShortcode
+const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
+const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
+const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables={"id":"${PROFILE_ID}","first":1}`
+function getShortcode() {
+    let currentPage = window.location.pathname
+    if (currentPage.startsWith('/p/') || currentPage.startsWith('/reel/') || currentPage.startsWith('/tv/')) {
+        postShortcode = currentPage.split('/')[2]
     }
-    return Postshortcode
+    return postShortcode
 }
-async function Fetch_First_Post(Profile_URL) {
-    const respone = await fetch(Profile_URL)
-    const Json = await respone.json()
-    Postshortcode = Json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
-}
-async function Fetch_Post_Photos(Post_URL) {
-    const respone = await fetch(Post_URL).catch(error => {
+async function fetchFirstPost(PROFILE_URL) {
+    const respone = await fetch(PROFILE_URL).catch(error => {
+        console.log(error)
         return null
     })
-    if (!respone) return 'Disconnect'
-    const Json = await respone.json()
-    return Json
+    if (!respone) return null
+    const json = await respone.json()
+    postShortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
 }
-async function Fetch_Photos(Photo_URL) {
-    const respone = await fetch(Photo_URL)
-    const Blob = await respone.blob()
-    const Download_URL = URL.createObjectURL(Blob)
-    return Download_URL
+async function fetchPostPhotos(postURL) {
+    const respone = await fetch(postURL).catch(error => {
+        console.log(error)
+        return null
+    })
+    if (!respone) return null
+    const json = await respone.json()
+    return json
 }
-async function Post_Photos_Downloader() {
-    Postshortcode = GetShortcode()
-    const Display_Div = document.querySelector('#Download-Display')
-    const Photos_Div = document.querySelector('#Photos-Display')
-    const Download_Button = document.querySelector('#Download-Button')
-    const Post_URL = `https://www.instagram.com/graphql/query/?query_hash=${Post_hash}&variables={"shortcode":"${Postshortcode}"}`
-    Display_Div.className = 'Show'
-    if (Postshortcode == Lastshortcode) return
-    Download_Button.className = 'Downloading'
-    Download_Button.textContent = 'Loading...'
-    Download_Button.disabled = true
-    Photos_Div.innerHTML = ''
-    const JsonRespone = await Fetch_Post_Photos(Post_URL)
-    if (JsonRespone == 'Disconnect') {
-        Lastshortcode = Postshortcode
-        Download_Button.textContent = 'Download'
-        Download_Button.className = 'Download'
-        Download_Button.disabled = false
+async function fetchPhotos(photoURL) {
+    const respone = await fetch(photoURL).catch(error => {
+        console.log(error)
+        return null
+    })
+    if (!respone) return null
+    const blob = await respone.blob()
+    const downloadURL = URL.createObjectURL(blob)
+    return downloadURL
+}
+async function downloadPostPhotos() {
+    postShortcode = getShortcode()
+    const DISPLAY_DIV = document.querySelector('#Display-Container')
+    const PHOTOS_DIV = document.querySelector('#Photos-Container')
+    const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables={"shortcode":"${postShortcode}"}`
+    DISPLAY_DIV.className = 'Show'
+    if (postShortcode == lastShortcode) return
+    DOWNLOAD_BUTTON.className = 'Downloading'
+    DOWNLOAD_BUTTON.textContent = 'Loading...'
+    DOWNLOAD_BUTTON.disabled = true
+    PHOTOS_DIV.querySelectorAll('a').forEach(item => {
+        item.remove()
+    })
+    const jsonRespone = await fetchPostPhotos(postURL)
+    if (!jsonRespone) {
+        DOWNLOAD_BUTTON.textContent = 'Download'
+        DOWNLOAD_BUTTON.className = 'Download'
+        DOWNLOAD_BUTTON.disabled = false
         return
     }
-    if ('edge_sidecar_to_children' in JsonRespone.data.shortcode_media) {
-        const Photos_Array = JsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
-        const Photo_Array_Length = Photos_Array.length
-        for (let i = 0; i < Photo_Array_Length; i++) {
-            if (Photos_Array[i].node.is_video == true) {
+    if ('edge_sidecar_to_children' in jsonRespone.data.shortcode_media) {
+        const photosArray = jsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
+        const photosArrayLength = photosArray.length
+        for (let i = 0; i < photosArrayLength; i++) {
+            if (photosArray[i].node.is_video == true) {
                 const video = document.createElement('video')
-                video.className = 'DisplayToDownload'
-                video.id = `${Postshortcode}_${i}`
-                video.src = Photos_Array[i].node.video_url
-                video.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}_${i}`
+                video.className = 'Photos-Items'
+                video.id = `${postShortcode}_${i}`
+                video.src = photosArray[i].node.video_url
+                video.title = `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`
                 video.setAttribute('controls', '')
                 const a = document.createElement('a')
-                Photos_Div.appendChild(a)
+                PHOTOS_DIV.appendChild(a)
                 a.appendChild(video)
-                a.href = await Fetch_Photos(Photos_Array[i].node.video_url)
-                a.download = `${Postshortcode}_${i}.mp4`
+                a.href = await fetchPhotos(photosArray[i].node.video_url)
+                a.download = `${postShortcode}_${i}.mp4`
             }
             else {
                 const img = document.createElement('img')
-                img.className = 'DisplayToDownload'
-                img.id = `${Postshortcode}_${i}`
-                img.src = Photos_Array[i].node.display_url
-                img.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}_${i}`
+                img.className = 'Photos-Items'
+                img.id = `${postShortcode}_${i}`
+                img.src = photosArray[i].node.display_url
+                img.title = `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`
                 const a = document.createElement('a')
-                Photos_Div.appendChild(a)
+                PHOTOS_DIV.appendChild(a)
                 a.appendChild(img)
-                a.href = await Fetch_Photos(Photos_Array[i].node.display_url)
-                a.download = `${Postshortcode}_${i}.jpeg`
+                a.href = await fetchPhotos(photosArray[i].node.display_url)
+                a.download = `${postShortcode}_${i}.jpeg`
             }
         }
     }
     else {
-        const Photo = JsonRespone.data.shortcode_media
-        if (Photo.is_video == true) {
+        const photo = jsonRespone.data.shortcode_media
+        if (photo.is_video == true) {
             const video = document.createElement('video')
-            video.className = 'DisplayToDownload'
-            video.id = `${Postshortcode}`
-            video.src = Photo.video_url
-            video.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}`
+            video.className = 'Photos-Items'
+            video.id = `${postShortcode}`
+            video.src = photo.video_url
+            video.title = `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`
             video.setAttribute('controls', '')
             const a = document.createElement('a')
-            Photos_Div.appendChild(a)
+            PHOTOS_DIV.appendChild(a)
             a.appendChild(video)
-            a.href = await Fetch_Photos(Photo.video_url)
-            a.download = `${Postshortcode}.mp4`
+            a.href = await fetchPhotos(photo.video_url)
+            a.download = `${postShortcode}.mp4`
         }
         else {
             const img = document.createElement('img')
-            img.className = 'DisplayToDownload'
-            img.id = `${Postshortcode}`
-            img.src = Photo.display_url
-            img.title = `${JsonRespone.data.shortcode_media.owner.username} | ${Postshortcode}`
+            img.className = 'Photos-Items'
+            img.id = `${postShortcode}`
+            img.src = photo.display_url
+            img.title = `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`
             const a = document.createElement('a')
             a.appendChild(img)
-            a.href = await Fetch_Photos(Photo.display_url)
-            a.download = `${Postshortcode}.jpeg`
-            Photos_Div.appendChild(a)
+            a.href = await fetchPhotos(photo.display_url)
+            a.download = `${postShortcode}.jpeg`
+            PHOTOS_DIV.appendChild(a)
         }
     }
-    Lastshortcode = Postshortcode
-    Download_Button.textContent = 'Download'
-    Download_Button.className = 'Download'
-    Download_Button.disabled = false
+    lastShortcode = postShortcode
+    DOWNLOAD_BUTTON.textContent = 'Download'
+    DOWNLOAD_BUTTON.className = 'Download'
+    DOWNLOAD_BUTTON.disabled = false
 }
-function UI_Init() {
-    const div = document.createElement('div')
-    const div1 = document.createElement('div')
-    const div2 = document.createElement('div')
-    const title = document.createElement('span')
-    const esc = document.createElement('span')
-    const button = document.createElement('button')
-    div.className = 'Hide'
-    div.id = 'Download-Display'
-    div1.id = 'Title-Div'
-    div2.id = 'Photos-Display'
-    title.textContent = 'Photos'
-    esc.id = 'ESC-Button'
-    esc.textContent = '×'
-    button.className = 'Download'
-    button.id = 'Download-Button'
-    button.textContent = 'Download'
-    document.body.appendChild(div)
-    div.appendChild(div1)
-    div1.appendChild(title)
-    div1.appendChild(esc)
-    div.appendChild(div2)
-    document.body.appendChild(button)
+function initUI() {
+    const DIV = document.createElement('div')
+    const DIV_1 = document.createElement('div')
+    const DIV_2 = document.createElement('div')
+    const TITLE = document.createElement('span')
+    const ESC = document.createElement('span')
+    const BUTTON = document.createElement('button')
+    DIV.className = 'Hide'
+    DIV.id = 'Display-Container'
+    DIV_1.id = 'Title-Container'
+    DIV_2.id = 'Photos-Container'
+    TITLE.textContent = 'Photos'
+    ESC.id = 'ESC-Button'
+    ESC.textContent = '×'
+    BUTTON.className = 'Download'
+    BUTTON.id = 'Download-Button'
+    BUTTON.textContent = 'Download'
+    document.body.appendChild(DIV)
+    DIV.appendChild(DIV_1)
+    DIV_1.appendChild(TITLE)
+    DIV_1.appendChild(ESC)
+    DIV.appendChild(DIV_2)
+    document.body.appendChild(BUTTON)
 }
-UI_Init()
-Fetch_First_Post(Profile_URL)
-const ESC_Button = document.querySelector('#ESC-Button')
-const Display_Div = document.querySelector('#Download-Display')
-const Download_Button = document.querySelector('#Download-Button')
-const Photos_Div = document.querySelector('#Photos-Display')
-Download_Button.addEventListener('click', Post_Photos_Downloader)
-ESC_Button.addEventListener('click', () => {
-    Display_Div.className = 'Hide'
+initUI()
+fetchFirstPost(PROFILE_URL)
+const ESC_BUTTON = document.querySelector('#ESC-Button')
+const DISPLAY_DIV = document.querySelector('#Display-Container')
+const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+const PHOTOS_DIV = document.querySelector('#Photos-Container')
+DOWNLOAD_BUTTON.addEventListener('click', downloadPostPhotos)
+ESC_BUTTON.addEventListener('click', () => {
+    DISPLAY_DIV.className = 'Hide'
 })
