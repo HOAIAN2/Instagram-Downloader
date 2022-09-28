@@ -9,6 +9,8 @@
     --dark-red: rgb(243, 9, 9);
     --gray: rgb(228, 228, 228);
     --shadow-black: rgba(0, 0, 0, 0.3);
+    --violet: rgb(138, 43, 226);
+    --gray-violet: rgb(161, 85, 231);
 }
 
 #Display-Container {
@@ -39,6 +41,7 @@
     background-color: rgba(255, 255, 255, 0.95);
     position: absolute;
     padding: 10px;
+    z-index: 1;
 }
 
 #Title-Container>span:first-child {
@@ -58,6 +61,7 @@
     flex-direction: column;
     align-items: center;
     overflow: scroll;
+    z-index: 0;
 }
 
 #Photos-Container::-webkit-scrollbar {
@@ -82,7 +86,6 @@
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 120px;
     height: 30px;
-    background-color: blueviolet;
     color: white;
     outline: none;
     font-size: large;
@@ -99,8 +102,10 @@
 
 .Download {
     cursor: pointer;
+    background-color: var(--violet);
 }
 
 .Downloading {
     cursor: default;
+    background-color: var(--gray-violet);
 }

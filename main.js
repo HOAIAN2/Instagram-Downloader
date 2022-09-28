@@ -126,7 +126,7 @@ async function downloadPostPhotos() {
             const photoAttributes = {
                 class: 'Photos-Items',
                 id: `${postShortcode}`,
-                src: photo.node.display_url,
+                src: photo.display_url,
                 title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`
             }
             Object.keys(photoAttributes).forEach(key => {
@@ -145,8 +145,8 @@ async function downloadPostPhotos() {
     DOWNLOAD_BUTTON.disabled = false
 }
 function initUI() {
-    const DIV = 
-    `<div class="Hide" id="Display-Container">
+    const DIV =
+        `<div class="Hide" id="Display-Container">
         <div id="Title-Container">
             <span>Photos</span>
             <span id="ESC-Button">&times</span>
@@ -168,6 +168,9 @@ function main() {
     DOWNLOAD_BUTTON.addEventListener('click', downloadPostPhotos)
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_DIV.className = 'Hide'
+    })
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') ESC_BUTTON.click()
     })
 }
 main()
