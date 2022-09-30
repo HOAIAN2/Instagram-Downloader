@@ -1,13 +1,15 @@
 const PROFILE_ID = '51963237586'
-let postShortcode
-let lastShortcode
+let postShortcode = ''
+let lastShortcode = ''
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables={"id":"${PROFILE_ID}","first":1}`
 function getShortcode() {
-    let currentPage = window.location.pathname
-    if (currentPage.startsWith('/p/') || currentPage.startsWith('/reel/') || currentPage.startsWith('/tv/')) {
-        postShortcode = currentPage.split('/')[2]
+    const PAGE = ['p', 'reel', 'tv']
+    const currentPage = window.location.pathname
+    const pagePath = currentPage.split('/')
+    if (PAGE.includes(pagePath[1])) {
+        postShortcode = pagePath[2]
     }
     return postShortcode
 }
@@ -16,7 +18,7 @@ async function fetchFirstPost(PROFILE_URL) {
         console.error(error)
         return null
     })
-    if (!respone) return null
+    if (!respone) return
     const json = await respone.json()
     postShortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
 }
@@ -25,7 +27,7 @@ async function fetchPostPhotos(postURL) {
         console.error(error)
         return null
     })
-    if (!respone) return null
+    if (!respone) return
     const json = await respone.json()
     return json
 }
@@ -34,7 +36,7 @@ async function fetchPhotos(photoURL) {
         console.error(error)
         return null
     })
-    if (!respone) return null
+    if (!respone) return ''
     const blob = await respone.blob()
     const downloadURL = URL.createObjectURL(blob)
     return downloadURL
@@ -46,7 +48,7 @@ async function downloadPostPhotos() {
     const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
     const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables={"shortcode":"${postShortcode}"}`
     DISPLAY_DIV.className = 'Show'
-    if (postShortcode == lastShortcode) return
+    if (postShortcode === lastShortcode) return
     DOWNLOAD_BUTTON.className = 'Downloading'
     DOWNLOAD_BUTTON.textContent = 'Loading...'
     DOWNLOAD_BUTTON.disabled = true
@@ -147,30 +149,39 @@ async function downloadPostPhotos() {
 function initUI() {
     const DIV =
         `<div class="Hide" id="Display-Container">
-        <div id="Title-Container">
-            <span>Photos</span>
-            <span id="ESC-Button">&times</span>
-        </div>
-        <div id="Photos-Container"></div>
-    </div>`
+            <div id="Title-Container">
+                <span>Photos</span>
+                <span id="ESC-Button">&times</span>
+            </div>
+            <div id="Photos-Container"></div>
+        </div>`
     const BUTTON = `<button class="Download" id="Download-Button">Download</button>`
     const DIV_NODE = new DOMParser().parseFromString(DIV, "text/html").body.firstElementChild;
     const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, "text/html").body.firstElementChild;
     document.body.appendChild(DIV_NODE)
     document.body.appendChild(BUTTON_NODE)
 }
-function main() {
-    initUI()
-    fetchFirstPost(PROFILE_URL)
+function handleEvents() {
     const ESC_BUTTON = document.querySelector('#ESC-Button')
     const DISPLAY_DIV = document.querySelector('#Display-Container')
     const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
+    const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
+    const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', downloadPostPhotos)
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_DIV.className = 'Hide'
     })
     window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') ESC_BUTTON.click()
+        if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
+            if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
+            if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
+        }
     })
+}
+function main() {
+    initUI()
+    fetchFirstPost(PROFILE_URL)
+    handleEvents()
 }
 main()
