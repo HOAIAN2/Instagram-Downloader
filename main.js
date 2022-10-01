@@ -67,7 +67,14 @@ async function downloadPostPhotos() {
         const photosArrayLength = photosArray.length
         for (let i = 0; i < photosArrayLength; i++) {
             if (photosArray[i].node.is_video == true) {
-                const video = document.createElement('video')
+                const anchor =
+                    `<a>
+                        <video>
+                    </a>`
+                const anchorAttributes = {
+                    href: await fetchPhotos(photosArray[i].node.video_url),
+                    download: `${postShortcode}_${i}.mp4`
+                }
                 const videoAttributes = {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
@@ -75,38 +82,52 @@ async function downloadPostPhotos() {
                     title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`,
                     controls: ''
                 }
-                Object.keys(videoAttributes).forEach(key => {
-                    video.setAttribute(key, videoAttributes[key])
+                const anchorElement = new DOMParser().parseFromString(anchor, 'text/html').body.firstElementChild
+                Object.keys(anchorAttributes).forEach(key => {
+                    anchorElement.setAttribute(key, anchorAttributes[key])
                 })
-                const a = document.createElement('a')
-                a.href = await fetchPhotos(photosArray[i].node.video_url)
-                a.download = `${postShortcode}_${i}.mp4`
-                PHOTOS_DIV.appendChild(a)
-                a.appendChild(video)
+                Object.keys(videoAttributes).forEach(key => {
+                    anchorElement.firstElementChild.setAttribute(key, videoAttributes[key])
+                })
+                PHOTOS_DIV.appendChild(anchorElement)
             }
             else {
-                const img = document.createElement('img')
+                const anchor =
+                    `<a>
+                        <img>
+                    </a>`
+                const anchorAttributes = {
+                    href: await fetchPhotos(photosArray[i].node.display_url),
+                    download: `${postShortcode}_${i}.jpeg`
+                }
                 const photoAttributes = {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
                     src: photosArray[i].node.display_url,
                     title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`
                 }
-                Object.keys(photoAttributes).forEach(key => {
-                    img.setAttribute(key, photoAttributes[key])
+                const anchorElement = new DOMParser().parseFromString(anchor, 'text/html').body.firstElementChild
+                Object.keys(anchorAttributes).forEach(key => {
+                    anchorElement.setAttribute(key, anchorAttributes[key])
                 })
-                const a = document.createElement('a')
-                a.href = await fetchPhotos(photosArray[i].node.display_url)
-                a.download = `${postShortcode}_${i}.jpeg`
-                PHOTOS_DIV.appendChild(a)
-                a.appendChild(img)
+                Object.keys(photoAttributes).forEach(key => {
+                    anchorElement.firstElementChild.setAttribute(key, photoAttributes[key])
+                })
+                PHOTOS_DIV.appendChild(anchorElement)
             }
         }
     }
     else {
         const photo = jsonRespone.data.shortcode_media
         if (photo.is_video == true) {
-            const video = document.createElement('video')
+            const anchor =
+                `<a>
+                    <video>
+                </a>`
+            const anchorAttributes = {
+                href: await fetchPhotos(photo.video_url),
+                download: `${postShortcode}.mp4`
+            }
             const videoAttributes = {
                 class: 'Photos-Items',
                 id: `${postShortcode}`,
@@ -114,31 +135,38 @@ async function downloadPostPhotos() {
                 title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`,
                 controls: ''
             }
-            Object.keys(videoAttributes).forEach(key => {
-                video.setAttribute(key, videoAttributes[key])
+            const anchorElement = new DOMParser().parseFromString(anchor, 'text/html').body.firstElementChild
+            Object.keys(anchorAttributes).forEach(key => {
+                anchorElement.setAttribute(key, anchorAttributes[key])
             })
-            const a = document.createElement('a')
-            a.href = await fetchPhotos(photo.video_url)
-            a.download = `${postShortcode}.mp4`
-            PHOTOS_DIV.appendChild(a)
-            a.appendChild(video)
+            Object.keys(videoAttributes).forEach(key => {
+                anchorElement.firstElementChild.setAttribute(key, videoAttributes[key])
+            })
+            PHOTOS_DIV.appendChild(anchorElement)
         }
         else {
-            const img = document.createElement('img')
+            const anchor =
+                `<a>
+                    <img>
+                </a>`
+            const anchorAttributes = {
+                href: await fetchPhotos(photo.display_url),
+                download: `${postShortcode}.jpeg`
+            }
             const photoAttributes = {
                 class: 'Photos-Items',
                 id: `${postShortcode}`,
                 src: photo.display_url,
                 title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`
             }
-            Object.keys(photoAttributes).forEach(key => {
-                img.setAttribute(key, photoAttributes[key])
+            const anchorElement = new DOMParser().parseFromString(anchor, 'text/html').body.firstElementChild
+            Object.keys(anchorAttributes).forEach(key => {
+                anchorElement.setAttribute(key, anchorAttributes[key])
             })
-            const a = document.createElement('a')
-            a.href = await fetchPhotos(photo.display_url)
-            a.download = `${postShortcode}.jpeg`
-            PHOTOS_DIV.appendChild(a)
-            a.appendChild(img)
+            Object.keys(photoAttributes).forEach(key => {
+                anchorElement.firstElementChild.setAttribute(key, photoAttributes[key])
+            })
+            PHOTOS_DIV.appendChild(anchorElement)
         }
     }
     lastShortcode = postShortcode
@@ -156,8 +184,8 @@ function initUI() {
             <div id="Photos-Container"></div>
         </div>`
     const BUTTON = `<button class="Download" id="Download-Button">Download</button>`
-    const DIV_NODE = new DOMParser().parseFromString(DIV, "text/html").body.firstElementChild;
-    const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, "text/html").body.firstElementChild;
+    const DIV_NODE = new DOMParser().parseFromString(DIV, 'text/html').body.firstElementChild
+    const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, 'text/html').body.firstElementChild
     document.body.appendChild(DIV_NODE)
     document.body.appendChild(BUTTON_NODE)
 }
