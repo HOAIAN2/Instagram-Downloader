@@ -15,7 +15,7 @@ function getShortcode() {
 }
 async function fetchFirstPost(PROFILE_URL) {
     const respone = await fetch(PROFILE_URL).catch(error => {
-        console.error(error)
+        console.log(error)
         return null
     })
     if (!respone) return
@@ -24,7 +24,7 @@ async function fetchFirstPost(PROFILE_URL) {
 }
 async function fetchPostPhotos(postURL) {
     const respone = await fetch(postURL).catch(error => {
-        console.error(error)
+        console.log(error)
         return null
     })
     if (!respone) return
@@ -33,7 +33,7 @@ async function fetchPostPhotos(postURL) {
 }
 async function fetchPhotos(photoURL) {
     const respone = await fetch(photoURL).catch(error => {
-        console.error(error)
+        console.log(error)
         return null
     })
     if (!respone) return ''
@@ -41,25 +41,42 @@ async function fetchPhotos(photoURL) {
     const downloadURL = URL.createObjectURL(blob)
     return downloadURL
 }
+function downloadState(state = 'Ready', PHOTOS_DIV) {
+    const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    switch (state) {
+        case 'Ready':
+            DOWNLOAD_BUTTON.className = 'Downloading'
+            DOWNLOAD_BUTTON.textContent = 'Loading...'
+            DOWNLOAD_BUTTON.disabled = true
+            PHOTOS_DIV.querySelectorAll('a').forEach(item => {
+                URL.revokeObjectURL(item.href)
+                item.remove()
+            })
+            break
+        case 'Fail':
+            DOWNLOAD_BUTTON.className = 'Download'
+            DOWNLOAD_BUTTON.textContent = 'Download'
+            DOWNLOAD_BUTTON.disabled = false
+            break
+        case 'Success':
+            lastShortcode = postShortcode
+            DOWNLOAD_BUTTON.className = 'Download'
+            DOWNLOAD_BUTTON.textContent = 'Download'
+            DOWNLOAD_BUTTON.disabled = false
+            break
+    }
+}
 async function downloadPostPhotos() {
     postShortcode = getShortcode()
     const DISPLAY_DIV = document.querySelector('#Display-Container')
     const PHOTOS_DIV = document.querySelector('#Photos-Container')
-    const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
     const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables={"shortcode":"${postShortcode}"}`
     DISPLAY_DIV.className = 'Show'
     if (postShortcode === lastShortcode) return
-    DOWNLOAD_BUTTON.className = 'Downloading'
-    DOWNLOAD_BUTTON.textContent = 'Loading...'
-    DOWNLOAD_BUTTON.disabled = true
-    PHOTOS_DIV.querySelectorAll('a').forEach(item => {
-        item.remove()
-    })
+    downloadState('Ready', PHOTOS_DIV)
     const jsonRespone = await fetchPostPhotos(postURL)
     if (!jsonRespone) {
-        DOWNLOAD_BUTTON.className = 'Download'
-        DOWNLOAD_BUTTON.textContent = 'Download'
-        DOWNLOAD_BUTTON.disabled = false
+        downloadState('Fail')
         return
     }
     if ('edge_sidecar_to_children' in jsonRespone.data.shortcode_media) {
@@ -169,10 +186,7 @@ async function downloadPostPhotos() {
             PHOTOS_DIV.appendChild(anchorElement)
         }
     }
-    lastShortcode = postShortcode
-    DOWNLOAD_BUTTON.className = 'Download'
-    DOWNLOAD_BUTTON.textContent = 'Download'
-    DOWNLOAD_BUTTON.disabled = false
+    downloadState('Success')
 }
 function initUI() {
     const DIV =
