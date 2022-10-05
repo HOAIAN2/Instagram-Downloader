@@ -63,9 +63,19 @@ function downloadState(state = 'Ready', PHOTOS_CONTAINER) {
             break
         case 'Success':
             lastShortcode = postShortcode
-            DOWNLOAD_BUTTON.className = 'Download'
-            DOWNLOAD_BUTTON.textContent = 'Download'
-            DOWNLOAD_BUTTON.disabled = false
+            const totalPhotos = PHOTOS_CONTAINER.querySelectorAll('img , video')
+            const totalPhotosLength = totalPhotos.length
+            let loadedPhotos = 0
+            totalPhotos.forEach(photo => {
+                photo.addEventListener('load', () => {
+                    loadedPhotos++
+                    if (loadedPhotos === totalPhotosLength) {
+                        DOWNLOAD_BUTTON.className = 'Download'
+                        DOWNLOAD_BUTTON.textContent = 'Download'
+                        DOWNLOAD_BUTTON.disabled = false
+                    }
+                })
+            })
             break
     }
 }
@@ -157,7 +167,7 @@ async function downloadPostPhotos() {
             })
         }
     }
-    downloadState('Success')
+    downloadState('Success', PHOTOS_CONTAINER)
 }
 function initUI() {
     const DISPLAY_CONTAINER =
