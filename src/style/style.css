@@ -103,9 +103,11 @@
 .Download {
     cursor: pointer;
     background-color: var(--violet);
+    box-shadow: 0px 0px 3px var(--violet);
 }
 
 .Downloading {
     cursor: default;
     background-color: var(--gray-violet);
+    box-shadow: 0px 0px 3px var(--gray-violet);
 }
