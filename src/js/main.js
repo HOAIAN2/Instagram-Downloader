@@ -67,14 +67,26 @@ function downloadState(state = 'Ready', PHOTOS_CONTAINER) {
             const totalPhotosLength = totalPhotos.length
             let loadedPhotos = 0
             totalPhotos.forEach(photo => {
-                photo.addEventListener('load', () => {
-                    loadedPhotos++
-                    if (loadedPhotos === totalPhotosLength) {
-                        DOWNLOAD_BUTTON.className = 'Download'
-                        DOWNLOAD_BUTTON.textContent = 'Download'
-                        DOWNLOAD_BUTTON.disabled = false
-                    }
-                })
+                if (photo.tagName === 'IMG') {
+                    photo.addEventListener('load', () => {
+                        loadedPhotos++
+                        if (loadedPhotos === totalPhotosLength) {
+                            DOWNLOAD_BUTTON.className = 'Download'
+                            DOWNLOAD_BUTTON.textContent = 'Download'
+                            DOWNLOAD_BUTTON.disabled = false
+                        }
+                    })
+                }
+                else {
+                    photo.addEventListener('loadeddata', () => {
+                        loadedPhotos++
+                        if (loadedPhotos === totalPhotosLength) {
+                            DOWNLOAD_BUTTON.className = 'Download'
+                            DOWNLOAD_BUTTON.textContent = 'Download'
+                            DOWNLOAD_BUTTON.disabled = false
+                        }
+                    })
+                }
             })
             break
     }
