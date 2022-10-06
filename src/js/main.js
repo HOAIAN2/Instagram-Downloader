@@ -11,8 +11,7 @@ function getShortcode() {
     }
     return postShortcode
 }
-async function setDefaultShortcode() {
-    const PROFILE_ID = '51963237586'
+async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables={"id":"${PROFILE_ID}","first":1}`
     const respone = await fetch(PROFILE_URL).catch(error => {
         console.log(error)
@@ -31,8 +30,8 @@ async function getPostPhotos(postURL) {
     const json = await respone.json()
     return json
 }
-async function downloadPhoto(photoURL, fileName) {
-    const respone = await fetch(photoURL.src).catch(error => {
+async function downloadPhoto(photo, fileName) {
+    const respone = await fetch(photo.src).catch(error => {
         console.log(error)
         return null
     })
@@ -43,12 +42,17 @@ async function downloadPhoto(photoURL, fileName) {
     a.href = downloadURL
     a.download = fileName
     a.click()
-    URL.revokeObjectURL(a.href)
+    URL.revokeObjectURL(downloadURL)
 }
-function downloadState(state = 'Ready', PHOTOS_CONTAINER) {
+function downloadState(state = 'ready', PHOTOS_CONTAINER) {
     const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    function resetState() {
+        DOWNLOAD_BUTTON.className = 'Download'
+        DOWNLOAD_BUTTON.textContent = 'Download'
+        DOWNLOAD_BUTTON.disabled = false
+    }
     switch (state) {
-        case 'Ready':
+        case 'ready':
             DOWNLOAD_BUTTON.className = 'Downloading'
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
@@ -56,12 +60,10 @@ function downloadState(state = 'Ready', PHOTOS_CONTAINER) {
                 item.remove()
             })
             break
-        case 'Fail':
-            DOWNLOAD_BUTTON.className = 'Download'
-            DOWNLOAD_BUTTON.textContent = 'Download'
-            DOWNLOAD_BUTTON.disabled = false
+        case 'fail':
+            resetState()
             break
-        case 'Success':
+        case 'success':
             lastShortcode = postShortcode
             const totalPhotos = PHOTOS_CONTAINER.querySelectorAll('img , video')
             const totalPhotosLength = totalPhotos.length
@@ -70,21 +72,13 @@ function downloadState(state = 'Ready', PHOTOS_CONTAINER) {
                 if (photo.tagName === 'IMG') {
                     photo.addEventListener('load', () => {
                         loadedPhotos++
-                        if (loadedPhotos === totalPhotosLength) {
-                            DOWNLOAD_BUTTON.className = 'Download'
-                            DOWNLOAD_BUTTON.textContent = 'Download'
-                            DOWNLOAD_BUTTON.disabled = false
-                        }
+                        if (loadedPhotos === totalPhotosLength) resetState()
                     })
                 }
                 else {
                     photo.addEventListener('loadeddata', () => {
                         loadedPhotos++
-                        if (loadedPhotos === totalPhotosLength) {
-                            DOWNLOAD_BUTTON.className = 'Download'
-                            DOWNLOAD_BUTTON.textContent = 'Download'
-                            DOWNLOAD_BUTTON.disabled = false
-                        }
+                        if (loadedPhotos === totalPhotosLength) resetState()
                     })
                 }
             })
@@ -98,22 +92,21 @@ async function downloadPostPhotos() {
     const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables={"shortcode":"${postShortcode}"}`
     DISPLAY_CONTAINER.className = 'Show'
     if (postShortcode === lastShortcode) return
-    downloadState('Ready', PHOTOS_CONTAINER)
+    downloadState('ready', PHOTOS_CONTAINER)
     const jsonRespone = await getPostPhotos(postURL)
     if (!jsonRespone) {
-        downloadState('Fail')
+        downloadState('fail')
         return
     }
     if ('edge_sidecar_to_children' in jsonRespone.data.shortcode_media) {
         const photosArray = jsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
-        const photosArrayLength = photosArray.length
-        for (let i = 0; i < photosArrayLength; i++) {
-            if (photosArray[i].node.is_video == true) {
+        photosArray.forEach((photo, i) => {
+            if (photo.node.is_video == true) {
                 const video = document.createElement('video')
                 const videoAttributes = {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
-                    src: photosArray[i].node.video_url,
+                    src: photo.node.video_url,
                     title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`,
                     controls: ''
                 }
@@ -130,7 +123,7 @@ async function downloadPostPhotos() {
                 const photoAttributes = {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
-                    src: photosArray[i].node.display_url,
+                    src: photo.node.display_url,
                     title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`
                 }
                 Object.keys(photoAttributes).forEach(key => {
@@ -141,7 +134,7 @@ async function downloadPostPhotos() {
                     downloadPhoto(img, `${postShortcode}_${i}.jpeg`)
                 })
             }
-        }
+        })
     }
     else {
         const photo = jsonRespone.data.shortcode_media
@@ -179,7 +172,7 @@ async function downloadPostPhotos() {
             })
         }
     }
-    downloadState('Success', PHOTOS_CONTAINER)
+    downloadState('success', PHOTOS_CONTAINER)
 }
 function initUI() {
     const DISPLAY_CONTAINER =
