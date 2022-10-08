@@ -175,9 +175,11 @@ async function downloadPostPhotos() {
     downloadState('success', PHOTOS_CONTAINER)
 }
 function initUI() {
+    let isDarkmode = false
+    if (window.location.search === '?theme=dark') isDarkmode = true
     const DISPLAY_CONTAINER =
-        `<div class="Hide" id="Display-Container">
-            <div id="Title-Container">
+        `<div darkmode="${isDarkmode}" class="Hide" id="Display-Container">
+            <div darkmode="${isDarkmode}" id="Title-Container">
                 <span>Photos</span>
                 <span id="ESC-Button">&times</span>
             </div>

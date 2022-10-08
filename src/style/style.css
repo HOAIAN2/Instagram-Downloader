@@ -5,9 +5,7 @@
 }
 
 :root {
-    --red: rgb(255, 0, 0);
-    --dark-red: rgb(243, 9, 9);
-    --gray: rgb(228, 228, 228);
+    --shadow-white: rgba(255, 255, 255, 0.3);
     --shadow-black: rgba(0, 0, 0, 0.3);
     --violet: rgb(138, 43, 226);
     --gray-violet: rgb(161, 85, 231);
@@ -15,6 +13,7 @@
 
 #Display-Container {
     background-color: white;
+    box-shadow: 0px 0px 5px var(--shadow-black);
     width: 300px;
     height: 500px;
     border-radius: 10px;
@@ -23,10 +22,14 @@
     position: fixed;
     bottom: 60px;
     right: 20px;
-    box-shadow: 0px 0px 5px var(--shadow-black);
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+}
+
+#Display-Container[darkmode=true] {
+    background-color: black;
+    box-shadow: 0px 0px 5px var(--shadow-white);
 }
 
 #Title-Container {
@@ -42,6 +45,10 @@
     position: absolute;
     padding: 10px;
     z-index: 1;
+}
+
+#Title-Container[darkmode=true] {
+    background-color: rgba(0, 0, 0, 0.95);
 }
 
 #Title-Container>span:first-child {
@@ -66,14 +73,6 @@
 
 #Photos-Container::-webkit-scrollbar {
     display: none;
-}
-
-.Hide {
-    display: none;
-}
-
-.Show {
-    display: block;
 }
 
 .Photos-Items {
@@ -110,4 +109,12 @@
     cursor: default;
     background-color: var(--gray-violet);
     box-shadow: 0px 0px 3px var(--gray-violet);
+}
+
+.Hide {
+    display: none;
+}
+
+.Show {
+    display: block;
 }
