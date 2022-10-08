@@ -4,10 +4,9 @@ const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 function getShortcode() {
     const DOWNLOADABLE_PAGE = ['p', 'reel', 'tv']
-    const currentPage = window.location.pathname
-    const pagePath = currentPage.split('/')
-    if (DOWNLOADABLE_PAGE.includes(pagePath[1])) {
-        postShortcode = pagePath[2]
+    const currentPage = window.location.pathname.split('/')
+    if (DOWNLOADABLE_PAGE.includes(currentPage[1])) {
+        postShortcode = currentPage[2]
     }
     return postShortcode
 }
@@ -26,8 +25,9 @@ async function getPostPhotos(postURL) {
         console.log(error)
         return null
     })
-    if (!respone) return
+    if (!respone) return null
     const json = await respone.json()
+    if (!json.data.shortcode_media) return null
     return json
 }
 async function downloadPhoto(photo, fileName) {
@@ -65,20 +65,20 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER) {
             break
         case 'success':
             lastShortcode = postShortcode
-            const totalPhotos = PHOTOS_CONTAINER.querySelectorAll('img , video')
-            const totalPhotosLength = totalPhotos.length
+            const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
+            const totalPhotos = photosArray.length
             let loadedPhotos = 0
-            totalPhotos.forEach(photo => {
+            photosArray.forEach(photo => {
                 if (photo.tagName === 'IMG') {
                     photo.addEventListener('load', () => {
                         loadedPhotos++
-                        if (loadedPhotos === totalPhotosLength) resetState()
+                        if (loadedPhotos === totalPhotos) resetState()
                     })
                 }
                 else {
                     photo.addEventListener('loadeddata', () => {
                         loadedPhotos++
-                        if (loadedPhotos === totalPhotosLength) resetState()
+                        if (loadedPhotos === totalPhotos) resetState()
                     })
                 }
             })
@@ -98,7 +98,7 @@ async function downloadPostPhotos() {
         downloadState('fail')
         return
     }
-    if ('edge_sidecar_to_children' in jsonRespone.data.shortcode_media) {
+    if (jsonRespone.data.shortcode_media.hasOwnProperty('edge_sidecar_to_children')) {
         const photosArray = jsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
         photosArray.forEach((photo, i) => {
             if (photo.node.is_video == true) {
