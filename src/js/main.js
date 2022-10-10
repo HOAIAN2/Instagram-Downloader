@@ -11,7 +11,7 @@ function getShortcode() {
     return postShortcode
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
-    const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables={"id":"${PROFILE_ID}","first":1}`
+    const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${PROFILE_ID}","first":1}`)}`
     try {
         const respone = await fetch(PROFILE_URL)
         const json = await respone.json()
@@ -87,7 +87,7 @@ async function downloadPostPhotos() {
     postShortcode = getShortcode()
     const DISPLAY_CONTAINER = document.querySelector('#Display-Container')
     const PHOTOS_CONTAINER = document.querySelector('#Photos-Container')
-    const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables={"shortcode":"${postShortcode}"}`
+    const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${postShortcode}"}`)}`
     DISPLAY_CONTAINER.className = 'Show'
     if (postShortcode === lastShortcode) return
     downloadState('ready', PHOTOS_CONTAINER)
