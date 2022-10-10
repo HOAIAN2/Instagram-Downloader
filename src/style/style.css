@@ -53,6 +53,7 @@
 
 #Title-Container>span:first-child {
     font-size: 22px;
+    cursor: pointer;
 }
 
 #ESC-Button:hover {

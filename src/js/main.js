@@ -12,37 +12,35 @@ function getShortcode() {
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables={"id":"${PROFILE_ID}","first":1}`
-    const respone = await fetch(PROFILE_URL).catch(error => {
+    try {
+        const respone = await fetch(PROFILE_URL)
+        const json = await respone.json()
+        postShortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
+    } catch (error) {
         console.log(error)
-        return null
-    })
-    if (!respone) return
-    const json = await respone.json()
-    postShortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
+    }
 }
 async function getPostPhotos(postURL) {
-    const respone = await fetch(postURL).catch(error => {
+    try {
+        const respone = await fetch(postURL)
+        const json = await respone.json()
+        return json.data.shortcode_media
+    } catch (error) {
         console.log(error)
-        return null
-    })
-    if (!respone) return null
-    const json = await respone.json()
-    if (!json.data.shortcode_media) return null
-    return json
+    }
 }
 async function downloadPhoto(photo, fileName) {
-    const respone = await fetch(photo.src).catch(error => {
-        console.log(error)
-        return null
-    })
-    if (!respone) return
-    const blob = await respone.blob()
-    const downloadURL = URL.createObjectURL(blob)
     const a = document.createElement('a')
-    a.href = downloadURL
     a.download = fileName
-    a.click()
-    URL.revokeObjectURL(downloadURL)
+    try {
+        const respone = await fetch(photo.src)
+        const blob = await respone.blob()
+        a.href = URL.createObjectURL(blob)
+        a.click()
+        URL.revokeObjectURL(a.href)
+    } catch (error) {
+        console.log(error)
+    }
 }
 function downloadState(state = 'ready', PHOTOS_CONTAINER) {
     const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
@@ -98,8 +96,8 @@ async function downloadPostPhotos() {
         downloadState('fail')
         return
     }
-    if (jsonRespone.data.shortcode_media.hasOwnProperty('edge_sidecar_to_children')) {
-        const photosArray = jsonRespone.data.shortcode_media.edge_sidecar_to_children.edges
+    if (jsonRespone.hasOwnProperty('edge_sidecar_to_children')) {
+        const photosArray = jsonRespone.edge_sidecar_to_children.edges
         photosArray.forEach((photo, i) => {
             if (photo.node.is_video == true) {
                 const video = document.createElement('video')
@@ -107,7 +105,7 @@ async function downloadPostPhotos() {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
                     src: photo.node.video_url,
-                    title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`,
+                    title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}_${i}`,
                     controls: ''
                 }
                 Object.keys(videoAttributes).forEach(key => {
@@ -124,7 +122,7 @@ async function downloadPostPhotos() {
                     class: 'Photos-Items',
                     id: `${postShortcode}_${i}`,
                     src: photo.node.display_url,
-                    title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}_${i}`
+                    title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}_${i}`
                 }
                 Object.keys(photoAttributes).forEach(key => {
                     img.setAttribute(key, photoAttributes[key])
@@ -137,14 +135,14 @@ async function downloadPostPhotos() {
         })
     }
     else {
-        const photo = jsonRespone.data.shortcode_media
+        const photo = jsonRespone
         if (photo.is_video == true) {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'Photos-Items',
                 id: `${postShortcode}`,
                 src: photo.video_url,
-                title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`,
+                title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -161,7 +159,7 @@ async function downloadPostPhotos() {
                 class: 'Photos-Items',
                 id: `${postShortcode}`,
                 src: photo.display_url,
-                title: `${jsonRespone.data.shortcode_media.owner.full_name} | ${jsonRespone.data.shortcode_media.owner.username} | ${postShortcode}`
+                title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}`
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
@@ -180,7 +178,7 @@ function initUI() {
     const DISPLAY_CONTAINER =
         `<div darkmode="${isDarkmode}" class="Hide" id="Display-Container">
             <div darkmode="${isDarkmode}" id="Title-Container">
-                <span>Photos</span>
+                <span title="Change Theme">Photos</span>
                 <span id="ESC-Button">&times</span>
             </div>
             <div id="Photos-Container"></div>
@@ -193,14 +191,19 @@ function initUI() {
 }
 function handleEvents() {
     const ESC_BUTTON = document.querySelector('#ESC-Button')
-    const DISPLAY_DIV = document.querySelector('#Display-Container')
+    const DISPLAY_CONTAINER = document.querySelector('#Display-Container')
     const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    const TOGGLE_BUTTON = DISPLAY_CONTAINER.querySelector('span')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', downloadPostPhotos)
+    TOGGLE_BUTTON.addEventListener('dblclick', () => {
+        if (window.location.search === '') window.location.search = '?theme=dark'
+        else window.location.search = ''
+    })
     ESC_BUTTON.addEventListener('click', () => {
-        DISPLAY_DIV.className = 'Hide'
+        DISPLAY_CONTAINER.className = 'Hide'
     })
     window.addEventListener('keydown', (e) => {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
