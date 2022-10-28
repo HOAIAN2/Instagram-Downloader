@@ -43,15 +43,15 @@ async function downloadPhoto(photo, fileName) {
     }
 }
 function downloadState(state = 'ready', PHOTOS_CONTAINER) {
-    const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    const DOWNLOAD_BUTTON = document.querySelector('#download-button')
     function resetState() {
-        DOWNLOAD_BUTTON.className = 'Download'
+        DOWNLOAD_BUTTON.className = 'download'
         DOWNLOAD_BUTTON.textContent = 'Download'
         DOWNLOAD_BUTTON.disabled = false
     }
     switch (state) {
         case 'ready':
-            DOWNLOAD_BUTTON.className = 'Downloading'
+            DOWNLOAD_BUTTON.className = 'downloading'
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
             PHOTOS_CONTAINER.querySelectorAll('img , video').forEach(item => {
@@ -85,8 +85,8 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER) {
 }
 async function downloadPostPhotos() {
     postShortcode = getShortcode()
-    const DISPLAY_CONTAINER = document.querySelector('#Display-Container')
-    const PHOTOS_CONTAINER = document.querySelector('#Photos-Container')
+    const DISPLAY_CONTAINER = document.querySelector('#display-container')
+    const PHOTOS_CONTAINER = document.querySelector('#photos-container')
     const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${postShortcode}"}`)}`
     DISPLAY_CONTAINER.className = 'Show'
     if (postShortcode === lastShortcode) return
@@ -102,7 +102,7 @@ async function downloadPostPhotos() {
             if (photo.node.is_video == true) {
                 const video = document.createElement('video')
                 const videoAttributes = {
-                    class: 'Photos-Items',
+                    class: 'photos-items',
                     id: `${postShortcode}_${i}`,
                     src: photo.node.video_url,
                     title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}_${i}`,
@@ -119,7 +119,7 @@ async function downloadPostPhotos() {
             else {
                 const img = document.createElement('img')
                 const photoAttributes = {
-                    class: 'Photos-Items',
+                    class: 'photos-items',
                     id: `${postShortcode}_${i}`,
                     src: photo.node.display_url,
                     title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}_${i}`
@@ -139,7 +139,7 @@ async function downloadPostPhotos() {
         if (photo.is_video == true) {
             const video = document.createElement('video')
             const videoAttributes = {
-                class: 'Photos-Items',
+                class: 'photos-items',
                 id: `${postShortcode}`,
                 src: photo.video_url,
                 title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}`,
@@ -156,7 +156,7 @@ async function downloadPostPhotos() {
         else {
             const img = document.createElement('img')
             const photoAttributes = {
-                class: 'Photos-Items',
+                class: 'photos-items',
                 id: `${postShortcode}`,
                 src: photo.display_url,
                 title: `${jsonRespone.owner.full_name} | ${jsonRespone.owner.username} | ${postShortcode}`
@@ -174,36 +174,46 @@ async function downloadPostPhotos() {
 }
 function initUI() {
     let isDarkmode = false
-    if (window.location.search === '?theme=dark') isDarkmode = true
+    if (window.location.search.includes('theme=dark')) isDarkmode = true
     const DISPLAY_CONTAINER =
-        `<div darkmode="${isDarkmode}" class="Hide" id="Display-Container">
-            <div darkmode="${isDarkmode}" id="Title-Container">
-                <span title="Change Theme">Photos</span>
-                <span id="ESC-Button">&times</span>
+        `<div darkmode="${isDarkmode}" class="hide" id="display-container">
+            <div darkmode="${isDarkmode}" id="title-container">
+                <span title="Double click to change Theme">Photos</span>
+                <span id="esc-button">&times</span>
             </div>
-            <div id="Photos-Container"></div>
+            <div id="photos-container"></div>
         </div>`
-    const BUTTON = `<button class="Download" id="Download-Button">Download</button>`
+    const BUTTON = `<button class="download" id="download-button">Download</button>`
     const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body.firstElementChild
     const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, 'text/html').body.firstElementChild
     document.body.appendChild(DISPLAY_NODE)
     document.body.appendChild(BUTTON_NODE)
 }
 function handleEvents() {
-    const ESC_BUTTON = document.querySelector('#ESC-Button')
-    const DISPLAY_CONTAINER = document.querySelector('#Display-Container')
-    const DOWNLOAD_BUTTON = document.querySelector('#Download-Button')
+    const ESC_BUTTON = document.querySelector('#esc-button')
+    const DISPLAY_CONTAINER = document.querySelector('#display-container')
+    const DOWNLOAD_BUTTON = document.querySelector('#download-button')
     const TOGGLE_BUTTON = DISPLAY_CONTAINER.querySelector('span')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', downloadPostPhotos)
     TOGGLE_BUTTON.addEventListener('dblclick', () => {
-        if (window.location.search === '') window.location.search = '?theme=dark'
-        else window.location.search = ''
+        const currentSearch = window.location.search.slice(1).split('&')
+        if (!currentSearch.includes('theme=dark')) {
+            if (currentSearch.includes('')) currentSearch[0] = 'theme=dark'
+            else {
+                currentSearch.push('theme=dark')
+            }
+            window.location.search = currentSearch.join('&')
+        }
+        else {
+            currentSearch.splice(currentSearch.indexOf('theme=dark'), 1)
+            window.location.search = currentSearch.join('&')
+        }
     })
     ESC_BUTTON.addEventListener('click', () => {
-        DISPLAY_CONTAINER.className = 'Hide'
+        DISPLAY_CONTAINER.className = 'hide'
     })
     window.addEventListener('keydown', (e) => {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
