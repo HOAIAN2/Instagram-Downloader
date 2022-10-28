@@ -11,7 +11,7 @@
     --gray-violet: rgb(161, 85, 231);
 }
 
-#Display-Container {
+#display-container {
     background-color: white;
     box-shadow: 0px 0px 5px var(--shadow-black);
     width: 300px;
@@ -27,12 +27,12 @@
     -webkit-user-select: none;
 }
 
-#Display-Container[darkmode=true] {
+#display-container[darkmode=true] {
     background-color: black;
     box-shadow: 0px 0px 5px var(--shadow-white);
 }
 
-#Title-Container {
+#title-container {
     width: 300px;
     height: 40px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -47,21 +47,21 @@
     z-index: 1;
 }
 
-#Title-Container[darkmode=true] {
+#title-container[darkmode=true] {
     background-color: rgba(0, 0, 0, 0.95);
 }
 
-#Title-Container>span:first-child {
+#title-container>span:first-child {
     font-size: 22px;
     cursor: pointer;
 }
 
-#ESC-Button:hover {
+#esc-button:hover {
     opacity: 0.8;
     cursor: pointer;
 }
 
-#Photos-Container {
+#photos-container {
     width: inherit;
     height: inherit;
     padding-top: 40px;
@@ -72,17 +72,17 @@
     z-index: 0;
 }
 
-#Photos-Container::-webkit-scrollbar {
+#photos-container::-webkit-scrollbar {
     display: none;
 }
 
-.Photos-Items {
+.photos-items {
     width: 275px;
     margin-bottom: 10px;
     cursor: pointer;
 }
 
-#Download-Button {
+#download-button {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 120px;
     height: 30px;
@@ -100,19 +100,19 @@
     -webkit-user-select: none;
 }
 
-.Download {
+.download {
     cursor: pointer;
     background-color: var(--violet);
     box-shadow: 0px 0px 3px var(--violet);
 }
 
-.Downloading {
+.downloading {
     cursor: default;
     background-color: var(--gray-violet);
     box-shadow: 0px 0px 3px var(--gray-violet);
 }
 
-.Hide {
+.hide {
     display: none;
 }
 
