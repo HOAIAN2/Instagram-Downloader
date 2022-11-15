@@ -1,7 +1,7 @@
 {
     "name": "Instagram downloader",
-    "description": "Download Photos and Videos from Instagram Post, Reels, TV",
-    "version": "2.5.0",
+    "description": "Download Photos and Videos from Instagram Post, Reels, TV, Stories",
+    "version": "2.5.1",
     "manifest_version": 3,
     "icons": {
         "16": "Instagram_Logo.png",
@@ -21,7 +21,9 @@
                 "https://www.instagram.com/*"
             ],
             "js": [
-                "src/js/main.js"
+                "src/js/main.js",
+                "src/js/post.js",
+                "src/js/story.js"
             ],
             "css": [
                 "src/style/style.css"
