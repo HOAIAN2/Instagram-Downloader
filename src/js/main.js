@@ -1,14 +1,29 @@
 let postShortcode = ''
 let lastShortcode = ''
+let username = ''
+let lastUsername = ''
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 function getShortcode() {
     const DOWNLOADABLE_PAGE = ['p', 'reel', 'tv']
     const currentPage = window.location.pathname.split('/')
-    if (DOWNLOADABLE_PAGE.includes(currentPage[1])) {
-        postShortcode = currentPage[2]
-    }
+    if (DOWNLOADABLE_PAGE.includes(currentPage[1])) postShortcode = currentPage[2]
     return postShortcode
+}
+function getUsername() {
+    const DOWNLOADABLE_PAGE = ['stories']
+    const currentPage = window.location.pathname.split('/')
+    if (DOWNLOADABLE_PAGE.includes(currentPage[1])) username = currentPage[2]
+    return username
+}
+function shouldDownload() {
+    const currentPage = window.location.pathname.split('/')
+    const POST_PAGE = ['p', 'reel', 'tv']
+    const STORY_PAGE = ['stories']
+    if (POST_PAGE.includes(currentPage[1]) && postShortcode !== lastShortcode) return 'post'
+    if (STORY_PAGE.includes(currentPage[1]) && username !== lastUsername) return 'stories'
+    if (lastShortcode === '') return 'post'
+    return 'none'
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${PROFILE_ID}","first":1}`)}`
@@ -20,7 +35,7 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
         console.log(error)
     }
 }
-async function getUserID(username = '', options) {
+async function getUserID(options) {
     try {
         const respone = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${username}`, options)
         const json = await respone.json()
@@ -37,6 +52,7 @@ async function getPostPhotos(postURL) {
         return json.data.shortcode_media
     } catch (error) {
         console.log(error)
+        return null
     }
 }
 async function getStoryPhotos(userID = '51963237586', options) {
@@ -46,7 +62,7 @@ async function getStoryPhotos(userID = '51963237586', options) {
         return json.reels[userID]
     } catch (error) {
         console.log(error)
-        return []
+        return null
     }
 }
 async function downloadPhoto(photo, fileName) {
@@ -62,7 +78,7 @@ async function downloadPhoto(photo, fileName) {
         console.log(error)
     }
 }
-function downloadState(state = 'ready', PHOTOS_CONTAINER) {
+function downloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     const DOWNLOAD_BUTTON = document.querySelector('#download-button')
     function resetState() {
         DOWNLOAD_BUTTON.className = 'download'
@@ -82,7 +98,8 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER) {
             resetState()
             break
         case 'success':
-            lastShortcode = postShortcode
+            if (option === 'post') lastShortcode = postShortcode
+            else lastUsername = username
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
             const totalPhotos = photosArray.length
             let loadedPhotos = 0
@@ -103,7 +120,7 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER) {
             break
     }
 }
-async function downloadStoryPhotos(username = '') {
+async function downloadStoryPhotos() {
     const csrftoken = document.cookie.split(' ')[2].split('=')[1]
     const claim = sessionStorage.getItem('www-claim-v2')
     const options = {
@@ -128,8 +145,9 @@ async function downloadStoryPhotos(username = '') {
         },
         media: []
     }
-    const userID = await getUserID(username, options)
+    const userID = await getUserID(options)
     const json = await getStoryPhotos(userID, options)
+    if (!json) return null
     jsonRespone.user.username = username
     jsonRespone.user.fullName = json.user["full_name"]
     json.items.forEach((item) => {
@@ -161,6 +179,7 @@ async function downloadPostPhotos() {
     postShortcode = getShortcode()
     const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${postShortcode}"}`)}`
     const json = await getPostPhotos(postURL)
+    if (!json) return null
     jsonRespone.user.username = json.owner['username']
     jsonRespone.user.fullName = json.owner['full_name']
     if (json.hasOwnProperty('edge_sidecar_to_children')) {
@@ -202,16 +221,26 @@ async function downloadPostPhotos() {
 }
 async function renderPhotos() {
     postShortcode = getShortcode()
+    username = getUsername()
     let jsonRespone = null
-    const currentPage = window.location.pathname.split('/')
+    let displayTitleElement = ''
     const DISPLAY_CONTAINER = document.querySelector('#display-container')
     const PHOTOS_CONTAINER = document.querySelector('#photos-container')
     DISPLAY_CONTAINER.className = 'Show'
-    downloadState('ready', PHOTOS_CONTAINER)
-    if (currentPage[1] == 'stories') jsonRespone = await downloadStoryPhotos(currentPage[2])
-    else {
-        // if (postShortcode === lastShortcode) return
-        jsonRespone = await downloadPostPhotos()
+    const option = shouldDownload()
+    switch (option) {
+        case 'none': return
+        case 'post':
+            downloadState('ready', PHOTOS_CONTAINER)
+            jsonRespone = await downloadPostPhotos()
+            displayTitleElement = postShortcode
+            break
+        case 'stories':
+            downloadState('ready', PHOTOS_CONTAINER)
+            jsonRespone = await downloadStoryPhotos()
+            displayTitleElement = `${username} latest stories`
+            break
+        default: return
     }
     if (!jsonRespone) {
         downloadState('fail')
@@ -222,9 +251,9 @@ async function renderPhotos() {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
-                id: `${postShortcode}_${index}`,
+                id: `${displayTitleElement}_${index}`,
                 src: item.url,
-                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${postShortcode}_${index}`,
+                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitleElement}_${index}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -232,27 +261,27 @@ async function renderPhotos() {
             })
             PHOTOS_CONTAINER.appendChild(video)
             video.addEventListener('click', () => {
-                downloadPhoto(video, `${postShortcode}_${index}`)
+                downloadPhoto(video, `${displayTitleElement}_${index}`)
             })
         }
         else {
             const img = document.createElement('img')
             const photoAttributes = {
                 class: 'photos-items',
-                id: `${postShortcode}_${index}`,
+                id: `${displayTitleElement}_${index}`,
                 src: item.url,
-                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${postShortcode}_${index}`,
+                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitleElement}_${index}`,
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
             })
             PHOTOS_CONTAINER.appendChild(img)
             img.addEventListener('click', () => {
-                downloadPhoto(img, `${postShortcode}_${index}.jpeg`)
+                downloadPhoto(img, `${displayTitleElement}_${index}.jpeg`)
             })
         }
     })
-    downloadState('success', PHOTOS_CONTAINER)
+    downloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
     let isDarkmode = false
