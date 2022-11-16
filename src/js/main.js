@@ -1,7 +1,15 @@
-let postShortcode = ''
-let lastShortcode = ''
-let username = ''
-let lastUsername = ''
+const appLog = {
+    current: {
+        shortcode: '',
+        username: '',
+        highlights: '',
+    },
+    previous: {
+        shortcode: '',
+        username: '',
+        highlights: '',
+    }
+}
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 async function downloadPhoto(photo, fileName) {
@@ -18,10 +26,12 @@ async function downloadPhoto(photo, fileName) {
     }
 }
 function shouldDownload() {
-    if (window.location.pathname === '/' && lastUsername !== '') return 'none'
-    if (username !== lastUsername) return 'stories'
-    if (postShortcode !== lastShortcode) return 'post'
-    if (lastShortcode === '' && lastUsername) return 'post'
+    if (window.location.pathname === '/') {
+        if (appLog.previous.highlights !== '' && appLog.previous.username !== '' && appLog.previous.shortcode === '') return 'none'
+    }
+    if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
+    if (appLog.current.username !== appLog.previous.username) return 'stories'
+    if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
     return 'none'
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
@@ -29,7 +39,7 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     try {
         const respone = await fetch(PROFILE_URL)
         const json = await respone.json()
-        postShortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
+        appLog.current.shortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
     } catch (error) {
         console.log(error)
     }
@@ -54,8 +64,11 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
             resetState()
             break
         case 'success':
-            if (option === 'post') lastShortcode = postShortcode
-            else lastUsername = username
+            if (option === 'post') appLog.previous.shortcode = appLog.current.shortcode
+            else {
+                if (option === 'stories') appLog.previous.username = appLog.current.username
+                else appLog.previous.highlights = appLog.current.highlights
+            }
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
             const totalPhotos = photosArray.length
             let loadedPhotos = 0
@@ -77,8 +90,9 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     }
 }
 async function handleDownload() {
-    postShortcode = getShortcode()
-    username = getUsername()
+    appLog.current.shortcode = getShortcode()
+    appLog.current.username = getUsername()
+    appLog.current.highlights = getHightlightsID()
     let jsonRespone = null
     let displayTitle = ''
     const DISPLAY_CONTAINER = document.querySelector('#display-container')
@@ -90,12 +104,17 @@ async function handleDownload() {
         case 'post':
             downloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadPostPhotos()
-            displayTitle = postShortcode
+            displayTitle = appLog.current.shortcode
             break
         case 'stories':
             downloadState('ready', PHOTOS_CONTAINER)
-            jsonRespone = await downloadStoryPhotos()
-            displayTitle = `${username}-latest-stories`
+            jsonRespone = await downloadStoryPhotos(1)
+            displayTitle = `${appLog.current.username}-latest-stories`
+            break
+        case 'highlights':
+            downloadState('ready', PHOTOS_CONTAINER)
+            jsonRespone = await downloadStoryPhotos(2)
+            displayTitle = `${appLog.current.highlights}-stories`
             break
         default: return
     }
