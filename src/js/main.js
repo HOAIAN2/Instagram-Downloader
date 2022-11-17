@@ -1,4 +1,5 @@
 const appLog = {
+    defaulShortcode: '',
     current: {
         shortcode: '',
         username: '',
@@ -26,7 +27,8 @@ async function downloadPhoto(photo, fileName) {
     }
 }
 function shouldDownload() {
-    if (appLog.previous.highlights !== '' || appLog.previous.username !== '' && appLog.previous.shortcode === '') return 'none'
+    if (appLog.previous.highlights !== '' || appLog.previous.username !== ''
+        && appLog.previous.shortcode === '' && appLog.current.shortcode === appLog.defaulShortcode) return 'none'
     if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
     if (appLog.current.username !== appLog.previous.username) return 'stories'
     if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
@@ -37,7 +39,8 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     try {
         const respone = await fetch(PROFILE_URL)
         const json = await respone.json()
-        appLog.current.shortcode = json.data.user.edge_owner_to_timeline_media.edges[0].node.shortcode
+        appLog.defaulShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
+        appLog.currentSearch = appLog.defaulShortcode
     } catch (error) {
         console.log(error)
     }
