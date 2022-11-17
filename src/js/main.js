@@ -40,7 +40,7 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
         const respone = await fetch(PROFILE_URL)
         const json = await respone.json()
         appLog.defaulShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
-        appLog.currentSearch = appLog.defaulShortcode
+        appLog.current.shortcode = appLog.defaulShortcode
     } catch (error) {
         console.log(error)
     }
