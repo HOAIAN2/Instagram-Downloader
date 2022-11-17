@@ -26,9 +26,7 @@ async function downloadPhoto(photo, fileName) {
     }
 }
 function shouldDownload() {
-    if (window.location.pathname === '/') {
-        if (appLog.previous.highlights !== '' && appLog.previous.username !== '' && appLog.previous.shortcode === '') return 'none'
-    }
+    if (appLog.previous.highlights !== '' || appLog.previous.username !== '' && appLog.previous.shortcode === '') return 'none'
     if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
     if (appLog.current.username !== appLog.previous.username) return 'stories'
     if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
