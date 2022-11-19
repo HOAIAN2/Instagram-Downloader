@@ -1,4 +1,4 @@
-function getShortcode() {
+function setCurrentShortcode() {
     const DOWNLOADABLE_PAGE = ['p', 'reel', 'tv']
     const currentPage = window.location.pathname.split('/')
     if (DOWNLOADABLE_PAGE.includes(currentPage[1])) appLog.current.shortcode = currentPage[2]

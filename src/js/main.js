@@ -1,5 +1,5 @@
 const appLog = {
-    defaulShortcode: '',
+    defaultShortcode: '',
     current: {
         shortcode: '',
         username: '',
@@ -13,11 +13,11 @@ const appLog = {
 }
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
-async function downloadPhoto(photo, fileName) {
+async function saveMedia(media, fileName) {
     const a = document.createElement('a')
     a.download = fileName
     try {
-        const respone = await fetch(photo.src)
+        const respone = await fetch(media.src)
         const blob = await respone.blob()
         a.href = URL.createObjectURL(blob)
         a.click()
@@ -27,8 +27,10 @@ async function downloadPhoto(photo, fileName) {
     }
 }
 function shouldDownload() {
-    if (appLog.previous.highlights !== '' || appLog.previous.username !== ''
-        && appLog.previous.shortcode === '' && appLog.current.shortcode === appLog.defaulShortcode) return 'none'
+    const isDownloadedStories = appLog.previous.highlights !== '' || appLog.previous.username !== ''
+    const isDownloadedPost = appLog.previous.shortcode !== ''
+    const isDefaultShortcode = appLog.current.shortcode === appLog.defaultShortcode
+    if (isDownloadedStories && (!isDownloadedPost && isDefaultShortcode)) return 'none'
     if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
     if (appLog.current.username !== appLog.previous.username) return 'stories'
     if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
@@ -39,13 +41,13 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     try {
         const respone = await fetch(PROFILE_URL)
         const json = await respone.json()
-        appLog.defaulShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
-        appLog.current.shortcode = appLog.defaulShortcode
+        appLog.defaultShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
+        appLog.current.shortcode = appLog.defaultShortcode
     } catch (error) {
         console.log(error)
     }
 }
-function downloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
+function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     const DOWNLOAD_BUTTON = document.querySelector('#download-button')
     function resetState() {
         DOWNLOAD_BUTTON.className = 'download'
@@ -91,9 +93,9 @@ function downloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     }
 }
 async function handleDownload() {
-    appLog.current.shortcode = getShortcode()
-    appLog.current.username = getUsername()
-    appLog.current.highlights = getHightlightsID()
+    setCurrentShortcode()
+    setCurrentUsername()
+    setCurrentHightlightsID()
     let jsonRespone = null
     let displayTitle = ''
     const DISPLAY_CONTAINER = document.querySelector('#display-container')
@@ -103,24 +105,24 @@ async function handleDownload() {
     switch (option) {
         case 'none': return
         case 'post':
-            downloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadPostPhotos()
             displayTitle = appLog.current.shortcode
             break
         case 'stories':
-            downloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(1)
-            displayTitle = `${appLog.current.username}-latest-stories`
+            displayTitle = `${jsonRespone.user.username}-latest-stories`
             break
         case 'highlights':
-            downloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(2)
-            displayTitle = `${appLog.current.highlights}-stories`
+            displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
             break
         default: return
     }
     if (!jsonRespone) {
-        downloadState('fail')
+        setDownloadState('fail')
         return
     }
     jsonRespone.media.forEach((item, index) => {
@@ -138,7 +140,7 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(video)
             video.addEventListener('click', () => {
-                downloadPhoto(video, `${displayTitle}_${index}`)
+                saveMedia(video, `${displayTitle}_${index}`)
             })
         }
         else {
@@ -154,11 +156,11 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(img)
             img.addEventListener('click', () => {
-                downloadPhoto(img, `${displayTitle}_${index}.jpeg`)
+                saveMedia(img, `${displayTitle}_${index}.jpeg`)
             })
         }
     })
-    downloadState('success', PHOTOS_CONTAINER, option)
+    setDownloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
     let isDarkmode = false
