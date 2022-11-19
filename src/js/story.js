@@ -1,10 +1,10 @@
-function getUsername() {
+function setCurrentUsername() {
     const DOWNLOADABLE_PAGE = ['stories']
     const currentPage = window.location.pathname.split('/')
     if (DOWNLOADABLE_PAGE.includes(currentPage[1]) && currentPage[2] !== 'highlights') appLog.current.username = currentPage[2]
     return appLog.current.username
 }
-function getHightlightsID() {
+function setCurrentHightlightsID() {
     const currentPage = window.location.pathname.split('/')
     if (currentPage[1] === 'stories' && currentPage[2] === 'highlights') appLog.current.highlights = currentPage[3]
     return appLog.current.highlights
