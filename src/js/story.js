@@ -29,11 +29,11 @@ async function getStoryPhotos(userID = '51963237586', options) {
         return null
     }
 }
-async function getHighlightStory(storyID, options) {
+async function getHighlightStory(options) {
     try {
-        const respone = await fetch(`https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=highlight:${storyID}`, options)
+        const respone = await fetch(`https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=highlight:${appLog.current.highlights}`, options)
         const json = await respone.json()
-        return json.reels[`highlight:${storyID}`]
+        return json.reels[`highlight:${appLog.current.highlights}`]
     } catch (error) {
         console.log(error)
         return null
@@ -66,7 +66,7 @@ async function downloadStoryPhotos(type = 1) {
     }
     let json = null
     if (type === 2) {
-        json = await getHighlightStory(appLog.current.highlights, options)
+        json = await getHighlightStory(options)
     }
     else {
         const userID = await getUserID(options)

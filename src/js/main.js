@@ -48,15 +48,15 @@ async function setDefaultShortcode(PROFILE_ID = '51963237586') {
     }
 }
 function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
-    const DOWNLOAD_BUTTON = document.querySelector('#download-button')
+    const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     function resetState() {
-        DOWNLOAD_BUTTON.className = 'download'
+        DOWNLOAD_BUTTON.classList.remove('loading')
         DOWNLOAD_BUTTON.textContent = 'Download'
         DOWNLOAD_BUTTON.disabled = false
     }
     switch (state) {
         case 'ready':
-            DOWNLOAD_BUTTON.className = 'downloading'
+            DOWNLOAD_BUTTON.classList.add('loading')
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
             PHOTOS_CONTAINER.querySelectorAll('img , video').forEach(item => {
@@ -98,9 +98,9 @@ async function handleDownload() {
     setCurrentHightlightsID()
     let jsonRespone = null
     let displayTitle = ''
-    const DISPLAY_CONTAINER = document.querySelector('#display-container')
-    const PHOTOS_CONTAINER = document.querySelector('#photos-container')
-    DISPLAY_CONTAINER.className = 'Show'
+    const DISPLAY_CONTAINER = document.querySelector('.display-container')
+    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
+    DISPLAY_CONTAINER.classList.remove('hide')
     const option = shouldDownload()
     switch (option) {
         case 'none': return
@@ -166,23 +166,23 @@ function initUI() {
     let isDarkmode = false
     if (window.location.search.includes('theme=dark')) isDarkmode = true
     const DISPLAY_CONTAINER =
-        `<div darkmode="${isDarkmode}" class="hide" id="display-container">
-            <div darkmode="${isDarkmode}" id="title-container">
+        `<div darkmode="${isDarkmode}" class="display-container hide">
+            <div darkmode="${isDarkmode}" class="title-container">
                 <span title="Double click to change Theme">Photos</span>
-                <span id="esc-button">&times</span>
+                <span class="esc-button">&times</span>
             </div>
-            <div id="photos-container"></div>
+            <div class="photos-container"></div>
         </div>`
-    const BUTTON = `<button class="download" id="download-button">Download</button>`
+    const BUTTON = `<button class="download-button">Download</button>`
     const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body.firstElementChild
     const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, 'text/html').body.firstElementChild
     document.body.appendChild(DISPLAY_NODE)
     document.body.appendChild(BUTTON_NODE)
 }
 function handleEvents() {
-    const ESC_BUTTON = document.querySelector('#esc-button')
-    const DISPLAY_CONTAINER = document.querySelector('#display-container')
-    const DOWNLOAD_BUTTON = document.querySelector('#download-button')
+    const ESC_BUTTON = document.querySelector('.esc-button')
+    const DISPLAY_CONTAINER = document.querySelector('.display-container')
+    const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     const TOGGLE_BUTTON = DISPLAY_CONTAINER.querySelector('span')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
@@ -203,7 +203,7 @@ function handleEvents() {
         }
     })
     ESC_BUTTON.addEventListener('click', () => {
-        DISPLAY_CONTAINER.className = 'hide'
+        DISPLAY_CONTAINER.classList.add('hide')
     })
     window.addEventListener('keydown', (e) => {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
