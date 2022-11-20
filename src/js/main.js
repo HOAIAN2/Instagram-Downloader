@@ -81,9 +81,17 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
                         loadedPhotos++
                         if (loadedPhotos === totalPhotos) resetState()
                     })
+                    photo.addEventListener('error', () => {
+                        loadedPhotos++
+                        if (loadedPhotos === totalPhotos) resetState()
+                    })
                 }
                 else {
                     photo.addEventListener('loadeddata', () => {
+                        loadedPhotos++
+                        if (loadedPhotos === totalPhotos) resetState()
+                    })
+                    photo.addEventListener('abort', () => {
                         loadedPhotos++
                         if (loadedPhotos === totalPhotos) resetState()
                     })
@@ -149,7 +157,7 @@ async function handleDownload() {
                 class: 'photos-items',
                 id: `${displayTitle}_${index}`,
                 src: item.url,
-                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`,
+                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
