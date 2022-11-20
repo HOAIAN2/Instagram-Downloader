@@ -4,9 +4,10 @@ function setCurrentShortcode() {
     if (DOWNLOADABLE_PAGE.includes(currentPage[1])) appLog.current.shortcode = currentPage[2]
     return appLog.current.shortcode
 }
-async function getPostPhotos(postURL) {
+async function getPostPhotos() {
+    const postAPI = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${appLog.current.shortcode}"}`)}`
     try {
-        const respone = await fetch(postURL)
+        const respone = await fetch(postAPI)
         const json = await respone.json()
         return json.data['shortcode_media']
     } catch (error) {
@@ -22,8 +23,7 @@ async function downloadPostPhotos() {
         },
         media: []
     }
-    const postURL = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${appLog.current.shortcode}"}`)}`
-    const json = await getPostPhotos(postURL)
+    const json = await getPostPhotos()
     if (!json) return null
     jsonRespone.user.username = json.owner['username']
     jsonRespone.user.fullName = json.owner['full_name']

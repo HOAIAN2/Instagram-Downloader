@@ -1,5 +1,4 @@
 const appLog = {
-    defaultShortcode: '',
     current: {
         shortcode: '',
         username: '',
@@ -27,22 +26,25 @@ async function saveMedia(media, fileName) {
     }
 }
 function shouldDownload() {
-    const isDownloadedStories = appLog.previous.highlights !== '' || appLog.previous.username !== ''
-    const isDownloadedPost = appLog.previous.shortcode !== ''
-    const isDefaultShortcode = appLog.current.shortcode === appLog.defaultShortcode
-    if (isDownloadedStories && (!isDownloadedPost && isDefaultShortcode)) return 'none'
-    if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
-    if (appLog.current.username !== appLog.previous.username) return 'stories'
-    if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
+    const postPages = ['p', 'reel', 'tv']
+    const storiesPage = ['stories']
+    const currentPage = window.location.pathname.split('/')[1]
+    if (storiesPage.includes(currentPage)) {
+        if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
+        if (appLog.current.username !== appLog.previous.username) return 'stories'
+    }
+    if (postPages.includes(currentPage)) {
+        if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
+    }
+    if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
-    const PROFILE_URL = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${PROFILE_ID}","first":1}`)}`
+    const profileAPI = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${PROFILE_ID}","first":1}`)}`
     try {
-        const respone = await fetch(PROFILE_URL)
+        const respone = await fetch(profileAPI)
         const json = await respone.json()
-        appLog.defaultShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
-        appLog.current.shortcode = appLog.defaultShortcode
+        appLog.current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
     } catch (error) {
         console.log(error)
     }
