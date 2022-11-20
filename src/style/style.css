@@ -11,7 +11,7 @@
     --gray-violet: rgb(161, 85, 231);
 }
 
-#display-container {
+.display-container {
     background-color: white;
     box-shadow: 0px 0px 5px var(--shadow-black);
     width: 300px;
@@ -25,14 +25,19 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
+    transition: 0.5s;
 }
 
-#display-container[darkmode=true] {
+.display-container[darkmode=true] {
     background-color: black;
     box-shadow: 0px 0px 5px var(--shadow-white);
 }
 
-#title-container {
+.display-container.hide {
+    height: 0px;
+}
+
+.display-container>.title-container {
     width: 300px;
     height: 40px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -47,21 +52,21 @@
     z-index: 1;
 }
 
-#title-container[darkmode=true] {
+.display-container>.title-container[darkmode=true] {
     background-color: rgba(0, 0, 0, 0.95);
 }
 
-#title-container>span:first-child {
+.display-container>.title-container>span:first-child {
     font-size: 22px;
     cursor: pointer;
 }
 
-#esc-button:hover {
+.display-container>.title-container>.esc-button:hover {
     opacity: 0.8;
     cursor: pointer;
 }
 
-#photos-container {
+.display-container>.photos-container {
     width: inherit;
     height: inherit;
     padding-top: 40px;
@@ -72,17 +77,17 @@
     z-index: 0;
 }
 
-#photos-container::-webkit-scrollbar {
+.display-container>.photos-container::-webkit-scrollbar {
     display: none;
 }
 
-.photos-items {
+.display-container>.photos-container>.photos-items {
     width: 275px;
     margin-bottom: 10px;
     cursor: pointer;
 }
 
-#download-button {
+.download-button {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     width: 120px;
     height: 30px;
@@ -98,24 +103,13 @@
     text-align: center;
     user-select: none;
     -webkit-user-select: none;
-}
-
-.download {
     cursor: pointer;
     background-color: var(--violet);
     box-shadow: 0px 0px 3px var(--violet);
 }
 
-.downloading {
+.download-button.loading {
     cursor: default;
     background-color: var(--gray-violet);
     box-shadow: 0px 0px 3px var(--gray-violet);
-}
-
-.hide {
-    display: none;
-}
-
-.Show {
-    display: block;
 }
