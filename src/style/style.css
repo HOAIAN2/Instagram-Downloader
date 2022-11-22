@@ -34,7 +34,9 @@
 }
 
 .display-container.hide {
-    height: 0px;
+    transform-origin: right bottom;
+    transform: scale(0.1);
+    opacity: 0;
 }
 
 .display-container>.title-container {
