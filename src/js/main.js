@@ -69,6 +69,7 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
             resetState()
             break
         case 'success':
+            DOWNLOAD_BUTTON.disabled = false
             if (option === 'post') appLog.previous.shortcode = appLog.current.shortcode
             else {
                 if (option === 'stories') appLog.previous.username = appLog.current.username
@@ -214,6 +215,9 @@ function handleEvents() {
     })
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_CONTAINER.classList.add('hide')
+        DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
+            video.pause()
+        })
     })
     window.addEventListener('keydown', (e) => {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
