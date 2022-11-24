@@ -141,7 +141,6 @@ async function handleDownload() {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
-                id: `${displayTitle}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`,
                 controls: ''
@@ -158,7 +157,6 @@ async function handleDownload() {
             const img = document.createElement('img')
             const photoAttributes = {
                 class: 'photos-items',
-                id: `${displayTitle}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`
             }
