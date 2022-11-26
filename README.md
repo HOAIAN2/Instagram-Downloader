@@ -1,7 +1,7 @@
 # Instagram-Downloader
 ### Browser compatibility ###
 
-This extension should work fine on the following browsers with `fetch(url)`:
+This extension should work fine on the following browsers with `fetch()` API:
 * Google Chrome
 * MS Edge
 ### Usage ###
@@ -24,12 +24,13 @@ setDefaultShortcode()
 .display-container.hide {
     transform-origin: right bottom;
     transform: scale(0.1);
+    pointer-events: none;
     opacity: 0;
 }
 ```
 ### Keyboard shortcut ###
 * Download: `D` `d`
 * Close: `esc` `C` `c`
-* Keyboard shortcut shoule work fine if you don't focus on special HTML Elements like `input` `textarea`
+* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea`
 ## Here is Demo
 https://user-images.githubusercontent.com/98139595/193407002-0d5d74eb-00c0-4247-8c92-c03e1610a977.mp4

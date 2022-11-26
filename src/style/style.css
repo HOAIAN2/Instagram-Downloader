@@ -37,7 +37,7 @@
 
 .display-container.hide {
     transform-origin: right bottom;
-    transform: scale(0);
+    transform: scale(0.1);
     pointer-events: none;
     opacity: 0;
 }
