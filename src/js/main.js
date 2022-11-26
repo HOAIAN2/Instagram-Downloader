@@ -28,6 +28,7 @@ async function saveMedia(media, fileName) {
 function shouldDownload() {
     const postPages = ['p', 'reel', 'tv']
     const storiesPage = ['stories']
+    const pages = [...postPages, ...storiesPage]
     const currentPage = window.location.pathname.split('/')[1]
     if (storiesPage.includes(currentPage)) {
         if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
@@ -37,6 +38,13 @@ function shouldDownload() {
         if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
+    if (pages.includes(currentPage)) {
+        if (postPages.includes(currentPage)) return 'post'
+        if (storiesPage.includes(currentPage)) {
+            if (window.location.pathname.split('/')[2] === 'highlights') return 'highlights'
+            return 'stories'
+        }
+    }
     return 'none'
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
@@ -109,6 +117,7 @@ async function handleDownload() {
     setCurrentHightlightsID()
     let jsonRespone = null
     let displayTitle = ''
+    let tagID = ''
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
@@ -119,16 +128,19 @@ async function handleDownload() {
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadPostPhotos()
             displayTitle = appLog.current.shortcode
+            tagID = appLog.current.shortcode
             break
         case 'stories':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(1)
             displayTitle = `${jsonRespone.user.username}-latest-stories`
+            tagID = appLog.current.username
             break
         case 'highlights':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(2)
             displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
+            tagID = appLog.current.highlights
             break
         default: return
     }
@@ -141,6 +153,7 @@ async function handleDownload() {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
+                id: `${tagID}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`,
                 controls: ''
@@ -157,6 +170,7 @@ async function handleDownload() {
             const img = document.createElement('img')
             const photoAttributes = {
                 class: 'photos-items',
+                id: `${tagID}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`
             }
@@ -192,12 +206,12 @@ function handleEvents() {
     const ESC_BUTTON = document.querySelector('.esc-button')
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
-    const TOGGLE_BUTTON = DISPLAY_CONTAINER.querySelector('span')
+    const TOGGLE_THEME_BUTTON = DISPLAY_CONTAINER.querySelector('span')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
-    TOGGLE_BUTTON.addEventListener('dblclick', () => {
+    TOGGLE_THEME_BUTTON.addEventListener('dblclick', () => {
         const currentSearch = window.location.search.slice(1).split('&')
         if (!currentSearch.includes('theme=dark')) {
             if (currentSearch.includes('')) currentSearch[0] = 'theme=dark'
