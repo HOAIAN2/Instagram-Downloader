@@ -1,13 +1,12 @@
 function setCurrentUsername() {
-    const DOWNLOADABLE_PAGE = ['stories']
-    const currentPage = window.location.pathname.split('/')
-    if (DOWNLOADABLE_PAGE.includes(currentPage[1]) && currentPage[2] !== 'highlights') appLog.current.username = currentPage[2]
-    return appLog.current.username
+    const regex = /\/(stories)\/(.*?)\/(.*?)\//
+    const page = window.location.pathname.match(regex)
+    if (page && page[2] !== 'highlights') appLog.current.username = page[2]
 }
 function setCurrentHightlightsID() {
-    const currentPage = window.location.pathname.split('/')
-    if (currentPage[1] === 'stories' && currentPage[2] === 'highlights') appLog.current.highlights = currentPage[3]
-    return appLog.current.highlights
+    const regex = /\/(stories)\/(highlights)\/(.*?)\//
+    const page = window.location.pathname.match(regex)
+    if (page) appLog.current.highlights = page[3]
 }
 async function getUserID(options) {
     const userIDAPI = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${appLog.current.username}`

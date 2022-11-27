@@ -26,24 +26,25 @@ async function saveMedia(media, fileName) {
     }
 }
 function shouldDownload() {
-    const postPages = ['p', 'reel', 'tv']
-    const storiesPage = ['stories']
-    const pages = [...postPages, ...storiesPage]
-    const currentPage = window.location.pathname.split('/')[1]
-    if (storiesPage.includes(currentPage)) {
+    const postRegex = /\/(p|tv|reel)\/(.*?)\//
+    const storyRegex = /\/(stories)\/(.*?)\/(.*?)\//
+    const pagesRegex = /\/(p|tv|reel|stories)\/(.*?)\//
+    const currentPage = window.location.pathname
+    const pathMatch = currentPage.match(pagesRegex)
+    if (currentPage.match(storyRegex)) {
         if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
         if (appLog.current.username !== appLog.previous.username) return 'stories'
     }
-    if (postPages.includes(currentPage)) {
+    if (currentPage.match(postRegex)) {
         if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
-    if (pages.includes(currentPage)) {
-        if (postPages.includes(currentPage)) return 'post'
-        if (storiesPage.includes(currentPage)) {
-            if (window.location.pathname.split('/')[2] === 'highlights') return 'highlights'
+    if (pathMatch) {
+        if (pathMatch[1] === 'stories') {
+            if (pathMatch[2] === 'highlights') return 'highlights'
             return 'stories'
         }
+        return 'post'
     }
     return 'none'
 }
@@ -117,7 +118,6 @@ async function handleDownload() {
     setCurrentHightlightsID()
     let jsonRespone = null
     let displayTitle = ''
-    let tagID = ''
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
@@ -128,21 +128,17 @@ async function handleDownload() {
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadPostPhotos()
             displayTitle = appLog.current.shortcode
-            tagID = appLog.current.shortcode
             break
         case 'stories':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(1)
             displayTitle = `${jsonRespone.user.username}-latest-stories`
-            tagID = appLog.current.username
             break
         case 'highlights':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(2)
             displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
-            tagID = appLog.current.highlights
             break
-        default: return
     }
     if (!jsonRespone) {
         setDownloadState('fail')
@@ -153,7 +149,6 @@ async function handleDownload() {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
-                id: `${tagID}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`,
                 controls: ''
@@ -170,7 +165,6 @@ async function handleDownload() {
             const img = document.createElement('img')
             const photoAttributes = {
                 class: 'photos-items',
-                id: `${tagID}_${index}`,
                 src: item.url,
                 title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`
             }
