@@ -1,8 +1,7 @@
 function setCurrentShortcode() {
-    const DOWNLOADABLE_PAGE = ['p', 'reel', 'tv']
-    const currentPage = window.location.pathname.split('/')
-    if (DOWNLOADABLE_PAGE.includes(currentPage[1])) appLog.current.shortcode = currentPage[2]
-    return appLog.current.shortcode
+    const regex = /\/(p|tv|reel)\/(.*?)\//
+    const page = window.location.pathname.match(regex)
+    if (page) appLog.current.shortcode = page[2]
 }
 async function getPostPhotos() {
     const postAPI = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${appLog.current.shortcode}"}`)}`
