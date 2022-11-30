@@ -1,10 +1,10 @@
 function setCurrentUsername() {
-    const regex = /\/(stories)\/(.*?)\/(.*?)\//
+    const regex = /\/(stories)\/(.*?)\/(\d*?)\//
     const page = window.location.pathname.match(regex)
     if (page && page[2] !== 'highlights') appLog.current.username = page[2]
 }
 function setCurrentHightlightsID() {
-    const regex = /\/(stories)\/(highlights)\/(.*?)\//
+    const regex = /\/(stories)\/(highlights)\/(\d*?)\//
     const page = window.location.pathname.match(regex)
     if (page) appLog.current.highlights = page[3]
 }
@@ -46,10 +46,10 @@ async function downloadStoryPhotos(type = 1) {
     const claim = sessionStorage.getItem('www-claim-v2')
     const options = {
         headers: {
-            'x-asbd-id': '198387', // Unkown
-            'x-csrftoken': csrftoken, // Cookie "csrftoken" can delete
-            'x-ig-app-id': '936619743392459', // Unkown
-            'x-ig-www-claim': claim, // Section "www-claim-v2"
+            'x-asbd-id': '198387',
+            'x-csrftoken': csrftoken,
+            'x-ig-app-id': '936619743392459',
+            'x-ig-www-claim': claim,
             'x-instagram-ajax': '1006598911',
             'x-requested-with': 'XMLHttpRequest'
         },
