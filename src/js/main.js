@@ -1,4 +1,5 @@
 const appLog = {
+    currentDisplay: '',
     current: {
         shortcode: '',
         username: '',
@@ -26,26 +27,31 @@ async function saveMedia(media, fileName) {
     }
 }
 function shouldDownload() {
-    const postRegex = /\/(p|tv|reel)\/(.*?)\//
-    const storyRegex = /\/(stories)\/(.*?)\/(\d*?)\//
-    const pagesRegex = /\/(p|tv|reel|stories)\/(.*?)\//
-    const currentPage = window.location.pathname
-    const pathMatch = currentPage.match(pagesRegex)
-    if (currentPage.match(storyRegex)) {
-        if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
-        if (appLog.current.username !== appLog.previous.username) return 'stories'
-    }
-    if (currentPage.match(postRegex)) {
-        if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
-    }
-    if (!document.querySelector('.photos-container').childElementCount) return 'post'
-    if (pathMatch) {
-        if (pathMatch[1] === 'stories') {
-            if (pathMatch[2] === 'highlights') return 'highlights'
+    function getCurrentPage() {
+        const postRegex = /\/(p|tv|reel)\/(.*?)\//
+        const storyRegex = /\/(stories)\/(.*?)\/(\d*?)\//
+        const currentPath = window.location.pathname
+        if (currentPath.match(postRegex)) return 'post'
+        if (currentPath.match(storyRegex)) {
+            if (currentPath.match(storyRegex)[2] === 'highlights') return 'highlights'
             return 'stories'
         }
-        return 'post'
+        return 'none'
     }
+    const currentPage = getCurrentPage()
+    if (currentPage === 'stories') {
+        if (appLog.current.username !== appLog.previous.username) return 'stories'
+        if (appLog.currentDisplay !== 'stories') return 'stories'
+    }
+    if (currentPage === 'highlights') {
+        if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
+        if (appLog.currentDisplay !== 'highlights') return 'highlights'
+    }
+    if (currentPage === 'post') {
+        if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
+        if (appLog.currentDisplay !== 'post') return 'post'
+    }
+    if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
 }
 async function setDefaultShortcode(PROFILE_ID = '51963237586') {
@@ -132,6 +138,7 @@ async function handleDownload() {
                 return
             }
             displayTitle = appLog.current.shortcode
+            appLog.currentDisplay = 'post'
             break
         case 'stories':
             setDownloadState('ready', PHOTOS_CONTAINER)
@@ -141,6 +148,7 @@ async function handleDownload() {
                 return
             }
             displayTitle = `${jsonRespone.user.username}-latest-stories`
+            appLog.currentDisplay = 'stories'
             break
         case 'highlights':
             setDownloadState('ready', PHOTOS_CONTAINER)
@@ -150,6 +158,7 @@ async function handleDownload() {
                 return
             }
             displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
+            appLog.currentDisplay = 'highlights'
             break
     }
     jsonRespone.media.forEach((item, index) => {
