@@ -127,22 +127,30 @@ async function handleDownload() {
         case 'post':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadPostPhotos()
+            if (!jsonRespone) {
+                setDownloadState('fail')
+                return
+            }
             displayTitle = appLog.current.shortcode
             break
         case 'stories':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(1)
+            if (!jsonRespone) {
+                setDownloadState('fail')
+                return
+            }
             displayTitle = `${jsonRespone.user.username}-latest-stories`
             break
         case 'highlights':
             setDownloadState('ready', PHOTOS_CONTAINER)
             jsonRespone = await downloadStoryPhotos(2)
+            if (!jsonRespone) {
+                setDownloadState('fail')
+                return
+            }
             displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
             break
-    }
-    if (!jsonRespone) {
-        setDownloadState('fail')
-        return
     }
     jsonRespone.media.forEach((item, index) => {
         if (item.isVideo === true) {
