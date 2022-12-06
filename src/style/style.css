@@ -27,7 +27,7 @@
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
-    transition: 0.5s;
+    transition: 0.5s ease;
 }
 
 .display-container[darkmode=true] {
@@ -37,9 +37,9 @@
 
 .display-container.hide {
     transform-origin: right bottom;
-    transform: scale(0.1);
+    transform: scale(0);
     pointer-events: none;
-    opacity: 0;
+    opacity: 0.1;
 }
 
 .display-container>.title-container {
