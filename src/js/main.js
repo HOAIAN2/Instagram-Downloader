@@ -29,9 +29,11 @@ async function saveMedia(media, fileName) {
 function shouldDownload() {
     function getCurrentPage() {
         const postRegex = /\/(p|tv|reel)\/(.*?)\//
+        const reelsREgex = /\/(reels)\/(videos)\/(.*?)\//
         const storyRegex = /\/(stories)\/(.*?)\/(\d*?)\//
         const currentPath = window.location.pathname
         if (currentPath.match(postRegex)) return 'post'
+        if (currentPath.match(reelsREgex)) return 'post'
         if (currentPath.match(storyRegex)) {
             if (currentPath.match(storyRegex)[2] === 'highlights') return 'highlights'
             return 'stories'

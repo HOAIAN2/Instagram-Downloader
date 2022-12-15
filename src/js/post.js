@@ -1,7 +1,10 @@
 function setCurrentShortcode() {
-    const regex = /\/(p|tv|reel)\/(.*?)\//
-    const page = window.location.pathname.match(regex)
+    const postRegex = /\/(p|tv|reel)\/(.*?)\//
+    const reelsREgex = /\/(reels)\/(videos)\/(.*?)\//
+    const page = window.location.pathname.match(postRegex)
+    const page1 = window.location.pathname.match(reelsREgex)
     if (page) appLog.current.shortcode = page[2]
+    if (page1) appLog.current.shortcode = page1[3]
 }
 async function getPostPhotos() {
     const postAPI = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${appLog.current.shortcode}"}`)}`
