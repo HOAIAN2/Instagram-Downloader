@@ -57,6 +57,7 @@
     position: absolute;
     padding: 5%;
     transition: 0.5s ease;
+    transition-property: background-color, color;
     z-index: 1;
 }
 
