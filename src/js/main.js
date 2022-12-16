@@ -199,12 +199,10 @@ async function handleDownload() {
     setDownloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
-    let isDarkmode = false
-    if (window.location.search.includes('theme=dark')) isDarkmode = true
     const DISPLAY_CONTAINER =
-        `<div darkmode="${isDarkmode}" class="display-container hide">
-            <div darkmode="${isDarkmode}" class="title-container">
-                <span title="Double click to change Theme">Photos</span>
+        `<div class="display-container hide">
+            <div class="title-container">
+                <span>Photos</span>
                 <span class="esc-button">&times</span>
             </div>
             <div class="photos-container"></div>
@@ -219,25 +217,21 @@ function handleEvents() {
     const ESC_BUTTON = document.querySelector('.esc-button')
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
-    const TOGGLE_THEME_BUTTON = DISPLAY_CONTAINER.querySelector('span')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
-    TOGGLE_THEME_BUTTON.addEventListener('dblclick', () => {
-        const currentSearch = window.location.search.slice(1).split('&')
-        if (!currentSearch.includes('theme=dark')) {
-            if (currentSearch.includes('')) currentSearch[0] = 'theme=dark'
-            else {
-                currentSearch.push('theme=dark')
-            }
-            window.location.search = currentSearch.join('&')
+    setInterval(() => {
+        const isDarkMode = document.documentElement.className.includes('_aa4d')
+        if (isDarkMode) {
+            DISPLAY_CONTAINER.classList.add('dark')
+            DISPLAY_CONTAINER.firstElementChild.classList.add('dark')
         }
         else {
-            currentSearch.splice(currentSearch.indexOf('theme=dark'), 1)
-            window.location.search = currentSearch.join('&')
+            DISPLAY_CONTAINER.classList.remove('dark')
+            DISPLAY_CONTAINER.firstElementChild.classList.remove('dark')
         }
-    })
+    }, 100)
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_CONTAINER.classList.add('hide')
         DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
