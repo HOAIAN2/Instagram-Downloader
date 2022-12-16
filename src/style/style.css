@@ -30,7 +30,7 @@
     transition: 0.5s ease;
 }
 
-.display-container[darkmode=true] {
+.display-container.dark {
     background-color: black;
     box-shadow: 0px 0px 5px var(--shadow-white);
 }
@@ -53,13 +53,16 @@
     font-size: 25px;
     font-weight: bold;
     background-color: rgba(255, 255, 255, 0.95);
+    color: black;
     position: absolute;
     padding: 5%;
+    transition: 0.5s ease;
     z-index: 1;
 }
 
-.display-container>.title-container[darkmode=true] {
+.display-container>.title-container.dark {
     background-color: rgba(0, 0, 0, 0.95);
+    color: white;
 }
 
 .display-container>.title-container>span:first-child {
