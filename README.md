@@ -17,7 +17,6 @@ This extension should work fine on the following browsers with `fetch()` API:
 * Download reels
 * Download latest stories
 * Download highlight stories
-* Bonus Toggle Light / Dark Mode
 ### Customize
 * Put your favourite one Instagram id on this function in `main.js` file, when app load it's gonna download latest post from that user, by default it's gonna download latest Tzuyu post
 ```js
@@ -37,4 +36,4 @@ setDefaultShortcode()
 * Close: `esc` `C` `c`
 * Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea`
 ## Here is Demo
-[Demo](https://user-images.githubusercontent.com/98139595/193407002-0d5d74eb-00c0-4247-8c92-c03e1610a977.mp4)
+[Demo](https://user-images.githubusercontent.com/98139595/208013689-2b731fc1-75fb-48b1-b6a6-6d84ab46e740.mp4)
