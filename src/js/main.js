@@ -221,8 +221,8 @@ function handleEvents() {
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
     DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
-    setInterval(() => {
-        const isDarkMode = document.documentElement.className.includes('_aa4d')
+    function setTheme() {
+        const isDarkMode = document.documentElement.classList.contains('_aa4d')
         if (isDarkMode) {
             DISPLAY_CONTAINER.classList.add('dark')
             DISPLAY_CONTAINER.firstElementChild.classList.add('dark')
@@ -231,7 +231,13 @@ function handleEvents() {
             DISPLAY_CONTAINER.classList.remove('dark')
             DISPLAY_CONTAINER.firstElementChild.classList.remove('dark')
         }
-    }, 100)
+    }
+    setTheme()
+    const handleTheme = new MutationObserver(setTheme)
+    handleTheme.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    })
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_CONTAINER.classList.add('hide')
         DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
