@@ -68,7 +68,6 @@
 
 .display-container>.title-container>span:first-child {
     font-size: 22px;
-    cursor: pointer;
 }
 
 .display-container>.title-container>.esc-button:hover {
