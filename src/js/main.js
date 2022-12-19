@@ -199,10 +199,11 @@ async function handleDownload() {
     setDownloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
+    const manifestData = chrome.runtime.getManifest()
     const DISPLAY_CONTAINER =
         `<div class="display-container hide">
             <div class="title-container">
-                <span>Photos</span>
+                <span title="${manifestData.name} v${manifestData.version}">Photos</span>
                 <span class="esc-button">&times</span>
             </div>
             <div class="photos-container"></div>
@@ -232,7 +233,6 @@ function handleEvents() {
             DISPLAY_CONTAINER.firstElementChild.classList.remove('dark')
         }
     }
-    setTheme()
     const handleTheme = new MutationObserver(setTheme)
     handleTheme.observe(document.documentElement, {
         attributes: true,
@@ -250,6 +250,7 @@ function handleEvents() {
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
         }
     })
+    setTheme()
 }
 function main() {
     initUI()
