@@ -124,7 +124,7 @@ async function handleDownload() {
     setCurrentShortcode()
     setCurrentUsername()
     setCurrentHightlightsID()
-    let jsonRespone = null
+    let data = null
     let displayTitle = ''
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
@@ -134,8 +134,8 @@ async function handleDownload() {
         case 'none': return
         case 'post':
             setDownloadState('ready', PHOTOS_CONTAINER)
-            jsonRespone = await downloadPostPhotos()
-            if (!jsonRespone) {
+            data = await downloadPostPhotos()
+            if (!data) {
                 setDownloadState('fail')
                 return
             }
@@ -144,32 +144,32 @@ async function handleDownload() {
             break
         case 'stories':
             setDownloadState('ready', PHOTOS_CONTAINER)
-            jsonRespone = await downloadStoryPhotos(1)
-            if (!jsonRespone) {
+            data = await downloadStoryPhotos(1)
+            if (!data) {
                 setDownloadState('fail')
                 return
             }
-            displayTitle = `${jsonRespone.user.username}-latest-stories`
+            displayTitle = `${data.user.username}-latest-stories`
             appLog.currentDisplay = 'stories'
             break
         case 'highlights':
             setDownloadState('ready', PHOTOS_CONTAINER)
-            jsonRespone = await downloadStoryPhotos(2)
-            if (!jsonRespone) {
+            data = await downloadStoryPhotos(2)
+            if (!data) {
                 setDownloadState('fail')
                 return
             }
-            displayTitle = `${jsonRespone.user.username}-${appLog.current.highlights}-stories`
+            displayTitle = `${data.user.username}-${appLog.current.highlights}-stories`
             appLog.currentDisplay = 'highlights'
             break
     }
-    jsonRespone.media.forEach((item, index) => {
+    data.media.forEach((item, index) => {
         if (item.isVideo === true) {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`,
+                title: `${data.user.fullName} | ${data.user.username} | ${displayTitle}_${index}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -185,7 +185,7 @@ async function handleDownload() {
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${jsonRespone.user.fullName} | ${jsonRespone.user.username} | ${displayTitle}_${index}`
+                title: `${data.user.fullName} | ${data.user.username} | ${displayTitle}_${index}`
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
@@ -248,6 +248,13 @@ function handleEvents() {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
             if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
+        }
+    })
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') {
+            DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
+                video.pause()
+            })
         }
     })
     setTheme()

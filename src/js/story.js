@@ -59,7 +59,7 @@ async function downloadStoryPhotos(type = 1) {
         mode: 'cors',
         credentials: 'include'
     }
-    const jsonRespone = {
+    const data = {
         user: {
             username: '',
             fullName: '',
@@ -75,23 +75,23 @@ async function downloadStoryPhotos(type = 1) {
         json = await getStoryPhotos(userID, options)
     }
     if (!json) return null
-    jsonRespone.user.username = json.user['username']
-    jsonRespone.user.fullName = json.user['full_name']
+    data.user.username = json.user['username']
+    data.user.fullName = json.user['full_name']
     json.items.forEach((item) => {
         if (item['media_type'] === 1) {
             const media = {
                 url: item['image_versions2'].candidates[0]['url'],
                 isVideo: false
             }
-            jsonRespone.media.push(media)
+            data.media.push(media)
         }
         else {
             const media = {
                 url: item['video_versions'][0].url,
                 isVideo: true
             }
-            jsonRespone.media.push(media)
+            data.media.push(media)
         }
     })
-    return jsonRespone
+    return data
 }
