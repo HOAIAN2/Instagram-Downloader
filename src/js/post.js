@@ -18,7 +18,7 @@ async function getPostPhotos() {
     }
 }
 async function downloadPostPhotos() {
-    const jsonRespone = {
+    const data = {
         user: {
             username: '',
             fullName: '',
@@ -27,8 +27,8 @@ async function downloadPostPhotos() {
     }
     const json = await getPostPhotos()
     if (!json) return null
-    jsonRespone.user.username = json.owner['username']
-    jsonRespone.user.fullName = json.owner['full_name']
+    data.user.username = json.owner['username']
+    data.user.fullName = json.owner['full_name']
     if (json.hasOwnProperty('edge_sidecar_to_children')) {
         const items = json['edge_sidecar_to_children']['edges']
         items.forEach((item) => {
@@ -37,14 +37,14 @@ async function downloadPostPhotos() {
                     url: item.node['video_url'],
                     isVideo: true
                 }
-                jsonRespone.media.push(media)
+                data.media.push(media)
             }
             else {
                 const media = {
                     url: item.node['display_url'],
                     isVideo: false
                 }
-                jsonRespone.media.push(media)
+                data.media.push(media)
             }
         })
     }
@@ -54,15 +54,15 @@ async function downloadPostPhotos() {
                 url: json['video_url'],
                 isVideo: true
             }
-            jsonRespone.media.push(media)
+            data.media.push(media)
         }
         else {
             const media = {
                 url: json['display_url'],
                 isVideo: false
             }
-            jsonRespone.media.push(media)
+            data.media.push(media)
         }
     }
-    return jsonRespone
+    return data
 }
