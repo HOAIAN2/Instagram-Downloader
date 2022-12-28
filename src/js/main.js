@@ -257,6 +257,11 @@ function handleEvents() {
             })
         }
     })
+    window.addEventListener('online', () => {
+        DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
+            media.src = media.src
+        })
+    })
     setTheme()
 }
 function main() {
