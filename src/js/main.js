@@ -233,16 +233,25 @@ function handleEvents() {
             DISPLAY_CONTAINER.firstElementChild.classList.remove('dark')
         }
     }
+    function pauseVideo() {
+        if (DISPLAY_CONTAINER.classList.contains('hide')) {
+            DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
+                video.pause()
+            })
+        }
+    }
     const handleTheme = new MutationObserver(setTheme)
+    const handleVideo = new MutationObserver(pauseVideo)
     handleTheme.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class']
+    })
+    handleVideo.observe(DISPLAY_CONTAINER, {
         attributes: true,
         attributeFilter: ['class']
     })
     ESC_BUTTON.addEventListener('click', () => {
         DISPLAY_CONTAINER.classList.add('hide')
-        DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
-            video.pause()
-        })
     })
     window.addEventListener('keydown', (e) => {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
