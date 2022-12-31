@@ -20,7 +20,7 @@ This extension should work fine on the following browsers with `fetch()` API:
 ### Customize
 * Put your favourite one Instagram id on this function in `main.js` file, when app load it's gonna download latest post from that user, by default it's gonna download latest Tzuyu post
 ```js
-setDefaultShortcode(PROFILE_ID)
+setDefaultShortcode(profileID)
 ```
 * If you know something about CSS, you can edit Hide / Show Transition effects
 ```css
@@ -34,6 +34,6 @@ setDefaultShortcode(PROFILE_ID)
 ### Keyboard shortcut ###
 * Download: `D` `d`
 * Close: `esc` `C` `c`
-* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea`
+* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` (ex: comment, search, ...)
 ## Here is Demo
 [Demo](https://user-images.githubusercontent.com/98139595/208013689-2b731fc1-75fb-48b1-b6a6-6d84ab46e740.mp4)

@@ -19,7 +19,7 @@ async function getUserID(options) {
         return ''
     }
 }
-async function getStoryPhotos(userID = '51963237586', options) {
+async function getStoryPhotos(userID, options) {
     const storiesAPI = `https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=${userID}`
     try {
         const respone = await fetch(storiesAPI, options)
