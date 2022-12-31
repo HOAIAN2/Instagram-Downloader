@@ -56,8 +56,8 @@ function shouldDownload() {
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
 }
-async function setDefaultShortcode(PROFILE_ID = '51963237586') {
-    const profileAPI = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${PROFILE_ID}","first":1}`)}`
+async function setDefaultShortcode(profileID = '51963237586') {
+    const profileAPI = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${profileID}","first":1}`)}`
     try {
         const respone = await fetch(profileAPI)
         const json = await respone.json()
@@ -125,7 +125,7 @@ async function handleDownload() {
     setCurrentUsername()
     setCurrentHightlightsID()
     let data = null
-    let displayTitle = ''
+    let title = ''
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
@@ -139,7 +139,7 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            displayTitle = appLog.current.shortcode
+            title = appLog.current.shortcode
             appLog.currentDisplay = 'post'
             break
         case 'stories':
@@ -149,7 +149,7 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            displayTitle = `${data.user.username}-latest-stories`
+            title = `${data.user.username}-latest-stories`
             appLog.currentDisplay = 'stories'
             break
         case 'highlights':
@@ -159,7 +159,7 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            displayTitle = `${data.user.username}-${appLog.current.highlights}-stories`
+            title = `${data.user.username}-${appLog.current.highlights}-stories`
             appLog.currentDisplay = 'highlights'
             break
     }
@@ -169,7 +169,7 @@ async function handleDownload() {
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${displayTitle}_${index}`,
+                title: `${data.user.fullName} | ${data.user.username} | ${title}_${index}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -177,7 +177,7 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(video)
             video.addEventListener('click', () => {
-                saveMedia(video, `${displayTitle}_${index}`)
+                saveMedia(video, `${title}_${index}`)
             })
         }
         else {
@@ -185,14 +185,14 @@ async function handleDownload() {
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${displayTitle}_${index}`
+                title: `${data.user.fullName} | ${data.user.username} | ${title}_${index}`
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
             })
             PHOTOS_CONTAINER.appendChild(img)
             img.addEventListener('click', () => {
-                saveMedia(img, `${displayTitle}_${index}.jpeg`)
+                saveMedia(img, `${title}_${index}.jpeg`)
             })
         }
     })
