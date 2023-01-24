@@ -50,7 +50,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 25px;
+    font-size: min(36px, 3.5vh);
     font-weight: bold;
     background-color: rgba(255, 255, 255, 0.95);
     color: black;
@@ -64,10 +64,6 @@
 .display-container>.title-container.dark {
     background-color: rgba(0, 0, 0, 0.95);
     color: white;
-}
-
-.display-container>.title-container>span:first-child {
-    font-size: 22px;
 }
 
 .display-container>.title-container>.esc-button:hover {
