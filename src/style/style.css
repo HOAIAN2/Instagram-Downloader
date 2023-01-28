@@ -120,3 +120,24 @@
     background-color: var(--gray-violet);
     box-shadow: 0px 0px 3px var(--gray-violet);
 }
+
+/* Support bottom navigation */
+@media (max-width:767px) {
+    .download-button {
+        text-align: center;
+        border-radius: 50%;
+        bottom: 70px;
+        right: 20px;
+        
+        font-size: 0;
+        width: 50px;
+        height: 50px;
+    }
+    
+    .download-button:before {
+        content: url('https://icons.getbootstrap.com/assets/icons/download.svg');
+        color: white;
+        display: inline-block;
+        font-size: 20px;
+    }
+}
