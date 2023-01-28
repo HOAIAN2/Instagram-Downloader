@@ -199,7 +199,7 @@ async function handleDownload() {
     setDownloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
-    const manifestData = chrome.runtime.getManifest()
+    const manifestData = browser.runtime.getManifest()
     const DISPLAY_CONTAINER =
         `<div class="display-container hide">
             <div class="title-container">
