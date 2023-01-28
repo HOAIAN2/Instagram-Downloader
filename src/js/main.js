@@ -121,17 +121,13 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     }
 }
 async function handleDownload() {
-    const DISPLAY_CONTAINER = document.querySelector('.display-container')
-    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
-    if (!DISPLAY_CONTAINER.classList.contains('hide')) {
-        DISPLAY_CONTAINER.classList.add('hide')
-        return
-    }
     setCurrentShortcode()
     setCurrentUsername()
     setCurrentHightlightsID()
     let data = null
     let title = ''
+    const DISPLAY_CONTAINER = document.querySelector('.display-container')
+    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
     const option = shouldDownload()
     switch (option) {
