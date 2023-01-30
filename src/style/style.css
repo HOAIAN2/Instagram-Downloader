@@ -1,4 +1,6 @@
-* {
+*,
+::before,
+::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -139,9 +141,13 @@
     }
 
     .download-button:before {
-        content: '📩';
+        content: '⇓';
         display: inline-block;
-        font-size: 20px;
+        font-size: 32px;
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
 
     .display-container {
