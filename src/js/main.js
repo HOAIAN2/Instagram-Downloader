@@ -11,6 +11,7 @@ const appLog = {
         highlights: '',
     }
 }
+const BASE_URL = 'https://www.instagram.com/'
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 async function saveMedia(media, fileName) {
@@ -57,9 +58,14 @@ function shouldDownload() {
     return 'none'
 }
 async function setDefaultShortcode(profileID = '51963237586') {
-    const profileAPI = `https://www.instagram.com/graphql/query/?query_hash=${PROFILE_HASH}&variables=${encodeURIComponent(`{"id":"${profileID}","first":1}`)}`
+    const apiURL = new URL('/graphql/query/', BASE_URL)
+    apiURL.searchParams.set('query_hash', PROFILE_HASH)
+    apiURL.searchParams.set('variables', JSON.stringify({
+        id: profileID,
+        first: 1
+    }))
     try {
-        const respone = await fetch(profileAPI)
+        const respone = await fetch(apiURL.href)
         const json = await respone.json()
         appLog.current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
     } catch (error) {
@@ -273,9 +279,12 @@ function handleEvents() {
     })
     setTheme()
 }
-function main() {
+function main(profileID = '51963237586') {
+    document.querySelectorAll('.display-container, .download-button').forEach(node => {
+        node.remove()
+    })
     initUI()
-    setDefaultShortcode()
+    setDefaultShortcode(profileID)
     handleEvents()
 }
 main()

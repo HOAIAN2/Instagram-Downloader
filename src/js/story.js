@@ -9,9 +9,10 @@ function setCurrentHightlightsID() {
     if (page) appLog.current.highlights = page[3]
 }
 async function getUserID(options) {
-    const userIDAPI = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${appLog.current.username}`
+    const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
+    apiURL.searchParams.set('username', appLog.current.username)
     try {
-        const respone = await fetch(userIDAPI, options)
+        const respone = await fetch(apiURL.href, options)
         const json = await respone.json()
         return json.data.user['id']
     } catch (error) {
@@ -20,9 +21,10 @@ async function getUserID(options) {
     }
 }
 async function getStoryPhotos(userID, options) {
-    const storiesAPI = `https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=${userID}`
+    const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
+    apiURL.searchParams.set('reel_ids', userID)
     try {
-        const respone = await fetch(storiesAPI, options)
+        const respone = await fetch(apiURL.href, options)
         const json = await respone.json()
         return json.reels[userID]
     } catch (error) {
@@ -31,9 +33,10 @@ async function getStoryPhotos(userID, options) {
     }
 }
 async function getHighlightStory(options) {
-    const highlightAPI = `https://www.instagram.com/api/v1/feed/reels_media/?reel_ids=highlight:${appLog.current.highlights}`
+    const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
+    apiURL.searchParams.set('reel_ids', `highlight:${appLog.current.highlights}`)
     try {
-        const respone = await fetch(highlightAPI, options)
+        const respone = await fetch(apiURL.href, options)
         const json = await respone.json()
         return json.reels[`highlight:${appLog.current.highlights}`]
     } catch (error) {
@@ -72,6 +75,7 @@ async function downloadStoryPhotos(type = 1) {
     }
     else {
         const userID = await getUserID(options)
+        if (!userID) return null
         json = await getStoryPhotos(userID, options)
     }
     if (!json) return null
