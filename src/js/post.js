@@ -7,9 +7,13 @@ function setCurrentShortcode() {
     if (page1) appLog.current.shortcode = page1[3]
 }
 async function getPostPhotos() {
-    const postAPI = `https://www.instagram.com/graphql/query/?query_hash=${POST_HASH}&variables=${encodeURIComponent(`{"shortcode":"${appLog.current.shortcode}"}`)}`
+    const apiURL = new URL('/graphql/query/', BASE_URL)
+    apiURL.searchParams.set('query_hash', POST_HASH)
+    apiURL.searchParams.set('variables', JSON.stringify({
+        shortcode: appLog.current.shortcode
+    }))
     try {
-        const respone = await fetch(postAPI)
+        const respone = await fetch(apiURL.href)
         const json = await respone.json()
         return json.data['shortcode_media']
     } catch (error) {
