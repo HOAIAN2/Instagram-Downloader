@@ -94,6 +94,11 @@
     width: 90%;
     margin-bottom: 10px;
     cursor: pointer;
+    transition: 0.5s;
+}
+
+.display-container>.photos-container>.photos-items:hover {
+    scale: 1.01;
 }
 
 .download-button {

@@ -13,14 +13,14 @@ This extension should work fine on the following browsers with `fetch()` API:
 * Drag and drop extracted folder to `chrome://extensions/`
 * Click `Download` button to fetch data then click on any photos/videos to save
 ### Features ###
-* Download posts
-* Download reels
-* Download latest stories
-* Download highlight stories
+* Download posts ✔
+* Download reels ✔
+* Download latest stories ✔
+* Download highlight stories ✔
 ### Customize
-* Put your favourite one Instagram id on this function in `main.js` file, when app load it's gonna download latest post from that user, by default it's gonna download latest Tzuyu post
+* There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user ( default user id is Tzuyu).
 ```js
-setDefaultShortcode(profileID)
+main(profileID)
 ```
 * If you know something about CSS, you can edit Hide / Show Transition effects
 ```css
