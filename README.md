@@ -18,11 +18,11 @@ This extension should work fine on the following browsers with `fetch()` API:
 * Download latest stories ✔
 * Download highlight stories ✔
 ### Customize
-* There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user ( default user id is Tzuyu).
+* There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user (I set default user id is Tzuyu).
 ```js
 main(profileID)
 ```
-* If you know something about CSS, you can edit Hide / Show Transition effects
+* Edit Hide / Show Transition effects
 ```css
 .display-container.hide {
     transform-origin: right bottom;
