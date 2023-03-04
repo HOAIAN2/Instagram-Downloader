@@ -8,13 +8,13 @@ function setCurrentHightlightsID() {
     const page = window.location.pathname.match(regex)
     if (page) appLog.current.highlights = page[3]
 }
-async function getUserID(options) {
-    const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
-    apiURL.searchParams.set('username', appLog.current.username)
+async function getUserID() {
+    const apiURL = new URL('/web/search/topsearch/', BASE_URL)
+    apiURL.searchParams.set('query', appLog.current.username)
     try {
-        const respone = await fetch(apiURL.href, options)
+        const respone = await fetch(apiURL.href)
         const json = await respone.json()
-        return json.data.user['id']
+        return json.users[0].user['pk_id']
     } catch (error) {
         console.log(error)
         return ''
@@ -74,7 +74,7 @@ async function downloadStoryPhotos(type = 1) {
         json = await getHighlightStory(options)
     }
     else {
-        const userID = await getUserID(options)
+        const userID = await getUserID()
         if (!userID) return null
         json = await getStoryPhotos(userID, options)
     }
