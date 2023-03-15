@@ -1,10 +1,7 @@
 function setCurrentShortcode() {
-    const postRegex = /\/(p|tv|reel)\/(.*?)\//
-    const reelsREgex = /\/(reels)\/(videos)\/(.*?)\//
+    const postRegex = /\/(p|tv|reel|reels)\/(.*?)\//
     const page = window.location.pathname.match(postRegex)
-    const page1 = window.location.pathname.match(reelsREgex)
     if (page) appLog.current.shortcode = page[2]
-    if (page1) appLog.current.shortcode = page1[3]
 }
 async function getPostPhotos() {
     const apiURL = new URL('/graphql/query/', BASE_URL)
