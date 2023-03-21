@@ -27,7 +27,30 @@ async function saveMedia(media, fileName) {
         console.log(error)
     }
 }
+function getAuthOptions() {
+    const csrftoken = document.cookie.split(' ')[2].split('=')[1]
+    const claim = sessionStorage.getItem('www-claim-v2')
+    const options = {
+        headers: {
+            'x-asbd-id': '198387',
+            'x-csrftoken': csrftoken,
+            'x-ig-app-id': '936619743392459',
+            'x-ig-www-claim': claim,
+            'x-instagram-ajax': '1006598911',
+            'x-requested-with': 'XMLHttpRequest'
+        },
+        referrer: 'https://www.instagram.com',
+        referrerPolicy: 'strict-origin-when-cross-origin',
+        method: 'GET',
+        mode: 'cors',
+        credentials: 'include'
+    }
+    return options
+}
 function shouldDownload() {
+    setCurrentShortcode()
+    setCurrentUsername()
+    setCurrentHightlightsID()
     function getCurrentPage() {
         const postRegex = /\/(p|tv|reel|reels)\/(.*?)\//
         const storyRegex = /\/(stories)\/(.*?)\/(\d*?)\//
@@ -125,11 +148,7 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
     }
 }
 async function handleDownload() {
-    setCurrentShortcode()
-    setCurrentUsername()
-    setCurrentHightlightsID()
     let data = null
-    let title = ''
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
@@ -143,7 +162,6 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            title = appLog.current.shortcode
             appLog.currentDisplay = 'post'
             break
         case 'stories':
@@ -153,7 +171,6 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            title = `${data.user.username}-latest-stories`
             appLog.currentDisplay = 'stories'
             break
         case 'highlights':
@@ -163,17 +180,16 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
-            title = `${data.user.username}-${appLog.current.highlights}-stories`
             appLog.currentDisplay = 'highlights'
             break
     }
-    data.media.forEach((item, index) => {
+    data.media.forEach(item => {
         if (item.isVideo === true) {
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${title}_${index}`,
+                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${data.date}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -181,7 +197,7 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(video)
             video.addEventListener('click', () => {
-                saveMedia(video, `${title}_${index}`)
+                saveMedia(video, video.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1))
             })
         }
         else {
@@ -189,14 +205,14 @@ async function handleDownload() {
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${title}_${index}`
+                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${data.date}`,
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
             })
             PHOTOS_CONTAINER.appendChild(img)
             img.addEventListener('click', () => {
-                saveMedia(img, `${title}_${index}.jpeg`)
+                saveMedia(img, `${img.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1)}.jpeg`)
             })
         }
     })

@@ -45,24 +45,9 @@ async function getHighlightStory(options) {
     }
 }
 async function downloadStoryPhotos(type = 1) {
-    const csrftoken = document.cookie.split(' ')[2].split('=')[1]
-    const claim = sessionStorage.getItem('www-claim-v2')
-    const options = {
-        headers: {
-            'x-asbd-id': '198387',
-            'x-csrftoken': csrftoken,
-            'x-ig-app-id': '936619743392459',
-            'x-ig-www-claim': claim,
-            'x-instagram-ajax': '1006598911',
-            'x-requested-with': 'XMLHttpRequest'
-        },
-        referrer: 'https://www.instagram.com',
-        referrerPolicy: 'strict-origin-when-cross-origin',
-        method: 'GET',
-        mode: 'cors',
-        credentials: 'include'
-    }
+    const options = getAuthOptions()
     const data = {
+        date: '',
         user: {
             username: '',
             fullName: '',
@@ -81,18 +66,21 @@ async function downloadStoryPhotos(type = 1) {
     if (!json) return null
     data.user.username = json.user['username']
     data.user.fullName = json.user['full_name']
-    json.items.forEach((item) => {
+    data.date = json.items[0]['taken_at']
+    json.items.forEach((item, index) => {
         if (item['media_type'] === 1) {
             const media = {
                 url: item['image_versions2'].candidates[0]['url'],
-                isVideo: false
+                isVideo: false,
+                id: item.id.split('_')[0]
             }
             data.media.push(media)
         }
         else {
             const media = {
                 url: item['video_versions'][0].url,
-                isVideo: true
+                isVideo: true,
+                id: item.id.split('_')[0]
             }
             data.media.push(media)
         }
