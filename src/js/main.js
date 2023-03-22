@@ -185,11 +185,12 @@ async function handleDownload() {
     }
     data.media.forEach(item => {
         if (item.isVideo === true) {
+            const date = new Date(data.date * 1000).toISOString().split('T')[0]
             const video = document.createElement('video')
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${data.date}`,
+                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
@@ -201,11 +202,12 @@ async function handleDownload() {
             })
         }
         else {
+            const date = new Date(data.date * 1000).toISOString().split('T')[0]
             const img = document.createElement('img')
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${data.date}`,
+                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
             }
             Object.keys(photoAttributes).forEach(key => {
                 img.setAttribute(key, photoAttributes[key])
