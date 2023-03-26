@@ -17,6 +17,7 @@ This extension should work fine on the following browsers with `fetch()` API:
 * Download reels ✔
 * Download latest stories ✔
 * Download highlight stories ✔
+* Support high resolution ✔
 ### Customize
 * There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user (I set default user id is Tzuyu).
 ```js
