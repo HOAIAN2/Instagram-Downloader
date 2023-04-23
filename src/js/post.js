@@ -3,23 +3,21 @@ function setCurrentShortcode() {
     const page = window.location.pathname.match(postRegex)
     if (page) appLog.current.shortcode = page[2]
 }
-async function getPostID() {
-    const apiURL = new URL('/graphql/query/', BASE_URL)
-    apiURL.searchParams.set('query_hash', POST_HASH)
-    apiURL.searchParams.set('variables', JSON.stringify({
-        shortcode: appLog.current.shortcode
-    }))
-    try {
-        const respone = await fetch(apiURL.href)
-        const json = await respone.json()
-        return json.data['shortcode_media']['id']
-    } catch (error) {
-        console.log(error)
-        return ''
-    }
+function convertToPostID(shortcode) {
+    let lower = 'abcdefghijklmnopqrstuvwxyz';
+    let upper = lower.toUpperCase();
+    let numbers = '0123456789'
+    let igAlphabet = upper + lower + numbers + '-_'
+    let bigIntAlphabet = numbers + lower
+    let o = shortcode.replace(/\S/g, m => {
+        let c = igAlphabet.indexOf(m)
+        let b = bigIntAlphabet.charAt(c)
+        return (b != "") ? b : `<${c}>`
+    })
+    return bigInt(o, 64).toString(10)
 }
 async function getPostPhotos(options) {
-    const postID = await getPostID()
+    const postID = convertToPostID(appLog.current.shortcode)
     const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
     try {
         const respone = await fetch(apiURL.href, options)
