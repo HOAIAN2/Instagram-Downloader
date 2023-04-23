@@ -67,7 +67,7 @@ async function downloadStoryPhotos(type = 1) {
     data.user.username = json.user['username']
     data.user.fullName = json.user['full_name']
     data.date = json.items[0]['taken_at']
-    json.items.forEach((item, index) => {
+    json.items.forEach((item) => {
         if (item['media_type'] === 1) {
             const media = {
                 url: item['image_versions2'].candidates[0]['url'],
