@@ -4,17 +4,13 @@ function setCurrentShortcode() {
     if (page) appLog.current.shortcode = page[2]
 }
 function convertToPostID(shortcode) {
-    let lower = 'abcdefghijklmnopqrstuvwxyz';
-    let upper = lower.toUpperCase();
-    let numbers = '0123456789'
-    let igAlphabet = upper + lower + numbers + '-_'
-    let bigIntAlphabet = numbers + lower
-    let o = shortcode.replace(/\S/g, m => {
-        let c = igAlphabet.indexOf(m)
-        let b = bigIntAlphabet.charAt(c)
-        return (b != "") ? b : `<${c}>`
-    })
-    return bigInt(o, 64).toString(10)
+    let id = BigInt(0);
+    let instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+    for (let i = 0; i < shortcode.length; i++) {
+        let char = shortcode[i]
+        id = (id * BigInt(64)) + BigInt(instagramAlphabet.indexOf(char))
+    }
+    return id.toString(10)
 }
 async function getPostPhotos(options) {
     const postID = convertToPostID(appLog.current.shortcode)
