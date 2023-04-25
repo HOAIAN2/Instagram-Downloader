@@ -23,8 +23,7 @@
             "js": [
                 "src/js/main.js",
                 "src/js/post.js",
-                "src/js/story.js",
-                "src/js/BigInteger.min.js"
+                "src/js/story.js"
             ],
             "css": [
                 "src/style/style.css"
