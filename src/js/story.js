@@ -8,16 +8,43 @@ function setCurrentHightlightsID() {
     const page = window.location.pathname.match(regex)
     if (page) appLog.current.highlights = page[3]
 }
-async function getUserID() {
-    const apiURL = new URL('/web/search/topsearch/', BASE_URL)
-    apiURL.searchParams.set('query', appLog.current.username)
+// async function getUserID() {
+//     const apiURL = new URL('/web/search/topsearch/', BASE_URL)
+//     apiURL.searchParams.set('query', appLog.current.username)
+//     try {
+//         const respone = await fetch(apiURL.href)
+//         const json = await respone.json()
+//         return json.users[0].user['pk_id']
+//     } catch (error) {
+//         console.log(error)
+//         return ''
+//     }
+// }
+// async function getUserID(options) {
+//     const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
+//     apiURL.searchParams.set('username', appLog.current.username)
+//     try {
+//         const respone = await fetch(apiURL.href, options)
+//         const json = await respone.json()
+//         return json.data.user['id']
+//     } catch (error) {
+//         console.log(error)
+//         return ''
+//     }
+// }
+// Explain: Story has many photo/video, each photo also count as a Post and had id
+// Instagram allow us to use Post API to get single photo and it load faster and also give back user id
+async function getUserID(options) {
+    const regex = /\/(stories)\/(.*?)\/(\d*?)\//
+    const page = window.location.pathname.match(regex)
+    const apiURL = new URL(`/api/v1/media/${page[3]}/info/`, BASE_URL)
     try {
-        const respone = await fetch(apiURL.href)
+        const respone = await fetch(apiURL.href, options)
         const json = await respone.json()
-        return json.users[0].user['pk_id']
+        return json.items[0].user['pk_id']
     } catch (error) {
         console.log(error)
-        return ''
+        return null
     }
 }
 async function getStoryPhotos(userID, options) {
@@ -59,7 +86,7 @@ async function downloadStoryPhotos(type = 1) {
         json = await getHighlightStory(options)
     }
     else {
-        const userID = await getUserID()
+        const userID = await getUserID(options)
         if (!userID) return null
         json = await getStoryPhotos(userID, options)
     }
