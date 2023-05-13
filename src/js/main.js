@@ -16,6 +16,8 @@ const BASE_URL = 'https://www.instagram.com/'
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 async function saveMedia(media, fileName) {
+    console.log(media)
+    console.log(fileName)
     const a = document.createElement('a')
     a.download = fileName
     try {
@@ -31,7 +33,7 @@ async function saveMedia(media, fileName) {
 async function saveZip() {
     const zip = new JSZip()
     const array = []
-    const medias = Array.from(document.querySelectorAll('.photos-items.checked'))
+    const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling)
     for (let index = 0; index < medias.length; index++) {
         const res = await fetch(medias[index].src)
         const blob = await res.blob()
@@ -53,10 +55,6 @@ async function saveZip() {
             a.download = appLog.zipFileName
             a.click()
             URL.revokeObjectURL(a.href)
-            medias.forEach(item => {
-                item.classList.remove('checked')
-                item.classList.add('saved')
-            })
         })
 }
 function getAuthOptions() {
@@ -137,7 +135,7 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
             DOWNLOAD_BUTTON.classList.add('loading')
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
-            PHOTOS_CONTAINER.querySelectorAll('img , video').forEach(item => {
+            Array.from(PHOTOS_CONTAINER.children).forEach(item => {
                 item.remove()
             })
             break
@@ -184,11 +182,11 @@ async function handleDownload() {
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
-    const totalItemChecked = Array.from(document.querySelectorAll('.photos-items.checked'))
-    if (totalItemChecked.length !== 0) {
-        saveZip()
-        return
-    }
+    // const totalItemChecked = Array.from(document.querySelectorAll('.photos-items.checked'))
+    // if (totalItemChecked.length !== 0) {
+    //     saveZip()
+    //     return
+    // }
     const option = shouldDownload()
     switch (option) {
         case 'none': return
@@ -227,7 +225,15 @@ async function handleDownload() {
     data.media.forEach(item => {
         if (item.isVideo === true) {
             const date = new Date(data.date * 1000).toISOString().split('T')[0]
-            const video = document.createElement('video')
+            const overlayImage = chrome.runtime.getURL('icons/tick.svg')
+            const VIDEO_TEMPLATE =
+                `<div>
+                    <video></video>
+                    <div class="overlay">
+                        <img src="${overlayImage}" />
+                    </div>
+                </div>`
+            const video = new DOMParser().parseFromString(VIDEO_TEMPLATE, 'text/html').body.firstElementChild
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
@@ -235,27 +241,35 @@ async function handleDownload() {
                 controls: ''
             }
             Object.keys(videoAttributes).forEach(key => {
-                video.setAttribute(key, videoAttributes[key])
+                video.querySelector('video').setAttribute(key, videoAttributes[key])
             })
             PHOTOS_CONTAINER.appendChild(video)
             video.addEventListener('click', () => {
-                saveMedia(video, video.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1))
+                saveMedia(video.querySelector('video'), video.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1))
             })
         }
         else {
             const date = new Date(data.date * 1000).toISOString().split('T')[0]
-            const img = document.createElement('img')
+            const overlayImage = chrome.runtime.getURL('icons/tick.svg')
+            const IMG_TEMPLATE =
+                `<div>
+                    <img />
+                    <div class="overlay">
+                        <img src="${overlayImage}" />
+                    </div>
+                </div>`
+            const img = new DOMParser().parseFromString(IMG_TEMPLATE, 'text/html').body.firstElementChild
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
                 title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
             }
             Object.keys(photoAttributes).forEach(key => {
-                img.setAttribute(key, photoAttributes[key])
+                img.querySelector('img').setAttribute(key, photoAttributes[key])
             })
             PHOTOS_CONTAINER.appendChild(img)
             img.addEventListener('click', () => {
-                saveMedia(img, `${img.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1)}.jpeg`)
+                saveMedia(img.querySelector('img'), `${img.title.replaceAll(' | ', '_').replaceAll(data.user.fullName, '').substring(1)}.jpeg`)
             })
         }
     })
@@ -331,17 +345,18 @@ function handleEvents() {
         }
     })
     TITLE_CONTAINER.addEventListener('click', () => {
-        const totalItem = Array.from(document.querySelectorAll('.photos-items'))
-        const totalItemChecked = Array.from(document.querySelectorAll('.photos-items.checked'))
+        const totalItem = Array.from(document.querySelectorAll('.overlay'))
+        const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
         if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
             item.classList.add('checked')
         })
         else totalItem.forEach(item => { item.classList.remove('checked') })
     })
     document.addEventListener('contextmenu', (e) => {
+        console.log(e)
         if (e.target.classList.contains('photos-items')) {
             e.preventDefault()
-            e.target.classList.toggle('checked')
+            e.target.parentNode.querySelector('.overlay').classList.toggle('checked')
         }
     })
     window.addEventListener('online', () => {

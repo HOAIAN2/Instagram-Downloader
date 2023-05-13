@@ -30,5 +30,15 @@
                 "src/style/style.css"
             ]
         }
+    ],
+    "web_accessible_resources": [
+        {
+            "matches": [
+                "https://www.instagram.com/*"
+            ],
+            "resources": [
+                "icons/tick.svg"
+            ]
+        }
     ]
 }
