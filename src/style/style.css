@@ -91,9 +91,39 @@
     display: none;
 }
 
-.display-container>.photos-container>.photos-items {
+.display-container>.photos-container>div {
+    position: relative;
     width: 90%;
+    height: fit-content;
     margin-bottom: 10px;
+}
+
+.display-container>.photos-container>div>.overlay {
+    background-color: rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;
+}
+
+.display-container>.photos-container>div>.overlay.checked {
+    display: block;
+}
+
+.display-container>.photos-container>div>.overlay>img {
+    opacity: 0.3;
+    width: 30%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.display-container>.photos-container>div>.photos-items {
+    width: 100%;
     cursor: pointer;
     transition: 0.5s;
     transition-property: width, height, scale;
@@ -101,14 +131,6 @@
 
 .display-container>.photos-container>.photos-items:hover {
     scale: 1.01;
-}
-
-.display-container>.photos-container>.photos-items.checked {
-    outline: 3px solid rgb(72, 51, 255);
-}
-
-.display-container>.photos-container>.photos-items.saved {
-    outline: 3px solid rgb(51, 255, 75);
 }
 
 .download-button {
