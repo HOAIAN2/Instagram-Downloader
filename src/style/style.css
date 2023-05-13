@@ -61,6 +61,7 @@
     transition: 0.5s ease;
     transition-property: background-color, color;
     z-index: 1;
+    cursor: pointer;
 }
 
 .display-container>.title-container.dark {
@@ -95,10 +96,19 @@
     margin-bottom: 10px;
     cursor: pointer;
     transition: 0.5s;
+    transition-property: width, height, scale;
 }
 
 .display-container>.photos-container>.photos-items:hover {
     scale: 1.01;
+}
+
+.display-container>.photos-container>.photos-items.checked {
+    outline: 3px solid rgb(72, 51, 255);
+}
+
+.display-container>.photos-container>.photos-items.saved {
+    outline: 3px solid rgb(51, 255, 75);
 }
 
 .download-button {

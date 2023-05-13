@@ -1,4 +1,5 @@
 const appLog = {
+    zipFileName: '',
     currentDisplay: '',
     current: {
         shortcode: '',
@@ -26,6 +27,37 @@ async function saveMedia(media, fileName) {
     } catch (error) {
         console.log(error)
     }
+}
+async function saveZip() {
+    const zip = new JSZip()
+    const array = []
+    const medias = Array.from(document.querySelectorAll('.photos-items.checked'))
+    for (let index = 0; index < medias.length; index++) {
+        const res = await fetch(medias[index].src)
+        const blob = await res.blob()
+        const data = {
+            title: medias[index].title.split(' | ').slice(1, 5).join('_'),
+            data: blob
+        }
+        if (medias[index].nodeName === 'VIDEO') data.title = `${data.title}.mp4`
+        else data.title = `${data.title}.jpeg`
+        array.push(data)
+    }
+    array.forEach(item => {
+        zip.file(item.title, item.data, { base64: true })
+    })
+    zip.generateAsync({ type: 'blob' })
+        .then(blob => {
+            const a = document.createElement('a')
+            a.href = URL.createObjectURL(blob)
+            a.download = appLog.zipFileName
+            a.click()
+            URL.revokeObjectURL(a.href)
+            medias.forEach(item => {
+                item.classList.remove('checked')
+                item.classList.add('saved')
+            })
+        })
 }
 function getAuthOptions() {
     const csrftoken = document.cookie.split(' ')[2].split('=')[1]
@@ -152,6 +184,11 @@ async function handleDownload() {
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     DISPLAY_CONTAINER.classList.remove('hide')
+    const totalItemChecked = Array.from(document.querySelectorAll('.photos-items.checked'))
+    if (totalItemChecked.length !== 0) {
+        saveZip()
+        return
+    }
     const option = shouldDownload()
     switch (option) {
         case 'none': return
@@ -162,6 +199,8 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
+            const date = new Date(data.date * 1000).toISOString().split('T')[0]
+            appLog.zipFileName = `Post_${data.user.username}_${appLog.current.shortcode}_${date}.zip`
             appLog.currentDisplay = 'post'
             break
         case 'stories':
@@ -171,6 +210,7 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
+            appLog.zipFileName = `Stories_${data.user.username}_${date}.zip`
             appLog.currentDisplay = 'stories'
             break
         case 'highlights':
@@ -180,6 +220,7 @@ async function handleDownload() {
                 setDownloadState('fail')
                 return
             }
+            appLog.zipFileName = `Highlights_${data.user.username}_${appLog.current.highlights}_${date}.zip`
             appLog.currentDisplay = 'highlights'
             break
     }
@@ -238,6 +279,7 @@ function initUI() {
 }
 function handleEvents() {
     const ESC_BUTTON = document.querySelector('.esc-button')
+    const TITLE_CONTAINER = document.querySelector('.title-container')
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
@@ -286,6 +328,20 @@ function handleEvents() {
             DISPLAY_CONTAINER.querySelectorAll('video').forEach(video => {
                 video.pause()
             })
+        }
+    })
+    TITLE_CONTAINER.addEventListener('click', () => {
+        const totalItem = Array.from(document.querySelectorAll('.photos-items'))
+        const totalItemChecked = Array.from(document.querySelectorAll('.photos-items.checked'))
+        if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
+            item.classList.add('checked')
+        })
+        else totalItem.forEach(item => { item.classList.remove('checked') })
+    })
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.classList.contains('photos-items')) {
+            e.preventDefault()
+            e.target.classList.toggle('checked')
         }
     })
     window.addEventListener('online', () => {
