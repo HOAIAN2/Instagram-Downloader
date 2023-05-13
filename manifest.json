@@ -23,7 +23,8 @@
             "js": [
                 "src/js/main.js",
                 "src/js/post.js",
-                "src/js/story.js"
+                "src/js/story.js",
+                "src/libs/jszip.min.js"
             ],
             "css": [
                 "src/style/style.css"
