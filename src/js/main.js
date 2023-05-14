@@ -185,9 +185,9 @@ async function handleDownload() {
     let data = null
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
-    DISPLAY_CONTAINER.classList.remove('hide')
+    const option = shouldDownload()
     const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
-    if (totalItemChecked.length !== 0) {
+    if (!DISPLAY_CONTAINER.classList.contains('hide') && option === 'none' && totalItemChecked.length !== 0) {
         if (totalItemChecked.length === 1) {
             const media = totalItemChecked[0].previousElementSibling
             if (media.nodeName === 'VIDEO') {
@@ -202,7 +202,7 @@ async function handleDownload() {
         }
         return
     }
-    const option = shouldDownload()
+    DISPLAY_CONTAINER.classList.remove('hide')
     switch (option) {
         case 'none': return
         case 'post':
