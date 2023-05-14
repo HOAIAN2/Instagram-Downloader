@@ -349,7 +349,7 @@ function initUI() {
 }
 function handleEvents() {
     const ESC_BUTTON = document.querySelector('.esc-button')
-    const TITLE_CONTAINER = document.querySelector('.title-container')
+    const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
