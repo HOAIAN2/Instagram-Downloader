@@ -113,7 +113,12 @@
     display: block;
 }
 
-.display-container>.photos-container>div>.overlay>img {
+.display-container>.photos-container>div>.overlay.saved {
+    color: var(--violet);
+    display: block;
+}
+
+.display-container>.photos-container>div>.overlay>svg {
     opacity: 0.3;
     width: 30%;
     position: absolute;

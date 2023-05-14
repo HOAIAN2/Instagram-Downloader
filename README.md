@@ -4,20 +4,22 @@
 
 ### Browser compatibility ###
 
-This extension should work fine on the following browsers with `fetch()` API:
+This extension should work fine on the following browsers with `fetch()` API and Chromium base browser, tested Browser:
 * Google Chrome
 * MS Edge
 ### Install and usage ###
 * Download [latest version](https://github.com/HOAIAN2/Instagram-Downloader/releases) and extract to a folder
 * Enable Chrome extensions developer mode
 * Drag and drop extracted folder to `chrome://extensions/`
-* Click `Download` button to fetch data then click on any photos/videos to save
+* Click `Download` button to fetch data
+* Click on any photos/videos to save or right click to mark multiple photos/videos then click `Download` to save zip file
 ### Features ###
 * Download posts ✔
 * Download reels ✔
 * Download latest stories ✔
 * Download highlight stories ✔
 * Support high resolution ✔
+* Support download zip file ✔
 ### Customize
 * There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user (I set default user id is Tzuyu).
 ```js
