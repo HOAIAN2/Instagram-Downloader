@@ -237,7 +237,7 @@ async function handleDownload() {
         `<svg xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 709 709">
             <path id="Imported Path"
-            fill="currentcolor" stroke="black" stroke-width="1"
+            fill="currentcolor" stroke="black" stroke-width="0"
             d="M 552.07,233.08
             C 548.07,234.96 501.43,273.35 424.52,338.12
             357.88,394.26 302.86,440.03 302.36,439.78
