@@ -110,6 +110,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.checked {
+    color: white;
     display: block;
 }
 
@@ -134,7 +135,7 @@
     transition-property: width, height, scale;
 }
 
-.display-container>.photos-container>.photos-items:hover {
+.display-container>.photos-container>div>.photos-items:hover {
     scale: 1.01;
 }
 
