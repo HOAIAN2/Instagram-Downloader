@@ -1,6 +1,5 @@
 function setCurrentShortcode() {
-    const postRegex = /\/(p|tv|reel|reels)\/(.*?)\//
-    const page = window.location.pathname.match(postRegex)
+    const page = window.location.pathname.match(POST_REGEX)
     if (page) appLog.current.shortcode = page[2]
 }
 function convertToPostID(shortcode) {
