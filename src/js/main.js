@@ -14,6 +14,9 @@ const appLog = {
 const BASE_URL = 'https://www.instagram.com/'
 const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
 const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
+const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
+const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
+const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
 async function saveMedia(media, fileName) {
     const a = document.createElement('a')
     a.download = fileName
@@ -86,12 +89,10 @@ function shouldDownload() {
     setCurrentUsername()
     setCurrentHightlightsID()
     function getCurrentPage() {
-        const postRegex = /\/(p|tv|reel|reels)\/(.*?)\//
-        const storyRegex = /\/(stories)\/(.*?)\/(\d*?)\//
         const currentPath = window.location.pathname
-        if (currentPath.match(postRegex)) return 'post'
-        if (currentPath.match(storyRegex)) {
-            if (currentPath.match(storyRegex)[2] === 'highlights') return 'highlights'
+        if (currentPath.match(POST_REGEX)) return 'post'
+        if (currentPath.match(STORY_REGEX)) {
+            if (currentPath.match(HIGHLIGHT_REGEX)) return 'highlights'
             return 'stories'
         }
         return 'none'

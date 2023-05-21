@@ -7,6 +7,7 @@
 This extension should work fine on the following browsers with `fetch()` API and Chromium base browser, tested Browser:
 * Google Chrome
 * MS Edge
+* FireFox
 ### Install and usage ###
 * Download [latest version](https://github.com/HOAIAN2/Instagram-Downloader/releases) and extract to a folder
 * Enable Chrome extensions developer mode

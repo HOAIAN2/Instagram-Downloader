@@ -1,11 +1,9 @@
 function setCurrentUsername() {
-    const regex = /\/(stories)\/(.*?)\/(\d*?)\//
-    const page = window.location.pathname.match(regex)
+    const page = window.location.pathname.match(STORY_REGEX)
     if (page && page[2] !== 'highlights') appLog.current.username = page[2]
 }
 function setCurrentHightlightsID() {
-    const regex = /\/(stories)\/(highlights)\/(\d*?)\//
-    const page = window.location.pathname.match(regex)
+    const page = window.location.pathname.match(HIGHLIGHT_REGEX)
     if (page) appLog.current.highlights = page[3]
 }
 // async function getUserID() {
