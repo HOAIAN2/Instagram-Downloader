@@ -106,26 +106,36 @@
     height: 100%;
     top: 0;
     left: 0;
-    display: none;
+    opacity: 0;
+    transition: 0.2s;
 }
 
 .display-container>.photos-container>div>.overlay.checked {
     color: white;
-    display: block;
+    opacity: 1;
+}
+
+.display-container>.photos-container>div>.overlay.checked>svg {
+    width: 30%;
 }
 
 .display-container>.photos-container>div>.overlay.saved {
     color: var(--violet);
-    display: block;
+    opacity: 1;
+}
+
+.display-container>.photos-container>div>.overlay.saved>svg {
+    width: 30%;
 }
 
 .display-container>.photos-container>div>.overlay>svg {
     opacity: 0.3;
-    width: 30%;
+    width: 50%;
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    transition: 0.4s;
 }
 
 .display-container>.photos-container>div>.photos-items {
