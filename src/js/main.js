@@ -356,6 +356,7 @@ function handleEvents() {
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
     const DOWNLOAD_EVENT_KEYS = ['D', 'd']
+    const SELECT_EVENT_KEYS = ['S', 's']
     DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
     function setTheme() {
         const isDarkMode = document.documentElement.classList.contains('_aa4d')
@@ -392,6 +393,7 @@ function handleEvents() {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
             if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
+            if (SELECT_EVENT_KEYS.includes(e.key)) TITLE_CONTAINER.click()
         }
     })
     document.addEventListener('visibilitychange', () => {
