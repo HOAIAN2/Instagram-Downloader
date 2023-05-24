@@ -38,6 +38,7 @@ main(profileID)
 ### Keyboard shortcut ###
 * Download: `D` `d`
 * Close: `esc` `C` `c`
+* Select all `S` `s`
 * Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` (ex: comment, search, ...)
 
 ## Here is Demo
