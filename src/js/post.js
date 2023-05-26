@@ -11,11 +11,32 @@ function convertToPostID(shortcode) {
     }
     return id.toString(10)
 }
+async function getPostIDFromAPI() {
+    const apiURL = new URL('/graphql/query/', BASE_URL)
+    apiURL.searchParams.set('query_hash', POST_HASH)
+    apiURL.searchParams.set('variables', JSON.stringify({
+        shortcode: appLog.current.shortcode
+    }))
+    try {
+        const respone = await fetch(apiURL.href)
+        const json = await respone.json()
+        return json.data['shortcode_media'].id
+    } catch (error) {
+        console.log(error)
+        return null
+    }
+}
 async function getPostPhotos(options) {
     const postID = convertToPostID(appLog.current.shortcode)
     const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
     try {
-        const respone = await fetch(apiURL.href, options)
+        let respone = await fetch(apiURL.href, options)
+        if (respone.status === 400) {
+            const postID = await getPostIDFromAPI()
+            if (!postID) throw new Error('Network bug')
+            const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
+            respone = await fetch(apiURL.href, options)
+        }
         const json = await respone.json()
         return json.items[0]
     } catch (error) {
