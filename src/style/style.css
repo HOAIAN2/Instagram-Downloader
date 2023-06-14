@@ -101,6 +101,7 @@
 
 .display-container>.photos-container>div>.overlay {
     background-color: rgba(255, 255, 255, 0.1);
+    color: white;
     pointer-events: none;
     position: absolute;
     width: 100%;
@@ -112,7 +113,6 @@
 }
 
 .display-container>.photos-container>div>.overlay.checked {
-    color: white;
     opacity: 1;
 }
 

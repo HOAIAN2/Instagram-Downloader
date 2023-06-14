@@ -393,7 +393,7 @@ function handleEvents() {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
             if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
-            if (SELECT_EVENT_KEYS.includes(e.key)) TITLE_CONTAINER.click()
+            if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) TITLE_CONTAINER.click()
         }
     })
     document.addEventListener('visibilitychange', () => {
