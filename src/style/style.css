@@ -11,6 +11,8 @@
     --shadow-black: rgba(0, 0, 0, 0.3);
     --violet: rgb(138, 43, 226);
     --gray-violet: rgb(161, 85, 231);
+    --green: rgba(0, 164, 0, 0.7);
+    --blue: rgba(0, 0, 255, 0.7);
 }
 
 .display-container {
@@ -61,7 +63,7 @@
     padding: 5%;
     transition: 0.5s ease;
     transition-property: background-color, color;
-    z-index: 1;
+    z-index: 10;
     cursor: pointer;
 }
 
@@ -106,46 +108,34 @@
 }
 
 .display-container>.photos-container>div>.overlay {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
     pointer-events: none;
     position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: 0.2s;
+    width: 10%;
+    aspect-ratio: 1;
+    top: 10px;
+    right: 10px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    display: none;
+}
+
+.display-container>.photos-container>div>.overlay.show {
+    display: block;
 }
 
 .display-container>.photos-container>div>.overlay.checked {
-    opacity: 1;
-}
-
-.display-container>.photos-container>div>.overlay.checked>svg {
-    width: 30%;
+    background-color: var(--blue)
 }
 
 .display-container>.photos-container>div>.overlay.saved {
-    color: var(--violet);
-    opacity: 1;
-}
-
-.display-container>.photos-container>div>.overlay.saved>svg {
-    width: 30%;
-}
-
-.display-container>.photos-container>div>.overlay>svg {
-    opacity: 0.5;
-    width: 50%;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    transition: 0.4s;
+    background-color: var()
 }
 
 .display-container>.photos-container>div>.photos-items {
+    position: relative;
     width: 100%;
     cursor: pointer;
 }
