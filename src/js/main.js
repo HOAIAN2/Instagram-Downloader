@@ -382,13 +382,13 @@ function handleEvents() {
             })
         }
     })
-    document.addEventListener('contextmenu', (e) => {
-        if (e.target.classList.contains('photos-items')) {
-            e.preventDefault()
-            const element = e.target.parentNode.querySelector('.overlay')
-            if (!element.classList.contains('saved')) element.classList.toggle('checked')
-        }
-    })
+    // document.addEventListener('contextmenu', (e) => {
+    //     if (e.target.classList.contains('photos-items')) {
+    //         e.preventDefault()
+    //         const element = e.target.parentNode.querySelector('.overlay')
+    //         if (!element.classList.contains('saved')) element.classList.toggle('checked')
+    //     }
+    // })
     window.addEventListener('online', () => {
         DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
             media.src = media.src
