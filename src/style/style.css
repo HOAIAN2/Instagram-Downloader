@@ -97,10 +97,16 @@
     width: 90%;
     height: fit-content;
     margin-bottom: 10px;
+    transition: 0.5s;
+    transition-property: width, height, scale;
+}
+
+.display-container>.photos-container>div:hover {
+    scale: 1.01;
 }
 
 .display-container>.photos-container>div>.overlay {
-    /* background-color: rgba(255, 255, 255, 0.1); */
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
     pointer-events: none;
     position: absolute;
@@ -142,12 +148,6 @@
 .display-container>.photos-container>div>.photos-items {
     width: 100%;
     cursor: pointer;
-    transition: 0.5s;
-    transition-property: width, height, scale;
-}
-
-.display-container>.photos-container>div>.photos-items:hover {
-    scale: 1.01;
 }
 
 .download-button {
