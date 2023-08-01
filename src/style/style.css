@@ -120,6 +120,7 @@
     border: 3px solid white;
     cursor: pointer;
     display: none;
+    transition: 0.2s;
 }
 
 .display-container>.photos-container>div>.overlay.show {
@@ -131,7 +132,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.saved {
-    background-color: var()
+    background-color: var(--green)
 }
 
 .display-container>.photos-container>div>.photos-items {

@@ -189,7 +189,10 @@ async function handleDownload() {
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     const option = shouldDownload()
     const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
-    if (!DISPLAY_CONTAINER.classList.contains('hide') && option === 'none' && totalItemChecked.length !== 0) {
+    if (TITLE_CONTAINER.classList.contains('multi-select')
+        && !DISPLAY_CONTAINER.classList.contains('hide')
+        && option === 'none'
+        && totalItemChecked.length !== 0) {
         if (totalItemChecked.length === 1) {
             const media = totalItemChecked[0].previousElementSibling
             if (media.nodeName === 'VIDEO') {
@@ -336,13 +339,39 @@ function handleEvents() {
             })
         }
     }
+    function toggleSelectMode() {
+        if (TITLE_CONTAINER.classList.contains('multi-select')) {
+            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
+                element.classList.add('show')
+            })
+        }
+        else {
+            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
+                element.classList.remove('show')
+            })
+        }
+    }
+    function handleSelectAll() {
+        if (!TITLE_CONTAINER.classList.contains('multi-select')) return
+        const totalItem = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay'))
+        const totalItemChecked = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay.checked'))
+        if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
+            if (!item.classList.contains('saved')) item.classList.add('checked')
+        })
+        else totalItem.forEach(item => { item.classList.remove('checked') })
+    }
     const handleTheme = new MutationObserver(setTheme)
     const handleVideo = new MutationObserver(pauseVideo)
+    const selectHandler = new MutationObserver(toggleSelectMode)
     handleTheme.observe(document.documentElement, {
         attributes: true,
         attributeFilter: ['class']
     })
     handleVideo.observe(DISPLAY_CONTAINER, {
+        attributes: true,
+        attributeFilter: ['class']
+    })
+    selectHandler.observe(TITLE_CONTAINER, {
         attributes: true,
         attributeFilter: ['class']
     })
@@ -363,32 +392,21 @@ function handleEvents() {
             })
         }
     })
-    TITLE_CONTAINER.addEventListener('click', () => {
-        // const totalItem = Array.from(document.querySelectorAll('.overlay'))
-        // const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
-        // if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
-        //     if (!item.classList.contains('saved')) item.classList.add('checked')
-        // })
-        // else totalItem.forEach(item => { item.classList.remove('checked') })
-        TITLE_CONTAINER.classList.toggle('multi-select')
-        if (TITLE_CONTAINER.classList.contains('multi-select')) {
-            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
-                element.classList.add('show')
-            })
-        }
-        else {
-            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
-                element.classList.remove('show')
-            })
-        }
+    TITLE_CONTAINER.addEventListener('mousedown', () => {
+        let count = 0
+        const MAX_COUNT = 400
+        const intervalID = setInterval(() => {
+            count = count + 10
+            if (count >= MAX_COUNT) {
+                clearInterval(intervalID)
+                handleSelectAll()
+            }
+        }, 10)
+        TITLE_CONTAINER.addEventListener('mouseup', () => {
+            clearInterval(intervalID)
+            if (count < MAX_COUNT) TITLE_CONTAINER.classList.toggle('multi-select')
+        }, { once: true })
     })
-    // document.addEventListener('contextmenu', (e) => {
-    //     if (e.target.classList.contains('photos-items')) {
-    //         e.preventDefault()
-    //         const element = e.target.parentNode.querySelector('.overlay')
-    //         if (!element.classList.contains('saved')) element.classList.toggle('checked')
-    //     }
-    // })
     window.addEventListener('online', () => {
         DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
             media.src = media.src
