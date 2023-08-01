@@ -184,6 +184,7 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
 }
 async function handleDownload() {
     let data = null
+    const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     const option = shouldDownload()
@@ -234,63 +235,17 @@ async function handleDownload() {
             appLog.currentDisplay = 'highlights'
             break
     }
-    const svgTemplate =
-        `<svg xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 709 709">
-            <path id="Imported Path"
-            fill="currentcolor" stroke="black" stroke-width="0"
-            d="M 552.07,233.08
-            C 548.07,234.96 501.43,273.35 424.52,338.12
-            357.88,394.26 302.86,440.03 302.36,439.78
-            301.86,439.66 275.97,413.40 244.96,381.38
-            213.83,349.37 186.19,321.74 183.56,319.86
-            165.31,307.23 138.55,316.61 131.05,338.12
-            129.92,341.62 128.92,346.50 128.80,349.00
-            128.80,355.13 131.92,365.00 135.30,369.63
-            139.42,375.13 273.35,512.56 278.60,516.68
-            285.73,522.18 292.60,524.31 302.23,523.68
-            306.86,523.43 312.86,522.18 315.36,520.93
-            317.86,519.68 381.38,467.04 456.66,403.89
-            587.71,293.73 593.46,288.73 597.46,281.35
-            609.84,257.72 593.08,230.08 566.45,230.08
-            560.45,230.08 556.70,230.96 552.07,233.08 Z
-            M 336.99,2.13
-            C 297.10,4.50 259.97,12.50 225.20,26.26
-            106.04,73.28 20.88,181.94 4.38,308.23
-            -14.38,451.53 55.27,590.46 182.06,662.61
-            219.33,683.74 268.47,699.62 314.49,705.37
-            330.74,707.50 378.51,707.50 394.51,705.37
-            505.30,691.24 598.59,631.72 655.86,538.31
-            712.63,445.78 723.51,328.24 684.37,228.33
-            638.35,110.41 534.44,26.13 410.89,6.25
-            386.76,2.38 358.50,0.75 336.99,2.13 Z
-            M 396.39,75.65
-            C 455.66,84.90 509.18,111.54 551.32,152.93
-            595.46,196.32 622.59,248.34 633.60,310.73
-            636.72,328.49 636.72,380.51 633.60,398.27
-            628.47,427.65 621.34,450.16 608.96,476.04
-            561.95,574.20 463.29,636.47 354.50,636.47
-            259.09,636.47 170.44,588.33 117.54,507.68
-            108.16,493.30 92.91,462.41 87.66,447.03
-            82.90,432.65 78.15,414.27 75.40,398.27
-            72.28,380.51 72.28,328.49 75.40,310.73
-            82.65,269.85 97.78,231.08 119.29,199.07
-            130.92,181.69 138.05,172.94 153.55,157.18
-            200.20,109.79 259.47,81.15 326.37,73.90
-            341.25,72.28 380.76,73.28 396.39,75.65 Z" />
-        </svg>`
     data.media.forEach(item => {
         if (item.isVideo === true) {
             const date = new Date(data.date * 1000).toISOString().split('T')[0]
             const ITEM_TEMPLATE =
                 `<div>
                     <video></video>
-                    <div class="overlay">
-                        ${svgTemplate}
-                    </div>
+                    <div class="overlay"></div>
                 </div>`
             const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
             const video = itemDOM.querySelector('video')
+            const selectBox = itemDOM.querySelector('.overlay')
             const videoAttributes = {
                 class: 'photos-items',
                 src: item.url,
@@ -302,7 +257,10 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(itemDOM)
             video.addEventListener('click', () => {
-                saveMedia(video, video.title.split(' | ').slice(1, 5).join('_') + '.mp4')
+                if (TITLE_CONTAINER.classList.contains('multi-select')) {
+                    selectBox.classList.toggle('checked')
+                }
+                else saveMedia(video, video.title.split(' | ').slice(1, 5).join('_') + '.mp4')
             })
         }
         else {
@@ -310,12 +268,11 @@ async function handleDownload() {
             const ITEM_TEMPLATE =
                 `<div>
                     <img />
-                    <div class="overlay">
-                        ${svgTemplate}
-                    </div>
+                    <div class="overlay"></div>
                 </div>`
             const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
             const img = itemDOM.querySelector('img')
+            const selectBox = itemDOM.querySelector('.overlay')
             const photoAttributes = {
                 class: 'photos-items',
                 src: item.url,
@@ -326,7 +283,10 @@ async function handleDownload() {
             })
             PHOTOS_CONTAINER.appendChild(itemDOM)
             img.addEventListener('click', () => {
-                saveMedia(img, img.title.split(' | ').slice(1, 5).join('_') + '.jpeg')
+                if (TITLE_CONTAINER.classList.contains('multi-select')) {
+                    selectBox.classList.toggle('checked')
+                }
+                else saveMedia(img, img.title.split(' | ').slice(1, 5).join('_') + '.jpeg')
             })
         }
     })
@@ -404,12 +364,23 @@ function handleEvents() {
         }
     })
     TITLE_CONTAINER.addEventListener('click', () => {
-        const totalItem = Array.from(document.querySelectorAll('.overlay'))
-        const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
-        if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
-            if (!item.classList.contains('saved')) item.classList.add('checked')
-        })
-        else totalItem.forEach(item => { item.classList.remove('checked') })
+        // const totalItem = Array.from(document.querySelectorAll('.overlay'))
+        // const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
+        // if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
+        //     if (!item.classList.contains('saved')) item.classList.add('checked')
+        // })
+        // else totalItem.forEach(item => { item.classList.remove('checked') })
+        TITLE_CONTAINER.classList.toggle('multi-select')
+        if (TITLE_CONTAINER.classList.contains('multi-select')) {
+            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
+                element.classList.add('show')
+            })
+        }
+        else {
+            DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
+                element.classList.remove('show')
+            })
+        }
     })
     document.addEventListener('contextmenu', (e) => {
         if (e.target.classList.contains('photos-items')) {
