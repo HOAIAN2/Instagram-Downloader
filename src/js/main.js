@@ -33,36 +33,62 @@ async function saveMedia(media, fileName) {
     }
 }
 async function saveZip() {
+    const DOWNLOAD_BUTTON = document.querySelector('.download-button')
+    DOWNLOAD_BUTTON.classList.add('loading')
+    DOWNLOAD_BUTTON.textContent = 'Loading...'
+    DOWNLOAD_BUTTON.disabled = true
     const zip = new JSZip()
     const array = []
     const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling)
     const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip'
-    for (let index = 0; index < medias.length; index++) {
-        const res = await fetch(medias[index].src)
-        const blob = await res.blob()
-        const data = {
-            title: medias[index].title.split(' | ').slice(1, 5).join('_'),
-            data: blob
-        }
-        if (medias[index].nodeName === 'VIDEO') data.title = `${data.title}.mp4`
-        else data.title = `${data.title}.jpeg`
-        array.push(data)
+    function resetState() {
+        DOWNLOAD_BUTTON.classList.remove('loading')
+        DOWNLOAD_BUTTON.textContent = 'Download'
+        DOWNLOAD_BUTTON.disabled = false
     }
-    array.forEach(item => {
-        zip.file(item.title, item.data, { base64: true })
-    })
-    zip.generateAsync({ type: 'blob' })
-        .then(blob => {
-            const a = document.createElement('a')
-            a.href = URL.createObjectURL(blob)
-            a.download = zipFileName
-            a.click()
-            URL.revokeObjectURL(a.href)
-            document.querySelectorAll('.overlay.checked').forEach(element => {
-                element.classList.remove('checked')
-                element.classList.add('saved')
+    async function fetchSelectedMedias() {
+        try {
+            for (let index = 0; index < medias.length; index++) {
+                const res = await fetch(medias[index].src)
+                const blob = await res.blob()
+                const data = {
+                    title: medias[index].title.split(' | ').slice(1, 5).join('_'),
+                    data: blob
+                }
+                if (medias[index].nodeName === 'VIDEO') data.title = `${data.title}.mp4`
+                else data.title = `${data.title}.jpeg`
+                array.push(data)
+                DOWNLOAD_BUTTON.textContent = `${index + 1}/${medias.length}`
+            }
+            array.forEach(item => {
+                zip.file(item.title, item.data, { base64: true })
             })
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
+    try {
+        await fetchSelectedMedias()
+        array.forEach(item => {
+            zip.file(item.title, item.data, { base64: true })
         })
+        const blob = await zip.generateAsync({ type: 'blob' }, ((metadata) => {
+            DOWNLOAD_BUTTON.textContent = `${Math.floor(metadata.percent)} %`
+        }))
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = zipFileName
+        a.click()
+        URL.revokeObjectURL(a.href)
+        document.querySelectorAll('.overlay.checked').forEach(element => {
+            element.classList.remove('checked')
+            element.classList.add('saved')
+        })
+        resetState()
+    } catch (error) {
+        console.log(error)
+        resetState()
+    }
 }
 function getAuthOptions() {
     const csrftoken = document.cookie.split(' ')[2].split('=')[1]
@@ -293,6 +319,7 @@ async function handleDownload() {
             })
         }
     })
+    TITLE_CONTAINER.classList.remove('multi-select')
     setDownloadState('success', PHOTOS_CONTAINER, option)
 }
 function initUI() {
