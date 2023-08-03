@@ -15,8 +15,14 @@ This extension should work fine on the following browsers with `fetch()` API and
 * Download [latest version](https://github.com/HOAIAN2/Instagram-Downloader/releases) and extract to a folder
 * Enable Chrome extensions developer mode
 * Drag and drop extracted folder to `chrome://extensions/`
+
+## Usage
+
 * Click `Download` button to fetch data
-* Click on any photos/videos to save or right click to mark multiple photos/videos then click `Download` to save zip file
+
+* Click on any photos/videos to save
+
+* Toggle multi select by click on ```Photos``` and select photos by click on them (or select all by click and hold on ```Photos```). Then click on ```Download``` to save zip file
 
 ## Features
 
