@@ -37,8 +37,8 @@ async function saveZip() {
     DOWNLOAD_BUTTON.classList.add('loading')
     DOWNLOAD_BUTTON.textContent = 'Loading...'
     DOWNLOAD_BUTTON.disabled = true
+    let count = 0
     const zip = new JSZip()
-    const array = []
     const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling)
     const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip'
     function resetState() {
@@ -47,31 +47,26 @@ async function saveZip() {
         DOWNLOAD_BUTTON.disabled = false
     }
     async function fetchSelectedMedias() {
-        try {
-            for (let index = 0; index < medias.length; index++) {
-                const res = await fetch(medias[index].src)
-                const blob = await res.blob()
-                const data = {
-                    title: medias[index].title.split(' | ').slice(1, 5).join('_'),
-                    data: blob
-                }
-                if (medias[index].nodeName === 'VIDEO') data.title = `${data.title}.mp4`
-                else data.title = `${data.title}.jpeg`
-                array.push(data)
-                DOWNLOAD_BUTTON.textContent = `${index + 1}/${medias.length}`
+        const results = await Promise.allSettled(medias.map(async (media) => {
+            const res = await fetch(media.src)
+            const blob = await res.blob()
+            const data = {
+                title: media.title.split(' | ').slice(1, 5).join('_'),
+                data: blob
             }
-            array.forEach(item => {
-                zip.file(item.title, item.data, { base64: true })
-            })
-        } catch (error) {
-            throw new Error(error)
-        }
+            if (media.nodeName === 'VIDEO') data.title = `${data.title}.mp4`
+            else data.title = `${data.title}.jpeg`
+            count++
+            DOWNLOAD_BUTTON.textContent = `${count}/${medias.length}`
+            return data
+        }))
+        results.forEach(promise => {
+            if (promise.status === 'rejected') throw new Error('Fail to fetch')
+            zip.file(promise.value.title, promise.value.data, { base64: true })
+        })
     }
     try {
         await fetchSelectedMedias()
-        array.forEach(item => {
-            zip.file(item.title, item.data, { base64: true })
-        })
         const blob = await zip.generateAsync({ type: 'blob' }, ((metadata) => {
             DOWNLOAD_BUTTON.textContent = `${Math.floor(metadata.percent)} %`
         }))
@@ -90,6 +85,7 @@ async function saveZip() {
         resetState()
     }
 }
+
 function getAuthOptions() {
     const csrftoken = document.cookie.split(' ')[2].split('=')[1]
     const claim = sessionStorage.getItem('www-claim-v2')
@@ -409,7 +405,21 @@ function handleEvents() {
         if (!IGNORE_FOCUS_ELEMENTS.includes(document.activeElement.tagName)) {
             if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
-            if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) TITLE_CONTAINER.click()
+            if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) {
+                let count = 0
+                const MAX_COUNT = 400
+                const intervalID = setInterval(() => {
+                    count = count + 10
+                    if (count >= MAX_COUNT) {
+                        clearInterval(intervalID)
+                        handleSelectAll()
+                    }
+                }, 10)
+                window.addEventListener('keyup', () => {
+                    clearInterval(intervalID)
+                    if (count < MAX_COUNT) TITLE_CONTAINER.classList.toggle('multi-select')
+                }, { once: true })
+            }
         }
     })
     document.addEventListener('visibilitychange', () => {
