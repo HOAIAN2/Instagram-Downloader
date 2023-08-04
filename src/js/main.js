@@ -375,7 +375,7 @@ function handleEvents() {
     }
     function handleSelectAll() {
         if (!TITLE_CONTAINER.classList.contains('multi-select')) return
-        const totalItem = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay'))
+        const totalItem = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay:not(.saved)'))
         const totalItemChecked = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay.checked'))
         if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
             if (!item.classList.contains('saved')) item.classList.add('checked')
