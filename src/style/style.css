@@ -128,7 +128,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.show::before {
-    content: " ";
+    content: "";
     position: absolute;
     width: 100%;
     height: 100%;
@@ -144,6 +144,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.checked::before {
+    content: "";
     width: 150%;
     height: 150%;
     border: 2px solid white;
@@ -154,6 +155,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.saved::before {
+    content: "";
     width: 150%;
     height: 150%;
     border: 2px solid white;
