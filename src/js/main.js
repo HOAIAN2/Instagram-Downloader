@@ -85,7 +85,6 @@ async function saveZip() {
         resetState()
     }
 }
-
 function getAuthOptions() {
     const csrftoken = document.cookie.split(' ')[2].split('=')[1]
     const claim = sessionStorage.getItem('www-claim-v2')
@@ -406,19 +405,7 @@ function handleEvents() {
             if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
             if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
             if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) {
-                let count = 0
-                const MAX_COUNT = 400
-                const intervalID = setInterval(() => {
-                    count = count + 10
-                    if (count >= MAX_COUNT) {
-                        clearInterval(intervalID)
-                        handleSelectAll()
-                    }
-                }, 10)
-                window.addEventListener('keyup', () => {
-                    clearInterval(intervalID)
-                    if (count < MAX_COUNT) TITLE_CONTAINER.classList.toggle('multi-select')
-                }, { once: true })
+                TITLE_CONTAINER.classList.toggle('multi-select')
             }
         }
     })
