@@ -1,6 +1,6 @@
 function convertToPostID(shortcode) {
     let id = BigInt(0);
-    let instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
+    const instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
     for (let i = 0; i < shortcode.length; i++) {
         let char = shortcode[i]
         id = (id * BigInt(64)) + BigInt(instagramAlphabet.indexOf(char))
