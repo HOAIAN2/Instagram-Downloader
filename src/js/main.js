@@ -1,3 +1,10 @@
+const BASE_URL = 'https://www.instagram.com/'
+const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
+const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
+const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
+const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
+const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
+
 const appLog = {
     currentDisplay: '',
     current: {
@@ -9,14 +16,33 @@ const appLog = {
         shortcode: '',
         username: '',
         highlights: '',
+    },
+    setCurrentShortcode() {
+        const page = window.location.pathname.match(POST_REGEX)
+        if (page) this.current.shortcode = page[2]
+    },
+    setCurrentUsername() {
+        const page = window.location.pathname.match(STORY_REGEX)
+        if (page && page[2] !== 'highlights') this.current.username = page[2]
+    },
+    setCurrentHightlightsID() {
+        const page = window.location.pathname.match(HIGHLIGHT_REGEX)
+        if (page) this.current.highlights = page[3]
+    },
+    setPrevious() {
+        this.previous = { ...this.current }
+    },
+    isShortcodeChange() {
+        return this.current.shortcode !== this.previous.shortcode
+    },
+    isUsernameChange() {
+        return this.current.username !== this.previous.username
+    },
+    isHighlightsIDChange() {
+        return this.current.highlights !== this.previous.highlights
     }
 }
-const BASE_URL = 'https://www.instagram.com/'
-const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
-const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
-const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
-const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
-const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
+
 async function saveMedia(media, fileName) {
     const a = document.createElement('a')
     a.download = fileName
@@ -106,9 +132,9 @@ function getAuthOptions() {
     return options
 }
 function shouldDownload() {
-    setCurrentShortcode()
-    setCurrentUsername()
-    setCurrentHightlightsID()
+    appLog.setCurrentShortcode()
+    appLog.setCurrentUsername()
+    appLog.setCurrentHightlightsID()
     function getCurrentPage() {
         const currentPath = window.location.pathname
         if (currentPath.match(POST_REGEX)) return 'post'
@@ -120,15 +146,15 @@ function shouldDownload() {
     }
     const currentPage = getCurrentPage()
     if (currentPage === 'stories') {
-        if (appLog.current.username !== appLog.previous.username) return 'stories'
+        if (appLog.isUsernameChange()) return 'stories'
         if (appLog.currentDisplay !== 'stories') return 'stories'
     }
     if (currentPage === 'highlights') {
-        if (appLog.current.highlights !== appLog.previous.highlights) return 'highlights'
+        if (appLog.isHighlightsIDChange()) return 'highlights'
         if (appLog.currentDisplay !== 'highlights') return 'highlights'
     }
     if (currentPage === 'post') {
-        if (appLog.current.shortcode !== appLog.previous.shortcode) return 'post'
+        if (appLog.isShortcodeChange()) return 'post'
         if (appLog.currentDisplay !== 'post') return 'post'
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
@@ -149,7 +175,7 @@ async function setDefaultShortcode(profileID = '51963237586') {
         console.log(error)
     }
 }
-function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
+function setDownloadState(state = 'ready', PHOTOS_CONTAINER) {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     function resetState() {
         DOWNLOAD_BUTTON.classList.remove('loading')
@@ -170,11 +196,7 @@ function setDownloadState(state = 'ready', PHOTOS_CONTAINER, option = '') {
             break
         case 'success':
             DOWNLOAD_BUTTON.disabled = false
-            if (option === 'post') appLog.previous.shortcode = appLog.current.shortcode
-            else {
-                if (option === 'stories') appLog.previous.username = appLog.current.username
-                else appLog.previous.highlights = appLog.current.highlights
-            }
+            appLog.setPrevious()
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
             const totalPhotos = photosArray.length
             let loadedPhotos = 0
