@@ -25,8 +25,7 @@
 // Explain: Story has many photo/video, each photo also count as a Post and had id
 // Instagram allow us to use Post API to get single photo and it load faster and also give back user id
 async function getUserID(options) {
-    const regex = /\/(stories)\/(.*?)\/(\d*?)\//
-    const page = window.location.pathname.match(regex)
+    const page = window.location.pathname.match(STORY_REGEX)
     const apiURL = new URL(`/api/v1/media/${page[3]}/info/`, BASE_URL)
     try {
         const respone = await fetch(apiURL.href, options)

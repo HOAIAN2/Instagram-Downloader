@@ -32,17 +32,13 @@ const appLog = {
     setPrevious() {
         this.previous = { ...this.current }
     },
-    isShortcodeChange() {
-        return this.current.shortcode !== this.previous.shortcode
-    },
-    isUsernameChange() {
-        return this.current.username !== this.previous.username
-    },
-    isHighlightsIDChange() {
-        return this.current.highlights !== this.previous.highlights
+    getFieldChange() {
+        if (this.current.highlights !== this.previous.highlights) return 'highlights'
+        if (this.current.username !== this.previous.username) return 'stories'
+        if (this.current.shortcode !== this.previous.shortcode) return 'post'
+        return 'none'
     }
 }
-
 async function saveMedia(media, fileName) {
     const a = document.createElement('a')
     a.download = fileName
@@ -145,17 +141,10 @@ function shouldDownload() {
         return 'none'
     }
     const currentPage = getCurrentPage()
-    if (currentPage === 'stories') {
-        if (appLog.isUsernameChange()) return 'stories'
-        if (appLog.currentDisplay !== 'stories') return 'stories'
-    }
-    if (currentPage === 'highlights') {
-        if (appLog.isHighlightsIDChange()) return 'highlights'
-        if (appLog.currentDisplay !== 'highlights') return 'highlights'
-    }
-    if (currentPage === 'post') {
-        if (appLog.isShortcodeChange()) return 'post'
-        if (appLog.currentDisplay !== 'post') return 'post'
+    const valueChange = appLog.getFieldChange()
+    if (['highlights', 'stories', 'post'].includes(currentPage)) {
+        if (currentPage === valueChange) return valueChange
+        if (appLog.currentDisplay !== currentPage) return currentPage
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
