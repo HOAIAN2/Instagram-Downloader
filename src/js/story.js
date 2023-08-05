@@ -1,11 +1,3 @@
-function setCurrentUsername() {
-    const page = window.location.pathname.match(STORY_REGEX)
-    if (page && page[2] !== 'highlights') appLog.current.username = page[2]
-}
-function setCurrentHightlightsID() {
-    const page = window.location.pathname.match(HIGHLIGHT_REGEX)
-    if (page) appLog.current.highlights = page[3]
-}
 // async function getUserID() {
 //     const apiURL = new URL('/web/search/topsearch/', BASE_URL)
 //     apiURL.searchParams.set('query', appLog.current.username)
@@ -57,13 +49,13 @@ async function getStoryPhotos(userID, options) {
         return null
     }
 }
-async function getHighlightStory(options) {
+async function getHighlightStory(highlightsID, options) {
     const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
-    apiURL.searchParams.set('reel_ids', `highlight:${appLog.current.highlights}`)
+    apiURL.searchParams.set('reel_ids', `highlight:${highlightsID}`)
     try {
         const respone = await fetch(apiURL.href, options)
         const json = await respone.json()
-        return json.reels[`highlight:${appLog.current.highlights}`]
+        return json.reels[`highlight:${highlightsID}`]
     } catch (error) {
         console.log(error)
         return null
@@ -81,7 +73,7 @@ async function downloadStoryPhotos(type = 1) {
     }
     let json = null
     if (type === 2) {
-        json = await getHighlightStory(options)
+        json = await getHighlightStory(appLog.current.highlights, options)
     }
     else {
         const userID = await getUserID(options)

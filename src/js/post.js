@@ -1,7 +1,3 @@
-function setCurrentShortcode() {
-    const page = window.location.pathname.match(POST_REGEX)
-    if (page) appLog.current.shortcode = page[2]
-}
 function convertToPostID(shortcode) {
     let id = BigInt(0);
     let instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
@@ -26,8 +22,8 @@ async function getPostIDFromAPI() {
         return null
     }
 }
-async function getPostPhotos(options) {
-    const postID = convertToPostID(appLog.current.shortcode)
+async function getPostPhotos(shortcode, options) {
+    const postID = convertToPostID(shortcode)
     const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
     try {
         let respone = await fetch(apiURL.href, options)
@@ -54,7 +50,7 @@ async function downloadPostPhotos() {
         },
         media: []
     }
-    const json = await getPostPhotos(options)
+    const json = await getPostPhotos(appLog.current.shortcode, options)
     if (!json) return null
     data.user.username = json.user['username']
     data.user.fullName = json.user['full_name']
