@@ -60,7 +60,7 @@ async function getHighlightStory(highlightsID, options) {
         return null
     }
 }
-async function downloadStoryPhotos(type = 1) {
+async function downloadStoryPhotos(type = 'stories') {
     const options = getAuthOptions()
     const data = {
         date: '',
@@ -71,7 +71,7 @@ async function downloadStoryPhotos(type = 1) {
         media: []
     }
     let json = null
-    if (type === 2) json = await getHighlightStory(appLog.current.highlights, options)
+    if (type === 'highlights') json = await getHighlightStory(appLog.current.highlights, options)
     else {
         const userID = await getUserID(options)
         if (!userID) return null

@@ -171,48 +171,38 @@ function setDownloadState(state = 'ready') {
         DOWNLOAD_BUTTON.textContent = 'Download'
         DOWNLOAD_BUTTON.disabled = false
     }
-    switch (state) {
-        case 'ready':
+    const options = {
+        ready() {
             DOWNLOAD_BUTTON.classList.add('loading')
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
             Array.from(PHOTOS_CONTAINER.children).forEach(item => {
                 item.remove()
             })
-            break
-        case 'fail':
-            resetState()
-            break
-        case 'success':
+        },
+        fail() { resetState() },
+        success() {
             DOWNLOAD_BUTTON.disabled = false
             appLog.setPrevious()
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
-            const totalPhotos = photosArray.length
             let loadedPhotos = 0
-            photosArray.forEach(photo => {
-                if (photo.tagName === 'IMG') {
-                    photo.addEventListener('load', () => {
-                        loadedPhotos++
-                        if (loadedPhotos === totalPhotos) resetState()
-                    })
-                    photo.addEventListener('error', () => {
-                        loadedPhotos++
-                        if (loadedPhotos === totalPhotos) resetState()
-                    })
+            function countLoaded() {
+                loadedPhotos++
+                if (loadedPhotos === photosArray.length) resetState()
+            }
+            photosArray.forEach(media => {
+                if (media.tagName === 'IMG') {
+                    media.addEventListener('load', countLoaded)
+                    media.addEventListener('error', countLoaded)
                 }
                 else {
-                    photo.addEventListener('loadeddata', () => {
-                        loadedPhotos++
-                        if (loadedPhotos === totalPhotos) resetState()
-                    })
-                    photo.addEventListener('abort', () => {
-                        loadedPhotos++
-                        if (loadedPhotos === totalPhotos) resetState()
-                    })
+                    media.addEventListener('loadeddata', countLoaded)
+                    media.addEventListener('abort', countLoaded)
                 }
             })
-            break
+        }
     }
+    options[state]()
 }
 async function handleDownload() {
     let data = null
@@ -233,36 +223,14 @@ async function handleDownload() {
         return
     }
     DISPLAY_CONTAINER.classList.remove('hide')
-    switch (option) {
-        case 'none': return
-        case 'post':
-            setDownloadState('ready')
-            data = await downloadPostPhotos()
-            if (!data) {
-                setDownloadState('fail')
-                return
-            }
-            appLog.currentDisplay = 'post'
-            break
-        case 'stories':
-            setDownloadState('ready')
-            data = await downloadStoryPhotos(1)
-            if (!data) {
-                setDownloadState('fail')
-                return
-            }
-            appLog.currentDisplay = 'stories'
-            break
-        case 'highlights':
-            setDownloadState('ready')
-            data = await downloadStoryPhotos(2)
-            if (!data) {
-                setDownloadState('fail')
-                return
-            }
-            appLog.currentDisplay = 'highlights'
-            break
+    if (option === 'none') return
+    setDownloadState('ready')
+    option === 'post' ? data = await downloadPostPhotos() : data = await downloadStoryPhotos(option)
+    if (!data) {
+        setDownloadState('fail')
+        return
     }
+    appLog.currentDisplay = option
     data.media.forEach(item => {
         const date = new Date(data.date * 1000).toISOString().split('T')[0]
         const attributes = {
