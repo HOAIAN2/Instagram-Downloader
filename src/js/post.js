@@ -57,41 +57,21 @@ async function downloadPostPhotos() {
     data.date = json['taken_at']
     if (json['carousel_media']) {
         json['carousel_media'].forEach((item) => {
-            if (item['media_type'] === 1) {
-                const media = {
-                    url: item['image_versions2'].candidates[0]['url'],
-                    isVideo: false,
-                    id: item.id.split('_')[0]
-                }
-                data.media.push(media)
+            const media = {
+                url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+                isVideo: item['media_type'] === 1 ? false : true,
+                id: item.id.split('_')[0]
             }
-            else {
-                const media = {
-                    url: item['video_versions'][0].url,
-                    isVideo: true,
-                    id: item.id.split('_')[0]
-                }
-                data.media.push(media)
-            }
+            data.media.push(media)
         })
     }
     else {
-        if (json['media_type'] === 1) {
-            const media = {
-                url: json['image_versions2'].candidates[0]['url'],
-                isVideo: false,
-                id: json.id.split('_')[0]
-            }
-            data.media.push(media)
+        const media = {
+            url: json['media_type'] === 1 ? json['image_versions2'].candidates[0]['url'] : json['video_versions'][0].url,
+            isVideo: json['media_type'] === 1 ? false : true,
+            id: json.id.split('_')[0]
         }
-        else {
-            const media = {
-                url: json['video_versions'][0].url,
-                isVideo: true,
-                id: json.id.split('_')[0]
-            }
-            data.media.push(media)
-        }
+        data.media.push(media)
     }
     return data
 }

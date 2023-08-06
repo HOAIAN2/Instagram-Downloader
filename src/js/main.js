@@ -39,15 +39,18 @@ const appLog = {
         return 'none'
     }
 }
-async function saveMedia(media, fileName) {
+function saveFile(blob, fileName) {
     const a = document.createElement('a')
     a.download = fileName
+    a.href = URL.createObjectURL(blob)
+    a.click()
+    URL.revokeObjectURL(a.href)
+}
+async function saveMedia(media, fileName) {
     try {
         const respone = await fetch(media.src)
         const blob = await respone.blob()
-        a.href = URL.createObjectURL(blob)
-        a.click()
-        URL.revokeObjectURL(a.href)
+        saveFile(blob, fileName)
         media.nextElementSibling.classList.remove('check')
         media.nextElementSibling.classList.add('saved')
     } catch (error) {
@@ -92,11 +95,7 @@ async function saveZip() {
         const blob = await zip.generateAsync({ type: 'blob' }, ((metadata) => {
             DOWNLOAD_BUTTON.textContent = `${Math.floor(metadata.percent)} %`
         }))
-        const a = document.createElement('a')
-        a.href = URL.createObjectURL(blob)
-        a.download = zipFileName
-        a.click()
-        URL.revokeObjectURL(a.href)
+        saveFile(blob, zipFileName)
         document.querySelectorAll('.overlay.checked').forEach(element => {
             element.classList.remove('checked')
             element.classList.add('saved')
@@ -164,8 +163,9 @@ async function setDefaultShortcode(profileID = '51963237586') {
         console.log(error)
     }
 }
-function setDownloadState(state = 'ready', PHOTOS_CONTAINER) {
+function setDownloadState(state = 'ready') {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
+    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     function resetState() {
         DOWNLOAD_BUTTON.classList.remove('loading')
         DOWNLOAD_BUTTON.textContent = 'Download'
@@ -236,7 +236,7 @@ async function handleDownload() {
     switch (option) {
         case 'none': return
         case 'post':
-            setDownloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready')
             data = await downloadPostPhotos()
             if (!data) {
                 setDownloadState('fail')
@@ -245,7 +245,7 @@ async function handleDownload() {
             appLog.currentDisplay = 'post'
             break
         case 'stories':
-            setDownloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready')
             data = await downloadStoryPhotos(1)
             if (!data) {
                 setDownloadState('fail')
@@ -254,7 +254,7 @@ async function handleDownload() {
             appLog.currentDisplay = 'stories'
             break
         case 'highlights':
-            setDownloadState('ready', PHOTOS_CONTAINER)
+            setDownloadState('ready')
             data = await downloadStoryPhotos(2)
             if (!data) {
                 setDownloadState('fail')
@@ -292,7 +292,7 @@ async function handleDownload() {
         })
     })
     TITLE_CONTAINER.classList.remove('multi-select')
-    setDownloadState('success', PHOTOS_CONTAINER, option)
+    setDownloadState('success')
 }
 function initUI() {
     const manifestData = chrome.runtime.getManifest()
