@@ -227,16 +227,9 @@ async function handleDownload() {
         && totalItemChecked.length !== 0) {
         if (totalItemChecked.length === 1) {
             const media = totalItemChecked[0].previousElementSibling
-            if (media.nodeName === 'VIDEO') {
-                saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + '.mp4')
-            }
-            else {
-                saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + '.jpeg')
-            }
+            saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + `${media.nodeName === 'VIDEO' ? '.mp4' : '.jpeg'}`)
         }
-        else {
-            saveZip()
-        }
+        else saveZip()
         return
     }
     DISPLAY_CONTAINER.classList.remove('hide')
@@ -271,59 +264,32 @@ async function handleDownload() {
             break
     }
     data.media.forEach(item => {
-        if (item.isVideo === true) {
-            const date = new Date(data.date * 1000).toISOString().split('T')[0]
-            const ITEM_TEMPLATE =
-                `<div>
-                    <video></video>
-                    <div class="overlay"></div>
-                </div>`
-            const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
-            const video = itemDOM.querySelector('video')
-            const selectBox = itemDOM.querySelector('.overlay')
-            const videoAttributes = {
-                class: 'photos-items',
-                src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
-                controls: ''
-            }
-            Object.keys(videoAttributes).forEach(key => {
-                video.setAttribute(key, videoAttributes[key])
-            })
-            PHOTOS_CONTAINER.appendChild(itemDOM)
-            video.addEventListener('click', () => {
-                if (TITLE_CONTAINER.classList.contains('multi-select')) {
-                    selectBox.classList.toggle('checked')
-                }
-                else saveMedia(video, video.title.split(' | ').slice(1, 5).join('_') + '.mp4')
-            })
+        const date = new Date(data.date * 1000).toISOString().split('T')[0]
+        const attributes = {
+            class: 'photos-item',
+            src: item.url,
+            title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
+            controls: ''
         }
-        else {
-            const date = new Date(data.date * 1000).toISOString().split('T')[0]
-            const ITEM_TEMPLATE =
-                `<div>
-                    <img />
-                    <div class="overlay"></div>
-                </div>`
-            const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
-            const img = itemDOM.querySelector('img')
-            const selectBox = itemDOM.querySelector('.overlay')
-            const photoAttributes = {
-                class: 'photos-items',
-                src: item.url,
-                title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
+        const ITEM_TEMPLATE =
+            `<div>
+                ${item.isVideo ? '<video></video>' : '<img/>'}
+                <div class="overlay"></div>
+            </div>`
+        const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
+        const media = itemDOM.firstElementChild
+        const selectBox = itemDOM.querySelector('.overlay')
+        Object.keys(attributes).forEach(key => {
+            if (item.isVideo) media.setAttribute(key, attributes[key])
+            else if (key !== 'controls') media.setAttribute(key, attributes[key])
+        })
+        PHOTOS_CONTAINER.appendChild(itemDOM)
+        media.addEventListener('click', () => {
+            if (TITLE_CONTAINER.classList.contains('multi-select')) {
+                selectBox.classList.toggle('checked')
             }
-            Object.keys(photoAttributes).forEach(key => {
-                img.setAttribute(key, photoAttributes[key])
-            })
-            PHOTOS_CONTAINER.appendChild(itemDOM)
-            img.addEventListener('click', () => {
-                if (TITLE_CONTAINER.classList.contains('multi-select')) {
-                    selectBox.classList.toggle('checked')
-                }
-                else saveMedia(img, img.title.split(' | ').slice(1, 5).join('_') + '.jpeg')
-            })
-        }
+            else saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + `${item.isVideo ? '.mp4' : '.jpeg'}`)
+        })
     })
     TITLE_CONTAINER.classList.remove('multi-select')
     setDownloadState('success', PHOTOS_CONTAINER, option)

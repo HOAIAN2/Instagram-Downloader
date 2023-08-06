@@ -161,7 +161,7 @@
     border: 2px solid white;
 }
 
-.display-container>.photos-container>div>.photos-items {
+.display-container>.photos-container>div>.photos-item {
     position: relative;
     width: 100%;
     cursor: pointer;
