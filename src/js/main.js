@@ -29,7 +29,7 @@ const appLog = {
         const page = window.location.pathname.match(HIGHLIGHT_REGEX)
         if (page) this.current.highlights = page[3]
     },
-    setPrevious() {
+    setPreviousValues() {
         this.previous = { ...this.current }
     },
     getFieldChange() {
@@ -38,6 +38,12 @@ const appLog = {
         if (this.current.shortcode !== this.previous.shortcode) return 'post'
         return 'none'
     }
+}
+function resetDownloadState() {
+    const DOWNLOAD_BUTTON = document.querySelector('.download-button')
+    DOWNLOAD_BUTTON.classList.remove('loading')
+    DOWNLOAD_BUTTON.textContent = 'Download'
+    DOWNLOAD_BUTTON.disabled = false
 }
 function saveFile(blob, fileName) {
     const a = document.createElement('a')
@@ -66,11 +72,6 @@ async function saveZip() {
     const zip = new JSZip()
     const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling)
     const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip'
-    function resetState() {
-        DOWNLOAD_BUTTON.classList.remove('loading')
-        DOWNLOAD_BUTTON.textContent = 'Download'
-        DOWNLOAD_BUTTON.disabled = false
-    }
     async function fetchSelectedMedias() {
         const results = await Promise.allSettled(medias.map(async (media) => {
             const res = await fetch(media.src)
@@ -100,10 +101,10 @@ async function saveZip() {
             element.classList.remove('checked')
             element.classList.add('saved')
         })
-        resetState()
+        resetDownloadState()
     } catch (error) {
         console.log(error)
-        resetState()
+        resetDownloadState()
     }
 }
 function getAuthOptions() {
@@ -166,11 +167,6 @@ async function setDefaultShortcode(profileID = '51963237586') {
 function setDownloadState(state = 'ready') {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
-    function resetState() {
-        DOWNLOAD_BUTTON.classList.remove('loading')
-        DOWNLOAD_BUTTON.textContent = 'Download'
-        DOWNLOAD_BUTTON.disabled = false
-    }
     const options = {
         ready() {
             DOWNLOAD_BUTTON.classList.add('loading')
@@ -180,15 +176,15 @@ function setDownloadState(state = 'ready') {
                 item.remove()
             })
         },
-        fail() { resetState() },
+        fail() { resetDownloadState() },
         success() {
             DOWNLOAD_BUTTON.disabled = false
-            appLog.setPrevious()
+            appLog.setPreviousValues()
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
             let loadedPhotos = 0
             function countLoaded() {
                 loadedPhotos++
-                if (loadedPhotos === photosArray.length) resetState()
+                if (loadedPhotos === photosArray.length) resetDownloadState()
             }
             photosArray.forEach(media => {
                 if (media.tagName === 'IMG') {
