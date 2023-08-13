@@ -57,7 +57,7 @@ main(profileID)
 * Download: `D` `d`
 * Close: `esc` `C` `c`
 * Select all `S` `s`
-* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` (ex: comment, search, ...)
+* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` or any element with ```textbox``` role (ex: comment, search, ...)
 
 ## Here is Demo
 
