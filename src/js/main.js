@@ -281,7 +281,7 @@ function handleEvents() {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA']
     const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
-    const DOWNLOAD_EVENT_KEYS = ['D', 'd']
+    const DOWNLOAD_EVENT_KEYS = ['D']
     const SELECT_EVENT_KEYS = ['S', 's']
     DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
     function setTheme() {
