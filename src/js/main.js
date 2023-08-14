@@ -342,6 +342,7 @@ function handleEvents() {
         DISPLAY_CONTAINER.classList.add('hide')
     })
     window.addEventListener('keydown', (e) => {
+        if (window.location.pathname.startsWith('/direct')) return
         if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return
         if (e.target.role === 'textbox') return
         if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
@@ -377,7 +378,12 @@ function handleEvents() {
             media.src = media.src
         })
     })
+    navigation.addEventListener('navigate', (e) => {
+        if (e.destination.url.startsWith(BASE_URL + 'direct')) DOWNLOAD_BUTTON.classList.add('hide')
+        else DOWNLOAD_BUTTON.classList.remove('hide')
+    })
     setTheme()
+    if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
 function main(profileID = '51963237586') {
     document.querySelectorAll('.display-container, .download-button').forEach(node => {

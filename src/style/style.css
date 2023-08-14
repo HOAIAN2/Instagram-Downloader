@@ -196,6 +196,10 @@
     box-shadow: 0px 0px 3px var(--gray-violet);
 }
 
+.download-button.hide {
+    display: none;
+}
+
 /* Support bottom navigation */
 @media (max-width:767px) {
     .download-button {
