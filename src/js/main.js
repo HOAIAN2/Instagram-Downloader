@@ -378,10 +378,14 @@ function handleEvents() {
             media.src = media.src
         })
     })
-    navigation.addEventListener('navigate', (e) => {
-        if (e.destination.url.startsWith(BASE_URL + 'direct')) DOWNLOAD_BUTTON.classList.add('hide')
-        else DOWNLOAD_BUTTON.classList.remove('hide')
-    })
+    new PerformanceObserver(list => {
+        for (const entry of list.getEntries()) {
+            if (entry.name === 'https://www.instagram.com/ajax/navigation/') {
+                if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
+                else DOWNLOAD_BUTTON.classList.remove('hide')
+            }
+        }
+    }).observe({ entryTypes: ["resource"] })
     setTheme()
     if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
