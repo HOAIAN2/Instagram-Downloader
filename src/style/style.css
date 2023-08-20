@@ -32,6 +32,7 @@
     user-select: none;
     -webkit-user-select: none;
     transition: 0.5s ease;
+    transition-property: transform, transform-origin, opacity;
     z-index: 1000000;
 }
 
@@ -61,8 +62,6 @@
     color: black;
     position: absolute;
     padding: 5%;
-    transition: 0.5s ease;
-    transition-property: background-color, color;
     z-index: 10;
     cursor: pointer;
 }
