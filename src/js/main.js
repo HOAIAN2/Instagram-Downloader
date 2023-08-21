@@ -222,10 +222,7 @@ async function handleDownload() {
     if (option === 'none') return
     setDownloadState('ready')
     option === 'post' ? data = await downloadPostPhotos() : data = await downloadStoryPhotos(option)
-    if (!data) {
-        setDownloadState('fail')
-        return
-    }
+    if (!data) return setDownloadState('fail')
     appLog.currentDisplay = option
     data.media.forEach(item => {
         const date = new Date(data.date * 1000).toISOString().split('T')[0]
@@ -345,11 +342,10 @@ function handleEvents() {
         if (window.location.pathname.startsWith('/direct')) return
         if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return
         if (e.target.role === 'textbox') return
-        if (DOWNLOAD_EVENT_KEYS.includes(e.key)) DOWNLOAD_BUTTON.click()
-        if (ESC_EVENT_KEYS.includes(e.key)) ESC_BUTTON.click()
-        if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) {
-            TITLE_CONTAINER.classList.toggle('multi-select')
-        }
+        if (DOWNLOAD_EVENT_KEYS.includes(e.key)) return DOWNLOAD_BUTTON.click()
+        if (ESC_EVENT_KEYS.includes(e.key)) return ESC_BUTTON.click()
+        if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide'))
+            return TITLE_CONTAINER.classList.toggle('multi-select')
     })
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') {
@@ -393,7 +389,7 @@ function main(profileID = '51963237586') {
         node.remove()
     })
     initUI()
-    setDefaultShortcode(profileID)
+    if (!appLog.current.shortcode) setDefaultShortcode(profileID)
     handleEvents()
 }
 main()
