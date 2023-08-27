@@ -172,9 +172,7 @@ function setDownloadState(state = 'ready') {
             DOWNLOAD_BUTTON.classList.add('loading')
             DOWNLOAD_BUTTON.textContent = 'Loading...'
             DOWNLOAD_BUTTON.disabled = true
-            Array.from(PHOTOS_CONTAINER.children).forEach(item => {
-                item.remove()
-            })
+            PHOTOS_CONTAINER.replaceChildren()
         },
         fail() { resetDownloadState() },
         success() {
