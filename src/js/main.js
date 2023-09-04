@@ -5,40 +5,61 @@ const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
 const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
 const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
 
-const appLog = {
-    currentDisplay: '',
-    current: {
+const appState = Object.freeze((() => {
+    let currentDisplay = ''
+    const current = {
         shortcode: '',
         username: '',
         highlights: '',
-    },
-    previous: {
-        shortcode: '',
-        username: '',
-        highlights: '',
-    },
-    setCurrentShortcode() {
-        const page = window.location.pathname.match(POST_REGEX)
-        if (page) this.current.shortcode = page[2]
-    },
-    setCurrentUsername() {
-        const page = window.location.pathname.match(STORY_REGEX)
-        if (page && page[2] !== 'highlights') this.current.username = page[2]
-    },
-    setCurrentHightlightsID() {
-        const page = window.location.pathname.match(HIGHLIGHT_REGEX)
-        if (page) this.current.highlights = page[3]
-    },
-    setPreviousValues() {
-        this.previous = { ...this.current }
-    },
-    getFieldChange() {
-        if (this.current.highlights !== this.previous.highlights) return 'highlights'
-        if (this.current.username !== this.previous.username) return 'stories'
-        if (this.current.shortcode !== this.previous.shortcode) return 'post'
-        return 'none'
     }
-}
+    const previous = {
+        shortcode: '',
+        username: '',
+        highlights: '',
+    }
+    return {
+        get currentDisplay() { return currentDisplay },
+        set currentDisplay(value) { if (['post', 'stories', 'highlights'].includes(value)) currentDisplay = value },
+        current: {
+            get shortcode() { return current.shortcode },
+            set shortcode(value) {
+                current.shortcode = value
+                downloadPostPhotos().then(data => { renderMedias(data) })
+            },
+            get username() { return current.username },
+            set username(value) {
+                current.username = value
+                downloadStoryPhotos('stories').then(data => { renderMedias(data) })
+            },
+            get highlights() { return current.highlights },
+            set highlights(value) {
+                current.highlights = value
+                downloadStoryPhotos('highlights').then(data => { renderMedias(data) })
+            },
+        },
+        setCurrentShortcode() {
+            const page = window.location.pathname.match(POST_REGEX)
+            if (page) current.shortcode = page[2]
+        },
+        setCurrentUsername() {
+            const page = window.location.pathname.match(STORY_REGEX)
+            if (page && page[2] !== 'highlights') current.username = page[2]
+        },
+        setCurrentHightlightsID() {
+            const page = window.location.pathname.match(HIGHLIGHT_REGEX)
+            if (page) current.highlights = page[3]
+        },
+        setPreviousValues() {
+            Object.keys(current).forEach(key => { previous[key] = current[key] })
+        },
+        getFieldChange() {
+            if (current.highlights !== previous.highlights) return 'highlights'
+            if (current.username !== previous.username) return 'stories'
+            if (current.shortcode !== previous.shortcode) return 'post'
+            return 'none'
+        }
+    }
+})())
 function resetDownloadState() {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
     DOWNLOAD_BUTTON.classList.remove('loading')
@@ -128,9 +149,9 @@ function getAuthOptions() {
     return options
 }
 function shouldDownload() {
-    appLog.setCurrentShortcode()
-    appLog.setCurrentUsername()
-    appLog.setCurrentHightlightsID()
+    appState.setCurrentShortcode()
+    appState.setCurrentUsername()
+    appState.setCurrentHightlightsID()
     function getCurrentPage() {
         const currentPath = window.location.pathname
         if (currentPath.match(POST_REGEX)) return 'post'
@@ -141,10 +162,10 @@ function shouldDownload() {
         return 'none'
     }
     const currentPage = getCurrentPage()
-    const valueChange = appLog.getFieldChange()
+    const valueChange = appState.getFieldChange()
     if (['highlights', 'stories', 'post'].includes(currentPage)) {
         if (currentPage === valueChange) return valueChange
-        if (appLog.currentDisplay !== currentPage) return currentPage
+        if (appState.currentDisplay !== currentPage) return currentPage
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
@@ -159,7 +180,7 @@ async function setDefaultShortcode(profileID = '51963237586') {
     try {
         const respone = await fetch(apiURL.href)
         const json = await respone.json()
-        appLog.current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
+        appState.current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
     } catch (error) {
         console.log(error)
     }
@@ -177,7 +198,7 @@ function setDownloadState(state = 'ready') {
         fail() { resetDownloadState() },
         success() {
             DOWNLOAD_BUTTON.disabled = false
-            appLog.setPreviousValues()
+            appState.setPreviousValues()
             const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video')
             let loadedPhotos = 0
             function countLoaded() {
@@ -202,7 +223,6 @@ async function handleDownload() {
     let data = null
     const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
     const DISPLAY_CONTAINER = document.querySelector('.display-container')
-    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     const option = shouldDownload()
     const totalItemChecked = Array.from(document.querySelectorAll('.overlay.checked'))
     if (TITLE_CONTAINER.classList.contains('multi-select')
@@ -221,7 +241,13 @@ async function handleDownload() {
     setDownloadState('ready')
     option === 'post' ? data = await downloadPostPhotos() : data = await downloadStoryPhotos(option)
     if (!data) return setDownloadState('fail')
-    appLog.currentDisplay = option
+    appState.currentDisplay = option
+    renderMedias(data)
+}
+function renderMedias(data) {
+    const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
+    const PHOTOS_CONTAINER = document.querySelector('.photos-container')
+    PHOTOS_CONTAINER.replaceChildren()
     data.media.forEach(item => {
         const date = new Date(data.date * 1000).toISOString().split('T')[0]
         const attributes = {
@@ -387,7 +413,7 @@ function main(profileID = '51963237586') {
         node.remove()
     })
     initUI()
-    if (!appLog.current.shortcode) setDefaultShortcode(profileID)
+    if (!appState.current.shortcode) setDefaultShortcode(profileID)
     handleEvents()
 }
 main()

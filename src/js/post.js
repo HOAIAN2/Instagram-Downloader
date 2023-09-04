@@ -1,4 +1,4 @@
-function convertToPostID(shortcode) {
+function convertToPostId(shortcode) {
     let id = BigInt(0);
     const instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_'
     for (let i = 0; i < shortcode.length; i++) {
@@ -7,11 +7,11 @@ function convertToPostID(shortcode) {
     }
     return id.toString(10)
 }
-async function getPostIDFromAPI() {
+async function getPostIdFromAPI() {
     const apiURL = new URL('/graphql/query/', BASE_URL)
     apiURL.searchParams.set('query_hash', POST_HASH)
     apiURL.searchParams.set('variables', JSON.stringify({
-        shortcode: appLog.current.shortcode
+        shortcode: appState.current.shortcode
     }))
     try {
         const respone = await fetch(apiURL.href)
@@ -23,14 +23,14 @@ async function getPostIDFromAPI() {
     }
 }
 async function getPostPhotos(shortcode, options) {
-    const postID = convertToPostID(shortcode)
-    const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
+    const postId = convertToPostId(shortcode)
+    const apiURL = new URL(`/api/v1/media/${postId}/info/`, BASE_URL)
     try {
         let respone = await fetch(apiURL.href, options)
         if (respone.status === 400) {
-            const postID = await getPostIDFromAPI()
-            if (!postID) throw new Error('Network bug')
-            const apiURL = new URL(`/api/v1/media/${postID}/info/`, BASE_URL)
+            const postId = await getPostIdFromAPI()
+            if (!postId) throw new Error('Network bug')
+            const apiURL = new URL(`/api/v1/media/${postId}/info/`, BASE_URL)
             respone = await fetch(apiURL.href, options)
         }
         const json = await respone.json()
@@ -50,7 +50,7 @@ async function downloadPostPhotos() {
         },
         media: []
     }
-    const json = await getPostPhotos(appLog.current.shortcode, options)
+    const json = await getPostPhotos(appState.current.shortcode, options)
     if (!json) return null
     data.user.username = json.user['username']
     data.user.fullName = json.user['full_name']
