@@ -20,7 +20,7 @@ const appState = Object.freeze((() => {
     return {
         get currentDisplay() { return currentDisplay },
         set currentDisplay(value) { if (['post', 'stories', 'highlights'].includes(value)) currentDisplay = value },
-        current: {
+        current: Object.freeze({
             get shortcode() { return current.shortcode },
             set shortcode(value) {
                 current.shortcode = value
@@ -36,7 +36,7 @@ const appState = Object.freeze((() => {
                 current.highlights = value
                 downloadStoryPhotos('highlights').then(data => { renderMedias(data) })
             },
-        },
+        }),
         setCurrentShortcode() {
             const page = window.location.pathname.match(POST_REGEX)
             if (page) current.shortcode = page[2]
