@@ -288,12 +288,12 @@ function initUI() {
                 <span class="esc-button">&times</span>
             </div>
             <div class="photos-container"></div>
-        </div>`
-    const BUTTON = `<button class="download-button">Download</button>`
-    const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body.firstElementChild
-    const BUTTON_NODE = new DOMParser().parseFromString(BUTTON, 'text/html').body.firstElementChild
-    document.body.appendChild(DISPLAY_NODE)
-    document.body.appendChild(BUTTON_NODE)
+        </div>
+        <button class="download-button">Download</button>`
+    const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
+    const FRAGMENT = document.createDocumentFragment()
+    DISPLAY_NODE.childNodes.forEach(node => { FRAGMENT.append(node) })
+    document.body.appendChild(FRAGMENT)
 }
 function handleEvents() {
     const ESC_BUTTON = document.querySelector('.esc-button')
