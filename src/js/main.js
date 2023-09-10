@@ -57,6 +57,21 @@ const appState = Object.freeze((() => {
             if (current.username !== previous.username) return 'stories'
             if (current.shortcode !== previous.shortcode) return 'post'
             return 'none'
+        },
+        async setDefaultShortcode(profileID = '51963237586') {
+            const apiURL = new URL('/graphql/query/', BASE_URL)
+            apiURL.searchParams.set('query_hash', PROFILE_HASH)
+            apiURL.searchParams.set('variables', JSON.stringify({
+                id: profileID,
+                first: 1
+            }))
+            try {
+                const respone = await fetch(apiURL.href)
+                const json = await respone.json()
+                current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 })())
@@ -169,21 +184,6 @@ function shouldDownload() {
     }
     if (!document.querySelector('.photos-container').childElementCount) return 'post'
     return 'none'
-}
-async function setDefaultShortcode(profileID = '51963237586') {
-    const apiURL = new URL('/graphql/query/', BASE_URL)
-    apiURL.searchParams.set('query_hash', PROFILE_HASH)
-    apiURL.searchParams.set('variables', JSON.stringify({
-        id: profileID,
-        first: 1
-    }))
-    try {
-        const respone = await fetch(apiURL.href)
-        const json = await respone.json()
-        appState.current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode
-    } catch (error) {
-        console.log(error)
-    }
 }
 function setDownloadState(state = 'ready') {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button')
@@ -413,7 +413,7 @@ function main(profileID = '51963237586') {
         node.remove()
     })
     initUI()
-    if (!appState.current.shortcode) setDefaultShortcode(profileID)
+    if (!appState.current.shortcode) appState.setDefaultShortcode(profileID)
     handleEvents()
 }
 main()
