@@ -248,6 +248,7 @@ function renderMedias(data) {
     const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
     const PHOTOS_CONTAINER = document.querySelector('.photos-container')
     PHOTOS_CONTAINER.replaceChildren()
+    if (!data) return
     data.media.forEach(item => {
         const date = new Date(data.date * 1000).toISOString().split('T')[0]
         const attributes = {
