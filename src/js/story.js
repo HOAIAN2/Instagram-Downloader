@@ -10,33 +10,16 @@ async function getUserIdFromSearch() {
         return ''
     }
 }
-// async function getUserId(options) {
-//     const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
-//     apiURL.searchParams.set('username', appState.current.username)
-//     try {
-//         const respone = await fetch(apiURL.href, options)
-//         const json = await respone.json()
-//         return json.data.user['id']
-//     } catch (error) {
-//         console.log(error)
-//         return ''
-//     }
-// }
-// Explain: Story has many photo/video, each photo also count as a Post and had id
-// Instagram allow us to use Post API to get single photo and it load faster and also give back user id
 async function getUserId(options) {
+    const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
+    apiURL.searchParams.set('username', appState.current.username)
     try {
-        const page = window.location.pathname.match(STORY_REGEX)
-        if (page) {
-            const apiURL = new URL(`/api/v1/media/${page[3]}/info/`, BASE_URL)
-            const respone = await fetch(apiURL.href, options)
-            const json = await respone.json()
-            return json.items[0].user['pk_id']
-        }
-        else return await getUserIdFromSearch()
+        const respone = await fetch(apiURL.href, options)
+        const json = await respone.json()
+        return json.data.user['id']
     } catch (error) {
         console.log(error)
-        return null
+        return ''
     }
 }
 async function getStoryPhotos(userID, options) {
