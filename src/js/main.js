@@ -292,9 +292,7 @@ function initUI() {
         </div>
         <button class="download-button">Download</button>`
 	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
-	const FRAGMENT = document.createDocumentFragment()
-	DISPLAY_NODE.childNodes.forEach(node => { FRAGMENT.append(node) })
-	document.body.appendChild(FRAGMENT)
+	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
 }
 function handleEvents() {
 	const ESC_BUTTON = document.querySelector('.esc-button')
