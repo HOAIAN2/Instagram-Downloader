@@ -284,13 +284,13 @@ function initUI() {
 	const manifestData = chrome.runtime.getManifest()
 	const DISPLAY_CONTAINER =
 		`<div class="display-container hide">
-            <div class="title-container">
-                <span title="${manifestData.name} v${manifestData.version}">Photos</span>
-                <span class="esc-button">&times</span>
-            </div>
-            <div class="photos-container"></div>
-        </div>
-        <button class="download-button">Download</button>`
+			<div class="title-container">
+				<span title="${manifestData.name} v${manifestData.version}">Photos</span>
+				<span class="esc-button">&times</span>
+			</div>
+			<div class="photos-container"></div>
+		</div>
+		<button class="download-button">Download</button>`
 	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
 	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
 }
