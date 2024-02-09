@@ -259,9 +259,9 @@ function renderMedias(data) {
 		}
 		const ITEM_TEMPLATE =
 			`<div>
-                ${item.isVideo ? '<video></video>' : '<img/>'}
-                <div class="overlay"></div>
-            </div>`
+				${item.isVideo ? '<video></video>' : '<img/>'}
+				<div class="overlay"></div>
+			</div>`
 		const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
 		const media = itemDOM.firstElementChild
 		const selectBox = itemDOM.querySelector('.overlay')
