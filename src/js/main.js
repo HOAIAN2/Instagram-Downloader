@@ -24,17 +24,26 @@ const appState = Object.freeze((() => {
 			get shortcode() { return current.shortcode },
 			set shortcode(value) {
 				current.shortcode = value
-				downloadPostPhotos().then(data => { renderMedias(data) })
+				downloadPostPhotos().then(data => {
+					renderMedias(data)
+					currentDisplay = 'post'
+				})
 			},
 			get username() { return current.username },
 			set username(value) {
 				current.username = value
-				downloadStoryPhotos('stories').then(data => { renderMedias(data) })
+				downloadStoryPhotos('stories').then(data => {
+					renderMedias(data)
+					currentDisplay = 'stories'
+				})
 			},
 			get highlights() { return current.highlights },
 			set highlights(value) {
 				current.highlights = value
-				downloadStoryPhotos('highlights').then(data => { renderMedias(data) })
+				downloadStoryPhotos('highlights').then(data => {
+					renderMedias(data)
+					currentDisplay = 'hightlights'
+				})
 			},
 		}),
 		setCurrentShortcode() {
