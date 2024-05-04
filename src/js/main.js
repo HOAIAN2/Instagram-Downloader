@@ -406,13 +406,10 @@ function handleEvents() {
 			media.src = media.src
 		})
 	})
-	new PerformanceObserver(list => {
-		for (const entry of list.getEntries()) {
-			if (entry.name !== 'https://www.instagram.com/ajax/navigation/') continue
-			if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
-			else DOWNLOAD_BUTTON.classList.remove('hide')
-		}
-	}).observe({ entryTypes: ["resource"] })
+	window.addEventListener('pathChanged', () => {
+		if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
+		else DOWNLOAD_BUTTON.classList.remove('hide')
+	})
 	setTheme()
 	if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
