@@ -11,6 +11,7 @@ async function getUserIdFromSearch(username) {
 		return ''
 	}
 }
+
 async function getUserId(options, username) {
 	const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
 	if (username) apiURL.searchParams.set('username', username)
@@ -24,6 +25,7 @@ async function getUserId(options, username) {
 		return ''
 	}
 }
+
 async function getStoryPhotos(userID, options) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
 	apiURL.searchParams.set('reel_ids', userID)
@@ -36,6 +38,7 @@ async function getStoryPhotos(userID, options) {
 		return null
 	}
 }
+
 async function getHighlightStory(highlightsID, options) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
 	apiURL.searchParams.set('reel_ids', `highlight:${highlightsID}`)
@@ -48,6 +51,7 @@ async function getHighlightStory(highlightsID, options) {
 		return null
 	}
 }
+
 async function downloadStoryPhotos(type = 'stories') {
 	const options = getAuthOptions()
 	const data = {

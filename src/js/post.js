@@ -7,6 +7,7 @@ function convertToPostId(shortcode) {
 	}
 	return id.toString(10)
 }
+
 async function getPostIdFromAPI() {
 	const apiURL = new URL('/graphql/query/', BASE_URL)
 	apiURL.searchParams.set('query_hash', POST_HASH)
@@ -22,6 +23,7 @@ async function getPostIdFromAPI() {
 		return null
 	}
 }
+
 async function getPostPhotos(shortcode, options) {
 	const postId = convertToPostId(shortcode)
 	const apiURL = new URL(`/api/v1/media/${postId}/info/`, BASE_URL)
@@ -40,6 +42,7 @@ async function getPostPhotos(shortcode, options) {
 		return null
 	}
 }
+
 async function downloadPostPhotos() {
 	const options = getAuthOptions()
 	const data = {
