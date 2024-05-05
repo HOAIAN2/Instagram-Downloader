@@ -1,7 +1,7 @@
 {
 	"name": "Instagram Downloader",
 	"description": "Download Photos and Videos from Instagram Post, Reels, TV, Stories",
-	"version": "4.0.3",
+	"version": "4.5.0",
 	"manifest_version": 3,
 	"icons": {
 		"16": "icons/icon16.png",
@@ -25,10 +25,12 @@
 				"src/js/post.js",
 				"src/js/story.js",
 				"src/js/event.js",
+				"src/js/user-config.js",
 				"src/libs/jszip.min.js"
 			],
 			"css": [
-				"src/style/style.css"
+				"src/style/style.css",
+				"src/style/user-config.css"
 			]
 		}
 	]

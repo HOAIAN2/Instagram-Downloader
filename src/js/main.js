@@ -4,6 +4,7 @@ const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
 const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
 const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
+const ROUTES_CONFIG = []
 
 const appState = Object.freeze((() => {
 	let currentDisplay = ''
@@ -67,7 +68,7 @@ const appState = Object.freeze((() => {
 			if (current.shortcode !== previous.shortcode) return 'post'
 			return 'none'
 		},
-		async setDefaultShortcode(profileID = '51963237586') {
+		async setDefaultShortcode(profileID = '') {
 			const apiURL = new URL('/graphql/query/', BASE_URL)
 			apiURL.searchParams.set('query_hash', PROFILE_HASH)
 			apiURL.searchParams.set('variables', JSON.stringify({
@@ -410,15 +411,25 @@ function handleEvents() {
 		if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 		else DOWNLOAD_BUTTON.classList.remove('hide')
 	})
+	window.addEventListener('pathChanged', (e) => {
+		console.log(ROUTES_CONFIG.some(regex => {
+			if (e.detail.currentPath.match(regex)) {
+				console.log(regex)
+				console.log(e.detail.currentPath)
+				return true
+			}
+		}))
+	})
 	setTheme()
 	if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
-function main(profileID = '51963237586') {
+function main() {
+	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	document.querySelectorAll('.display-container, .download-button').forEach(node => {
 		node.remove()
 	})
 	initUI()
-	if (!appState.current.shortcode) appState.setDefaultShortcode(profileID)
+	if (!appState.current.shortcode) appState.setDefaultShortcode(defaultDownloadUser.id)
 	handleEvents()
 }
 main()
