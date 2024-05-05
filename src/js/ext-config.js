@@ -13,9 +13,10 @@ async function setDefaultDownloadUser(username = '') {
 	}
 }
 function showExtensionConfig() {
+	const isDarkMode = document.documentElement.classList.contains('_aa4d')
 	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	const DISPLAY_CONTAINER =
-		`<div class="ext-config-container">
+		`<div class="ext-config-container ${isDarkMode ? 'dark' : ''}">
 			<div class="title">
 				<span>Config</span>
 				<span class="esc">&times</span>
