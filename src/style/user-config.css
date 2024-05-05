@@ -1,0 +1,48 @@
+.default-download-user-container {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	/* background: white;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px rgb(210, 217, 228); */
+}
+
+.default-download-user-container>.data-container {
+	padding: 20px;
+	width: calc(80vh /5*3);
+	height: 80px;
+	background: white;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px rgb(210, 217, 228);
+}
+
+.default-download-user-container>.data-container>.esc {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	font-size: min(24px, 3.5vh);
+	cursor: pointer;
+}
+
+.default-download-user-container>.data-container>input {
+	padding-left: 10px;
+	background: rgb(239, 239, 239);
+	border: none;
+	outline: none;
+	height: 100%;
+	width: calc(100% - 50px - 5px);
+	border-radius: 5px;
+}
+
+.default-download-user-container>.data-container>button {
+	background-color: var(--violet);
+	box-shadow: 0px 0px 3px var(--violet);
+	color: white;
+	border: none;
+	outline: none;
+	width: 50px;
+	height: 100%;
+	border-radius: 5px;
+	cursor: pointer;
+}

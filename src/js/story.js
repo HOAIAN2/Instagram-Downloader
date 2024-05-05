@@ -1,6 +1,7 @@
-async function getUserIdFromSearch() {
+async function getUserIdFromSearch(username) {
 	const apiURL = new URL('/web/search/topsearch/', BASE_URL)
-	apiURL.searchParams.set('query', appState.current.username)
+	if (username) apiURL.searchParams.set('query', username)
+	else apiURL.searchParams.set('query', appState.current.username)
 	try {
 		const respone = await fetch(apiURL.href)
 		const json = await respone.json()
@@ -10,9 +11,10 @@ async function getUserIdFromSearch() {
 		return ''
 	}
 }
-async function getUserId(options) {
+async function getUserId(options, username) {
 	const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
-	apiURL.searchParams.set('username', appState.current.username)
+	if (username) apiURL.searchParams.set('username', username)
+	else apiURL.searchParams.set('username', appState.current.username)
 	try {
 		const respone = await fetch(apiURL.href, options)
 		const json = await respone.json()
