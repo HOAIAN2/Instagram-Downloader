@@ -429,15 +429,6 @@ function handleEvents() {
 		if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 		else DOWNLOAD_BUTTON.classList.remove('hide')
 	})
-	window.addEventListener('pathChanged', (e) => {
-		console.log(ROUTES_CONFIG.some(regex => {
-			if (e.detail.currentPath.match(regex)) {
-				console.log(regex)
-				console.log(e.detail.currentPath)
-				return true
-			}
-		}))
-	})
 	setTheme()
 	if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
