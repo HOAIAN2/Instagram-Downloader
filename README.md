@@ -35,11 +35,11 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 ## Customize
 
-* There's no shortcode to download any post when you first load, so I prefer you put one user id in ```main()``` function. So when you go to Instagram, it will set default shortcode as latest post from that user (I set default user id is Tzuyu).
+Set default username, so extension can download their latest post when app first load.
 
-```js
-main(profileID)
-```
+1. Hold the download button
+2. Change username in textbox
+3. Save and close.
 
 * Edit Hide / Show Transition effects
 
