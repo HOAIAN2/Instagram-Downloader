@@ -8,6 +8,18 @@
 	box-shadow: 0px 0px 10px rgb(210, 217, 228);
 }
 
+.ext-config-container.dark {
+	background: black;
+}
+
+.ext-config-container.dark>* {
+	color: white;
+}
+
+.ext-config-container.dark>form>div>input {
+	background: rgb(38, 38, 38);
+}
+
 .ext-config-container>.title {
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	font-weight: bold;

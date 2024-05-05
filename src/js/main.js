@@ -346,10 +346,12 @@ function handleEvents() {
 		if (isDarkMode) {
 			DISPLAY_CONTAINER.classList.add('dark')
 			DISPLAY_CONTAINER.firstElementChild.classList.add('dark')
+			document.querySelector('.ext-config-container')?.classList.add('dark')
 		}
 		else {
 			DISPLAY_CONTAINER.classList.remove('dark')
 			DISPLAY_CONTAINER.firstElementChild.classList.remove('dark')
+			document.querySelector('.ext-config-container')?.classList.remove('dark')
 		}
 	}
 	function pauseVideo() {
