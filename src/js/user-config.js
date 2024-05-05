@@ -28,13 +28,18 @@ function showDefaultDownloadUser() {
 	const container = document.querySelector('.default-download-user-container')
 	container.addEventListener('click', e => {
 		if (e.target.classList.contains('esc')) container.remove()
-
 		if (e.target.nodeName === 'BUTTON') {
 			const username = document.querySelector('.data-container>input').value
+			const saveButton = document.querySelector('.data-container>button')
+			const interval = setInterval(() => {
+				if (saveButton.textContent.length <= 3) saveButton.textContent += '.'
+			}, 200)
 			setDefaultDownloadUser(username)
 				.then(() => {
-					console.log('Done')
+					saveButton.textContent = 'Saved'
+					clearInterval(interval)
 				})
+			saveButton.textContent = '.'
 		}
 	})
 }
