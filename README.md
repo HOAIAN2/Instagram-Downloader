@@ -35,13 +35,15 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 ## Customize
 
+## Config default download
+
 Set default username, so extension can download their latest post when app first load.
 
 1. Hold the download button
 2. Change username in textbox
 3. Save and close.
 
-* Edit Hide / Show Transition effects
+### Edit Hide / Show Transition effects
 
 ```css
 .display-container.hide {
