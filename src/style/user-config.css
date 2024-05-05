@@ -36,6 +36,8 @@
 }
 
 .default-download-user-container>.data-container>button {
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-weight: bold;
 	background-color: var(--violet);
 	box-shadow: 0px 0px 3px var(--violet);
 	color: white;
