@@ -21,7 +21,7 @@
 				"https://www.instagram.com/*"
 			],
 			"js": [
-				"src/js/user-config.js",
+				"src/js/ext-config.js",
 				"src/js/main.js",
 				"src/js/post.js",
 				"src/js/story.js",
@@ -30,7 +30,7 @@
 			],
 			"css": [
 				"src/style/style.css",
-				"src/style/user-config.css"
+				"src/style/ext-config.css"
 			]
 		}
 	]

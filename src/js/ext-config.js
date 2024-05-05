@@ -15,7 +15,7 @@ async function setDefaultDownloadUser(username = '') {
 function showExtensionConfig() {
 	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	const DISPLAY_CONTAINER =
-		`<div class="default-download-user-container">
+		`<div class="ext-config-container">
 			<div class="title">
 				<span>Config</span>
 				<span class="esc">&times</span>
@@ -31,7 +31,7 @@ function showExtensionConfig() {
 	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
 	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
 
-	const container = document.querySelector('.default-download-user-container')
+	const container = document.querySelector('.ext-config-container')
 	document.querySelector('form.data-container').addEventListener('submit', e => {
 		e.preventDefault()
 		const saveButton = document.querySelector('button.save-button')
