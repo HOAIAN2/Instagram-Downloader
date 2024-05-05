@@ -85,12 +85,14 @@ const appState = Object.freeze((() => {
 		}
 	}
 })())
+
 function resetDownloadState() {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button')
 	DOWNLOAD_BUTTON.classList.remove('loading')
 	DOWNLOAD_BUTTON.textContent = 'Download'
 	DOWNLOAD_BUTTON.disabled = false
 }
+
 function saveFile(blob, fileName) {
 	const a = document.createElement('a')
 	a.download = fileName
@@ -98,6 +100,7 @@ function saveFile(blob, fileName) {
 	a.click()
 	URL.revokeObjectURL(a.href)
 }
+
 async function saveMedia(media, fileName) {
 	try {
 		const respone = await fetch(media.src)
@@ -109,6 +112,7 @@ async function saveMedia(media, fileName) {
 		console.log(error)
 	}
 }
+
 async function saveZip() {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button')
 	DOWNLOAD_BUTTON.classList.add('loading')
@@ -153,6 +157,7 @@ async function saveZip() {
 		resetDownloadState()
 	}
 }
+
 function getAuthOptions() {
 	const csrftoken = document.cookie.split(' ')[2].split('=')[1]
 	const claim = sessionStorage.getItem('www-claim-v2')
@@ -173,6 +178,7 @@ function getAuthOptions() {
 	}
 	return options
 }
+
 function shouldDownload() {
 	appState.setCurrentShortcode()
 	appState.setCurrentUsername()
@@ -195,6 +201,7 @@ function shouldDownload() {
 	if (!document.querySelector('.photos-container').childElementCount) return 'post'
 	return 'none'
 }
+
 function setDownloadState(state = 'ready') {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button')
 	const PHOTOS_CONTAINER = document.querySelector('.photos-container')
@@ -229,6 +236,7 @@ function setDownloadState(state = 'ready') {
 	}
 	options[state]()
 }
+
 async function handleDownload() {
 	let data = null
 	const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
@@ -254,6 +262,7 @@ async function handleDownload() {
 	appState.currentDisplay = option
 	renderMedias(data)
 }
+
 function renderMedias(data) {
 	const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
 	const PHOTOS_CONTAINER = document.querySelector('.photos-container')
@@ -290,6 +299,7 @@ function renderMedias(data) {
 	TITLE_CONTAINER.classList.remove('multi-select')
 	setDownloadState('success')
 }
+
 function initUI() {
 	const manifestData = chrome.runtime.getManifest()
 	const DISPLAY_CONTAINER =
@@ -304,6 +314,24 @@ function initUI() {
 	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
 	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
 }
+
+function handleLongClick(element, shortClickHandler = () => { }, longClickHandler = () => { }, delay = 400) {
+	element.addEventListener('mousedown', () => {
+		let count = 0
+		const intervalID = setInterval(() => {
+			count = count + 10
+			if (count >= delay) {
+				clearInterval(intervalID)
+				longClickHandler()
+			}
+		}, 10)
+		element.addEventListener('mouseup', () => {
+			clearInterval(intervalID)
+			if (count < delay) shortClickHandler()
+		}, { once: true })
+	})
+}
+
 function handleEvents() {
 	const ESC_BUTTON = document.querySelector('.esc-button')
 	const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild
@@ -313,7 +341,6 @@ function handleEvents() {
 	const ESC_EVENT_KEYS = ['Escape', 'C', 'c']
 	const DOWNLOAD_EVENT_KEYS = ['D']
 	const SELECT_EVENT_KEYS = ['S', 's']
-	DOWNLOAD_BUTTON.addEventListener('click', handleDownload)
 	function setTheme() {
 		const isDarkMode = document.documentElement.classList.contains('_aa4d')
 		if (isDarkMode) {
@@ -387,21 +414,10 @@ function handleEvents() {
 			})
 		}
 	})
-	TITLE_CONTAINER.addEventListener('mousedown', () => {
-		let count = 0
-		const MAX_COUNT = 400
-		const intervalID = setInterval(() => {
-			count = count + 10
-			if (count >= MAX_COUNT) {
-				clearInterval(intervalID)
-				handleSelectAll()
-			}
-		}, 10)
-		TITLE_CONTAINER.addEventListener('mouseup', () => {
-			clearInterval(intervalID)
-			if (count < MAX_COUNT) TITLE_CONTAINER.classList.toggle('multi-select')
-		}, { once: true })
-	})
+	handleLongClick(TITLE_CONTAINER, () => {
+		TITLE_CONTAINER.classList.toggle('multi-select')
+	}, handleSelectAll)
+	handleLongClick(DOWNLOAD_BUTTON, handleDownload, showDefaultDownloadUser)
 	window.addEventListener('online', () => {
 		DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
 			media.src = media.src
@@ -423,6 +439,7 @@ function handleEvents() {
 	setTheme()
 	if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide')
 }
+
 function main() {
 	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	document.querySelectorAll('.display-container, .download-button').forEach(node => {
