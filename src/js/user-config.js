@@ -12,35 +12,44 @@ async function setDefaultDownloadUser(username = '') {
 		console.log(error)
 	}
 }
-function showDefaultDownloadUser() {
+function showExtensionConfig() {
 	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	const DISPLAY_CONTAINER =
 		`<div class="default-download-user-container">
-			<div class="data-container">
+			<div class="title">
+				<span>Config</span>
 				<span class="esc">&times</span>
-				<input value="${defaultDownloadUser.username}"/>
-				<button>Save</button>
 			</div>
+			<form class="data-container">
+				<div class="group-input">
+					<label>Default download latest post from (username)</label>
+					<input name="default_download_username" class="input-item" value="${defaultDownloadUser.username}"/>
+				</div>
+				<button class="save-button">Save</button>
+			</form>
 		</div>`
 	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
 	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
 
 	const container = document.querySelector('.default-download-user-container')
-	container.addEventListener('click', e => {
-		if (e.target.classList.contains('esc')) container.remove()
-		if (e.target.nodeName === 'BUTTON') {
-			const username = document.querySelector('.data-container>input').value
-			const saveButton = document.querySelector('.data-container>button')
-			const interval = setInterval(() => {
-				if (saveButton.textContent.length <= 3) saveButton.textContent += '.'
-				else saveButton.textContent = '.'
-			}, 200)
-			setDefaultDownloadUser(username)
-				.then(() => {
-					saveButton.textContent = 'Saved'
-					clearInterval(interval)
-				})
-			saveButton.textContent = '.'
-		}
+	document.querySelector('form.data-container').addEventListener('submit', e => {
+		e.preventDefault()
+		const saveButton = document.querySelector('button.save-button')
+		const formData = new FormData(e.target)
+		const interval = setInterval(() => {
+			if (saveButton.textContent.length <= 3) saveButton.textContent += '.'
+			else saveButton.textContent = '.'
+		}, 200)
+		setDefaultDownloadUser(formData.get('default_download_username'))
+			.then(() => {
+				saveButton.textContent = 'Saved'
+				clearInterval(interval)
+				const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
+				if (!appState.currentDisplay) appState.setDefaultShortcode(defaultDownloadUser.id)
+			})
+		saveButton.textContent = '.'
+	})
+	document.querySelector('span.esc').addEventListener('click', () => {
+		container.remove()
 	})
 }

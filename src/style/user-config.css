@@ -3,39 +3,48 @@
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
-	/* background: white;
-	border-radius: 10px;
-	box-shadow: 0px 0px 10px rgb(210, 217, 228); */
-}
-
-.default-download-user-container>.data-container {
-	padding: 20px;
-	width: calc(80vh /5*3);
-	height: 80px;
 	background: white;
 	border-radius: 10px;
 	box-shadow: 0px 0px 10px rgb(210, 217, 228);
 }
 
-.default-download-user-container>.data-container>.esc {
-	position: absolute;
-	right: 3px;
-	top: 3px;
+.default-download-user-container>.title {
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-weight: bold;
+	padding: 20px 20px 0px 20px;
 	font-size: min(24px, 3.5vh);
+	display: flex;
+	justify-content: space-between
+}
+
+.default-download-user-container>.data-container {
+	padding: 20px;
+	width: calc(80vh /5*3);
+	height: fit-content;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.esc {
 	cursor: pointer;
 }
 
-.default-download-user-container>.data-container>input {
+.group-input {
+	height: fit-content;
+}
+
+.input-item {
 	padding-left: 10px;
 	background: rgb(239, 239, 239);
 	border: none;
 	outline: none;
-	height: 100%;
-	width: calc(100% - 50px - 5px);
+	height: 40px;
+	width: 100%;
 	border-radius: 5px;
 }
 
-.default-download-user-container>.data-container>button {
+.save-button {
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	font-weight: bold;
 	background-color: var(--violet);
@@ -43,8 +52,8 @@
 	color: white;
 	border: none;
 	outline: none;
-	width: 50px;
-	height: 100%;
+	width: 100%;
+	height: 40px;
 	border-radius: 5px;
 	cursor: pointer;
 }
