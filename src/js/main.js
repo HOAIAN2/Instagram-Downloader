@@ -417,7 +417,7 @@ function handleEvents() {
 	handleLongClick(TITLE_CONTAINER, () => {
 		TITLE_CONTAINER.classList.toggle('multi-select')
 	}, handleSelectAll)
-	handleLongClick(DOWNLOAD_BUTTON, handleDownload, showDefaultDownloadUser)
+	handleLongClick(DOWNLOAD_BUTTON, handleDownload, showExtensionConfig)
 	window.addEventListener('online', () => {
 		DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
 			media.src = media.src
