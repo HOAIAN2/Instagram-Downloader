@@ -33,6 +33,7 @@ function showDefaultDownloadUser() {
 			const saveButton = document.querySelector('.data-container>button')
 			const interval = setInterval(() => {
 				if (saveButton.textContent.length <= 3) saveButton.textContent += '.'
+				else saveButton.textContent = '.'
 			}, 200)
 			setDefaultDownloadUser(username)
 				.then(() => {
