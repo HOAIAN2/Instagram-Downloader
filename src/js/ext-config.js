@@ -1,12 +1,16 @@
 async function setDefaultDownloadUser(username = '') {
 	try {
+		if (!username) {
+			DEFAULT_DOWNLOAD_USER.username = ''
+			DEFAULT_DOWNLOAD_USER.id = ''
+			DEFAULT_DOWNLOAD_USER.save()
+			return
+		}
 		const userId = await getUserId(getAuthOptions(), username)
 		if (userId) {
-			const data = {
-				username: username,
-				id: userId
-			}
-			localStorage.setItem('_default_download_user', JSON.stringify(data))
+			DEFAULT_DOWNLOAD_USER.username = username
+			DEFAULT_DOWNLOAD_USER.id = userId
+			DEFAULT_DOWNLOAD_USER.save()
 		}
 	} catch (error) {
 		console.log(error)
@@ -14,7 +18,6 @@ async function setDefaultDownloadUser(username = '') {
 }
 function showExtensionConfig() {
 	const isDarkMode = document.documentElement.classList.contains('_aa4d')
-	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
 	const DISPLAY_CONTAINER =
 		`<div class="ext-config-container ${isDarkMode ? 'dark' : ''}">
 			<div class="title">
@@ -24,7 +27,11 @@ function showExtensionConfig() {
 			<form class="data-container">
 				<div class="group-input">
 					<label>Default download latest post from (username)</label>
-					<input name="default_download_username" class="input-item" value="${defaultDownloadUser.username}"/>
+					<input
+						placeholder="Keep blank to get yourself"
+						name="default_download_username"
+						class="input-item"
+						value="${DEFAULT_DOWNLOAD_USER.username}"/>
 				</div>
 				<button class="save-button">Save</button>
 			</form>
@@ -45,8 +52,7 @@ function showExtensionConfig() {
 			.then(() => {
 				saveButton.textContent = 'Saved'
 				clearInterval(interval)
-				const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
-				if (!appState.currentDisplay) appState.setDefaultShortcode(defaultDownloadUser.id)
+				if (!appState.currentDisplay) appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id)
 			})
 		saveButton.textContent = '.'
 	})
