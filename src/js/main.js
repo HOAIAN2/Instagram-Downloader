@@ -4,7 +4,24 @@ const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
 const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
 const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
-
+const APP_KEYS = Object.freeze({
+	_DEFAULT_DOWNLOAD_USER: '_DEFAULT_DOWNLOAD_USER',
+})
+const DEFAULT_DOWNLOAD_USER = {
+	username: '',
+	id: '',
+	load: () => {
+		const data = JSON.parse(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER))
+		if (data && data.id && data.username) {
+			DEFAULT_DOWNLOAD_USER.username = data.username
+			DEFAULT_DOWNLOAD_USER.id = data.id
+		}
+		else DEFAULT_DOWNLOAD_USER.save()
+	},
+	save: () => {
+		localStorage.setItem(APP_KEYS._DEFAULT_DOWNLOAD_USER, JSON.stringify(DEFAULT_DOWNLOAD_USER))
+	}
+}
 const appState = Object.freeze((() => {
 	let currentDisplay = ''
 	const current = {
@@ -433,12 +450,12 @@ function handleEvents() {
 }
 
 function main() {
-	const defaultDownloadUser = JSON.parse(localStorage.getItem('_default_download_user'))
+	DEFAULT_DOWNLOAD_USER.load()
 	document.querySelectorAll('.display-container, .download-button').forEach(node => {
 		node.remove()
 	})
 	initUI()
-	if (!appState.current.shortcode) appState.setDefaultShortcode(defaultDownloadUser.id)
+	if (!appState.current.shortcode) appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id)
 	handleEvents()
 }
 main()
