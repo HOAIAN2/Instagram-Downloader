@@ -4,7 +4,6 @@ const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
 const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
 const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
 const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
-const ROUTES_CONFIG = []
 
 const appState = Object.freeze((() => {
 	let currentDisplay = ''
