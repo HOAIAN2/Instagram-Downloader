@@ -20,14 +20,15 @@ function getAuthOptions() {
 	const claim = sessionStorage.getItem('www-claim-v2')
 	const options = {
 		headers: {
-			'x-asbd-id': '129477',
+			// Hardcode variable: a="129477";f.ASBD_ID=a in JS, can be remove
+			// 'x-asbd-id': '129477',
 			'x-csrftoken': csrftoken,
 			'x-ig-app-id': APP_ID,
 			'x-ig-www-claim': claim,
-			'x-instagram-ajax': '1006598911',
+			// 'x-instagram-ajax': '1006598911',
 			'x-requested-with': 'XMLHttpRequest'
 		},
-		referrer: 'https://www.instagram.com',
+		referrer: window.location.href,
 		referrerPolicy: 'strict-origin-when-cross-origin',
 		method: 'GET',
 		mode: 'cors',
