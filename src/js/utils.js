@@ -37,11 +37,11 @@ function getAuthOptions() {
 	return options
 }
 
-function findKeyInNestedObject(obj, key) {
+function findValueByKey(obj, key) {
 	if (typeof obj !== 'object' || obj === null) return null
 	if (Array.isArray(obj)) {
 		for (const element of obj) {
-			const result = findKeyInNestedObject(element, key)
+			const result = findValueByKey(element, key)
 			if (result !== null) return result
 		}
 		return null
@@ -49,7 +49,7 @@ function findKeyInNestedObject(obj, key) {
 	if (obj.hasOwnProperty(key)) return obj[key]
 	for (const prop in obj) {
 		if (obj.hasOwnProperty(prop)) {
-			const result = findKeyInNestedObject(obj[prop], key)
+			const result = findValueByKey(obj[prop], key)
 			if (result !== null) return result
 		}
 	}
