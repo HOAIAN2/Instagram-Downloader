@@ -7,10 +7,13 @@ const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
 const APP_KEYS = Object.freeze({
 	_DEFAULT_DOWNLOAD_USER: '_DEFAULT_DOWNLOAD_USER',
 })
-const APP_ID = findKeyInNestedObject(JSON.parse(Array.from(document
-	.querySelectorAll('script[type="application/json"]'))
-	.find(item => item.innerText?.includes('X-IG-App-ID')).innerText),
-	'X-IG-App-ID')
+const APP_ID = (() => {
+	const jsons = Array.from(document.querySelectorAll('script[type="application/json"]'))
+		.find(item => item.innerText?.includes('X-IG-App-ID'))
+		?.innerText
+	const jsonData = isValidJson(jsons) ? JSON.parse(jsons) : null
+	return jsonData ? findValueByKey(JSON.parse(jsons), 'X-IG-App-ID') : '936619743392459'
+})()
 const DEFAULT_DOWNLOAD_USER = Object.freeze((() => {
 	const data = {
 		username: '',
