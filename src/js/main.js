@@ -7,21 +7,37 @@ const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
 const APP_KEYS = Object.freeze({
 	_DEFAULT_DOWNLOAD_USER: '_DEFAULT_DOWNLOAD_USER',
 })
-const DEFAULT_DOWNLOAD_USER = {
-	username: '',
-	id: '',
-	load: () => {
-		const data = JSON.parse(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER))
-		if (data && data.id && data.username) {
-			DEFAULT_DOWNLOAD_USER.username = data.username
-			DEFAULT_DOWNLOAD_USER.id = data.id
-		}
-		else DEFAULT_DOWNLOAD_USER.save()
-	},
-	save: () => {
-		localStorage.setItem(APP_KEYS._DEFAULT_DOWNLOAD_USER, JSON.stringify(DEFAULT_DOWNLOAD_USER))
+const APP_ID = findKeyInNestedObject(JSON.parse(Array.from(document
+	.querySelectorAll('script[type="application/json"]'))
+	.find(item => item.innerText?.includes('X-IG-App-ID')).innerText),
+	'X-IG-App-ID')
+const DEFAULT_DOWNLOAD_USER = Object.freeze((() => {
+	const data = {
+		username: '',
+		id: '',
 	}
-}
+	const load = () => {
+		const localStorageData = isValidJson(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER)) ?
+			JSON.parse(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER)) : null
+		if (localStorageData && localStorageData.id && localStorageData.username) {
+			data.username = localStorageData.username
+			data.id = localStorageData.id
+		}
+		else save()
+	}
+	const save = () => {
+		localStorage.setItem(APP_KEYS._DEFAULT_DOWNLOAD_USER, JSON.stringify(data))
+	}
+	return {
+		get username() { return data.username },
+		set username(value) { data.username = value },
+		get id() { return data.id },
+		set id(value) { data.id = value },
+		load: load,
+		save: save
+	}
+})())
+
 const appState = Object.freeze((() => {
 	let currentDisplay = ''
 	const current = {
@@ -109,14 +125,6 @@ function resetDownloadState() {
 	DOWNLOAD_BUTTON.disabled = false
 }
 
-function saveFile(blob, fileName) {
-	const a = document.createElement('a')
-	a.download = fileName
-	a.href = URL.createObjectURL(blob)
-	a.click()
-	URL.revokeObjectURL(a.href)
-}
-
 async function saveMedia(media, fileName) {
 	try {
 		const respone = await fetch(media.src)
@@ -172,27 +180,6 @@ async function saveZip() {
 		console.log(error)
 		resetDownloadState()
 	}
-}
-
-function getAuthOptions() {
-	const csrftoken = document.cookie.split(' ')[2].split('=')[1]
-	const claim = sessionStorage.getItem('www-claim-v2')
-	const options = {
-		headers: {
-			'x-asbd-id': '198387',
-			'x-csrftoken': csrftoken,
-			'x-ig-app-id': '936619743392459',
-			'x-ig-www-claim': claim,
-			'x-instagram-ajax': '1006598911',
-			'x-requested-with': 'XMLHttpRequest'
-		},
-		referrer: 'https://www.instagram.com',
-		referrerPolicy: 'strict-origin-when-cross-origin',
-		method: 'GET',
-		mode: 'cors',
-		credentials: 'include'
-	}
-	return options
 }
 
 function shouldDownload() {
