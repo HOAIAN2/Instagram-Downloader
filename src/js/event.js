@@ -18,11 +18,3 @@
 		attributes: true, childList: true, subtree: true
 	})
 }
-
-// const observer = new PerformanceObserver((list, obj) => {
-// 	list.getEntries().forEach((entry) => {
-// 		console.log(entry)
-// 	});
-// });
-// observer.observe({ type: "resource", buffered: true });
-// polaris.profilePage
