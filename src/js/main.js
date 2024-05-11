@@ -306,21 +306,6 @@ function renderMedias(data) {
 	setDownloadState('success')
 }
 
-function initUI() {
-	const manifestData = chrome.runtime.getManifest()
-	const DISPLAY_CONTAINER =
-		`<div class="display-container hide">
-			<div class="title-container">
-				<span title="${manifestData.name} v${manifestData.version}">Photos</span>
-				<span class="esc-button">&times</span>
-			</div>
-			<div class="photos-container"></div>
-		</div>
-		<button class="download-button">Download</button>`
-	const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
-	DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
-}
-
 function handleLongClick(element, shortClickHandler = () => { }, longClickHandler = () => { }, delay = 400) {
 	element.addEventListener('mousedown', () => {
 		let count = 0
@@ -410,10 +395,16 @@ function handleEvents() {
 		if (window.location.pathname.startsWith('/direct')) return
 		if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return
 		if (e.target.role === 'textbox') return
-		if (DOWNLOAD_EVENT_KEYS.includes(e.key)) return DOWNLOAD_BUTTON.click()
-		if (ESC_EVENT_KEYS.includes(e.key)) return ESC_BUTTON.click()
-		if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide'))
+		if (DOWNLOAD_EVENT_KEYS.includes(e.key)) {
+			DOWNLOAD_BUTTON.dispatchEvent(new Event('mousedown'))
+			return DOWNLOAD_BUTTON.dispatchEvent(new Event('mouseup'))
+		}
+		if (ESC_EVENT_KEYS.includes(e.key)) {
+			return ESC_BUTTON.click()
+		}
+		if (SELECT_EVENT_KEYS.includes(e.key) && !DISPLAY_CONTAINER.classList.contains('hide')) {
 			return TITLE_CONTAINER.classList.toggle('multi-select')
+		}
 	})
 	document.addEventListener('visibilitychange', () => {
 		if (document.visibilityState === 'hidden') {
@@ -440,6 +431,20 @@ function handleEvents() {
 }
 
 function main() {
+	function initUI() {
+		const manifestData = chrome.runtime.getManifest()
+		const DISPLAY_CONTAINER =
+			`<div class="display-container hide">
+			<div class="title-container">
+				<span title="${manifestData.name} v${manifestData.version}">Photos</span>
+				<span class="esc-button">&times</span>
+			</div>
+			<div class="photos-container"></div>
+		</div>
+		<button class="download-button">Download</button>`
+		const DISPLAY_NODE = new DOMParser().parseFromString(DISPLAY_CONTAINER, 'text/html').body
+		DISPLAY_NODE.childNodes.forEach(node => { document.body.appendChild(node) })
+	}
 	DEFAULT_DOWNLOAD_USER.load()
 	document.querySelectorAll('.display-container, .download-button').forEach(node => {
 		node.remove()
