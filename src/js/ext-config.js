@@ -17,6 +17,7 @@ async function setDefaultDownloadUser(username = '') {
 	}
 }
 function showExtensionConfig() {
+	document.querySelector('.ext-config-container')?.remove()
 	const isDarkMode = document.documentElement.classList.contains('_aa4d')
 	const DISPLAY_CONTAINER =
 		`<div class="ext-config-container ${isDarkMode ? 'dark' : ''}">
