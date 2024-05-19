@@ -1,5 +1,5 @@
 async function getUserIdFromSearch(username) {
-	const apiURL = new URL('/web/search/topsearch/', BASE_URL)
+	const apiURL = new URL('/web/search/topsearch/', IG_BASE_URL)
 	if (username) apiURL.searchParams.set('query', username)
 	else apiURL.searchParams.set('query', appState.current.username)
 	try {
@@ -13,7 +13,7 @@ async function getUserIdFromSearch(username) {
 }
 
 async function getUserId(options, username) {
-	const apiURL = new URL('/api/v1/users/web_profile_info/', BASE_URL)
+	const apiURL = new URL('/api/v1/users/web_profile_info/', IG_BASE_URL)
 	if (username) apiURL.searchParams.set('username', username)
 	else apiURL.searchParams.set('username', appState.current.username)
 	try {
@@ -27,7 +27,7 @@ async function getUserId(options, username) {
 }
 
 async function getStoryPhotos(userID, options) {
-	const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
+	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL)
 	apiURL.searchParams.set('reel_ids', userID)
 	try {
 		const respone = await fetch(apiURL.href, options)
@@ -40,7 +40,7 @@ async function getStoryPhotos(userID, options) {
 }
 
 async function getHighlightStory(highlightsID, options) {
-	const apiURL = new URL('/api/v1/feed/reels_media/', BASE_URL)
+	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL)
 	apiURL.searchParams.set('reel_ids', `highlight:${highlightsID}`)
 	try {
 		const respone = await fetch(apiURL.href, options)

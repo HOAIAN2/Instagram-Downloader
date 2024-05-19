@@ -9,8 +9,8 @@ function convertToPostId(shortcode) {
 }
 
 async function getPostIdFromAPI() {
-	const apiURL = new URL('/graphql/query/', BASE_URL)
-	apiURL.searchParams.set('query_hash', POST_HASH)
+	const apiURL = new URL('/graphql/query/', IG_BASE_URL)
+	apiURL.searchParams.set('query_hash', IG_POST_HASH)
 	apiURL.searchParams.set('variables', JSON.stringify({
 		shortcode: appState.current.shortcode
 	}))
@@ -26,13 +26,13 @@ async function getPostIdFromAPI() {
 
 async function getPostPhotos(shortcode, options) {
 	const postId = convertToPostId(shortcode)
-	const apiURL = new URL(`/api/v1/media/${postId}/info/`, BASE_URL)
+	const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL)
 	try {
 		let respone = await fetch(apiURL.href, options)
 		if (respone.status === 400) {
 			const postId = await getPostIdFromAPI()
 			if (!postId) throw new Error('Network bug')
-			const apiURL = new URL(`/api/v1/media/${postId}/info/`, BASE_URL)
+			const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL)
 			respone = await fetch(apiURL.href, options)
 		}
 		const json = await respone.json()

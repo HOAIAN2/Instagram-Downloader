@@ -1,19 +1,20 @@
-const BASE_URL = 'https://www.instagram.com/'
-const PROFILE_HASH = '69cba40317214236af40e7efa697781d'
-const POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
-const POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
-const STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
-const HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
+const IG_BASE_URL = window.location.origin + '/'
+const IG_PROFILE_HASH = '69cba40317214236af40e7efa697781d'
+const IG_POST_HASH = '9f8827793ef34641b2fb195d4d41151c'
+const IG_POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/
+const IG_STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/
+const IG_HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/
 const APP_KEYS = Object.freeze({
 	_DEFAULT_DOWNLOAD_USER: '_DEFAULT_DOWNLOAD_USER',
 })
-const APP_ID = (() => {
+const IG_APP_ID = (() => {
 	const jsons = Array.from(document.querySelectorAll('script[type="application/json"]'))
 		.find(item => item.innerText?.includes('X-IG-App-ID'))
 		?.innerText
 	const jsonData = isValidJson(jsons) ? JSON.parse(jsons) : null
 	return jsonData ? findValueByKey(JSON.parse(jsons), 'X-IG-App-ID') : '936619743392459'
 })()
+
 const DEFAULT_DOWNLOAD_USER = Object.freeze((() => {
 	const data = {
 		username: '',
@@ -83,15 +84,15 @@ const appState = Object.freeze((() => {
 			},
 		}),
 		setCurrentShortcode() {
-			const page = window.location.pathname.match(POST_REGEX)
+			const page = window.location.pathname.match(IG_POST_REGEX)
 			if (page) current.shortcode = page[2]
 		},
 		setCurrentUsername() {
-			const page = window.location.pathname.match(STORY_REGEX)
+			const page = window.location.pathname.match(IG_STORY_REGEX)
 			if (page && page[2] !== 'highlights') current.username = page[2]
 		},
 		setCurrentHightlightsID() {
-			const page = window.location.pathname.match(HIGHLIGHT_REGEX)
+			const page = window.location.pathname.match(IG_HIGHLIGHT_REGEX)
 			if (page) current.highlights = page[3]
 		},
 		setPreviousValues() {
@@ -104,8 +105,8 @@ const appState = Object.freeze((() => {
 			return 'none'
 		},
 		async setDefaultShortcode(profileID = '') {
-			const apiURL = new URL('/graphql/query/', BASE_URL)
-			apiURL.searchParams.set('query_hash', PROFILE_HASH)
+			const apiURL = new URL('/graphql/query/', IG_BASE_URL)
+			apiURL.searchParams.set('query_hash', IG_PROFILE_HASH)
 			apiURL.searchParams.set('variables', JSON.stringify({
 				id: profileID,
 				first: 1
@@ -191,9 +192,9 @@ function shouldDownload() {
 	appState.setCurrentHightlightsID()
 	function getCurrentPage() {
 		const currentPath = window.location.pathname
-		if (currentPath.match(POST_REGEX)) return 'post'
-		if (currentPath.match(STORY_REGEX)) {
-			if (currentPath.match(HIGHLIGHT_REGEX)) return 'highlights'
+		if (currentPath.match(IG_POST_REGEX)) return 'post'
+		if (currentPath.match(IG_STORY_REGEX)) {
+			if (currentPath.match(IG_HIGHLIGHT_REGEX)) return 'highlights'
 			return 'stories'
 		}
 		return 'none'
