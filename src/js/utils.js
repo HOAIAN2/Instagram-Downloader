@@ -23,7 +23,7 @@ function getAuthOptions() {
 			// Hardcode variable: a="129477";f.ASBD_ID=a in JS, can be remove
 			// 'x-asbd-id': '129477',
 			'x-csrftoken': csrftoken,
-			'x-ig-app-id': APP_ID,
+			'x-ig-app-id': IG_APP_ID,
 			'x-ig-www-claim': claim,
 			// 'x-instagram-ajax': '1006598911',
 			'x-requested-with': 'XMLHttpRequest'
