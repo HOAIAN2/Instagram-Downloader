@@ -54,7 +54,7 @@
 	outline: none;
 	height: 40px;
 	width: 100%;
-	border-radius: 5px;
+	border-radius: var(--border-radius-low);
 }
 
 .save-button {
@@ -67,6 +67,6 @@
 	outline: none;
 	width: 100%;
 	height: 40px;
-	border-radius: 5px;
+	border-radius: var(--border-radius-low);
 	cursor: pointer;
 }
