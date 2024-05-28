@@ -13,6 +13,7 @@
 	--gray-violet: rgb(161, 85, 231);
 	--green: rgba(0, 164, 0, 0.7);
 	--blue: rgba(0, 0, 255, 0.7);
+	--border-radius-low: 4px;
 }
 
 .display-container {
@@ -22,7 +23,7 @@
 	height: 80vh;
 	max-width: 480px;
 	max-height: 800px;
-	border-radius: 10px;
+	border-radius: var(--border-radius-low);
 	border: none;
 	outline: none;
 	position: fixed;
