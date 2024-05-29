@@ -65,6 +65,7 @@ async function downloadPostPhotos() {
 				isVideo: item['media_type'] === 1 ? false : true,
 				id: item.id.split('_')[0]
 			}
+			if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url']
 			data.media.push(media)
 		})
 	}
@@ -74,6 +75,7 @@ async function downloadPostPhotos() {
 			isVideo: json['media_type'] === 1 ? false : true,
 			id: json.id.split('_')[0]
 		}
+		if (media.isVideo) media.thumbnail = json['image_versions2'].candidates[0]['url']
 		data.media.push(media)
 	}
 	return data
