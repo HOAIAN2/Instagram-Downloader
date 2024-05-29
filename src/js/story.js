@@ -79,6 +79,7 @@ async function downloadStoryPhotos(type = 'stories') {
 			isVideo: item['media_type'] === 1 ? false : true,
 			id: item.id.split('_')[0]
 		}
+		if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url']
 		data.media.push(media)
 	})
 	return data

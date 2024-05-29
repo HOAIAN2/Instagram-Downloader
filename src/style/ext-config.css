@@ -6,7 +6,8 @@
 	background: white;
 	border-radius: var(--border-radius-low);
 	z-index: 9999999;
-	box-shadow: 0px 0px 10px rgb(210, 217, 228);
+	/* box-shadow: 0px 0px 10px rgb(210, 217, 228); */
+	border: 1px solid var(--shadow-black);
 }
 
 .ext-config-container.dark {

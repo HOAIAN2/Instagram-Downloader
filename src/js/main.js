@@ -261,7 +261,7 @@ async function handleDownload() {
 		else saveZip()
 		return
 	}
-	DISPLAY_CONTAINER.classList.remove('hide')
+	requestAnimationFrame(() => { DISPLAY_CONTAINER.classList.remove('hide') })
 	if (option === 'none') return
 	setDownloadState('ready')
 	option === 'post' ? data = await downloadPostPhotos() : data = await downloadStoryPhotos(option)
@@ -285,7 +285,7 @@ function renderMedias(data) {
 		}
 		const ITEM_TEMPLATE =
 			`<div>
-				${item.isVideo ? '<video></video>' : '<img/>'}
+				${item.isVideo ? `<video preload="metadata" poster="${item.thumbnail}"></video>` : '<img/>'}
 				<div class="overlay"></div>
 			</div>`
 		const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild
