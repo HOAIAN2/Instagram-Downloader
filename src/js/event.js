@@ -1,5 +1,5 @@
 // history path changed event
-{
+(() => {
 	let path = window.location.pathname
 	const observer = new MutationObserver(() => {
 		const newPath = window.location.pathname
@@ -17,4 +17,4 @@
 	observer.observe(document.body, {
 		attributes: true, childList: true, subtree: true
 	})
-}
+})();

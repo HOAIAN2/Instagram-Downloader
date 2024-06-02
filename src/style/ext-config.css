@@ -1,17 +1,17 @@
 .ext-config-container {
-	position: fixed;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
+	margin: auto;
 	background: white;
 	border-radius: var(--border-radius-low);
-	z-index: 9999999;
-	/* box-shadow: 0px 0px 10px rgb(210, 217, 228); */
-	border: 1px solid var(--shadow-black);
+	border: none;
+}
+
+.ext-config-container::backdrop {
+	background: rgba(0, 0, 0, 0.5);
 }
 
 .ext-config-container.dark {
 	background: black;
+	border: 1px solid var(--shadow-white);
 }
 
 .ext-config-container.dark>* {
@@ -25,7 +25,10 @@
 .ext-config-container>.title {
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	font-weight: bold;
-	padding: 20px 20px 0px 20px;
+	padding: 0px 20px;
+	height: 45px;
+	display: flex;
+	align-items: center;
 	font-size: min(24px, 3.5vh);
 	display: flex;
 	justify-content: space-between
@@ -40,11 +43,7 @@
 	gap: 10px;
 }
 
-.esc {
-	cursor: pointer;
-}
-
-.group-input {
+.group-inputs {
 	height: fit-content;
 }
 
