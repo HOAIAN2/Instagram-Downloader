@@ -32,16 +32,17 @@
 	overflow: hidden;
 	user-select: none;
 	-webkit-user-select: none;
-	transform-origin: calc() center;
+	transform-origin: center center;
+	transform: scale(1);
 	transition: transform 0.5s cubic-bezier(0.82, -0.07, 0.25, 1.08), opacity 0.4s ease-in-out, transform-origin 0.5s ease-in-out;
-	/* transition-property: transform, transform-origin, opacity; */
 	will-change: transform, transform-origin, opacity;
 	z-index: 1000000;
 }
 
 .display-container.dark {
-	background-color: black;
-	box-shadow: 0px 0px 5px var(--shadow-white);
+	background: black;
+	border: 1px solid var(--shadow-white);
+	/* box-shadow: 0px 0px 5px var(--shadow-white); */
 }
 
 .display-container.hide {
@@ -55,7 +56,6 @@
 	width: inherit;
 	height: 8%;
 	max-width: inherit;
-	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
@@ -65,7 +65,7 @@
 	backdrop-filter: blur(3px);
 	color: black;
 	position: absolute;
-	padding: 5%;
+	padding: 0px 18px;
 	z-index: 10;
 	cursor: pointer;
 }
@@ -75,9 +75,17 @@
 	color: white;
 }
 
-.display-container>.title-container>.esc-button:hover {
-	opacity: 0.8;
+.esc-button {
 	cursor: pointer;
+	font-size: min(36px, 5vh);
+	background: none;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
+.esc-button:hover {
+	opacity: 0.8;
 }
 
 .display-container>.photos-container {
@@ -171,7 +179,6 @@
 }
 
 .download-button {
-	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 	width: 120px;
 	height: 30px;
 	color: white;
