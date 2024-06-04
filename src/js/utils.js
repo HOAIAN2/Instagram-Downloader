@@ -200,6 +200,7 @@ function renderMedias(data) {
 	const PHOTOS_CONTAINER = document.querySelector('.photos-container');
 	PHOTOS_CONTAINER.replaceChildren();
 	if (!data) return;
+	const fragment = document.createDocumentFragment();
 	data.media.forEach(item => {
 		const date = new Date(data.date * 1000).toISOString().split('T')[0];
 		const attributes = {
@@ -220,7 +221,7 @@ function renderMedias(data) {
 			if (item.isVideo) media.setAttribute(key, attributes[key]);
 			else if (key !== 'controls') media.setAttribute(key, attributes[key]);
 		});
-		PHOTOS_CONTAINER.appendChild(itemDOM);
+		fragment.appendChild(itemDOM);
 		media.addEventListener('click', () => {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
 				selectBox.classList.toggle('checked');
@@ -228,6 +229,7 @@ function renderMedias(data) {
 			else saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + `${item.isVideo ? '.mp4' : '.jpeg'}`);
 		});
 	});
+	PHOTOS_CONTAINER.appendChild(fragment);
 	TITLE_CONTAINER.classList.remove('multi-select');
 	setDownloadState('success');
 }
