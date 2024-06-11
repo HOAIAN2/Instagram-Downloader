@@ -1,20 +1,18 @@
 function convertToPostId(shortcode) {
 	let id = BigInt(0);
-	const instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 	for (let i = 0; i < shortcode.length; i++) {
 		let char = shortcode[i];
-		id = (id * BigInt(64)) + BigInt(instagramAlphabet.indexOf(char));
+		id = (id * BigInt(64)) + BigInt(IG_ALPHABET.indexOf(char));
 	}
 	return id.toString(10);
 }
 
 function convertToShortcode(postId) {
 	let id = BigInt(postId);
-	const instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 	let shortcode = '';
 	while (id > BigInt(0)) {
 		const remainder = id % BigInt(64);
-		shortcode = instagramAlphabet[Number(remainder)] + shortcode;
+		shortcode = IG_ALPHABET[Number(remainder)] + shortcode;
 		id = id / BigInt(64);
 		id = id - (id % BigInt(1));
 	}

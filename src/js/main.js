@@ -1,6 +1,7 @@
 const IG_BASE_URL = window.location.origin + '/';
 const IG_PROFILE_HASH = '69cba40317214236af40e7efa697781d';
 const IG_POST_HASH = '9f8827793ef34641b2fb195d4d41151c';
+const IG_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 const IG_POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/;
 const IG_STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/;
 const IG_HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/;
