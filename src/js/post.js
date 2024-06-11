@@ -8,6 +8,19 @@ function convertToPostId(shortcode) {
 	return id.toString(10);
 }
 
+function convertToShortcode(postId) {
+	let id = BigInt(postId);
+	const instagramAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+	let shortcode = '';
+	while (id > BigInt(0)) {
+		const remainder = id % BigInt(64);
+		shortcode = instagramAlphabet[Number(remainder)] + shortcode;
+		id = id / BigInt(64);
+		id = id - (id % BigInt(1));
+	}
+	return shortcode;
+}
+
 async function getPostIdFromAPI() {
 	const apiURL = new URL('/graphql/query/', IG_BASE_URL);
 	apiURL.searchParams.set('query_hash', IG_POST_HASH);
