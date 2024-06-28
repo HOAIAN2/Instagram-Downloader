@@ -23,8 +23,7 @@
 	max-width: 480px;
 	max-height: 800px;
 	border-radius: var(--border-radius-low);
-	border: 1px solid var(--shadow-black);
-	outline: none;
+	outline: 1px solid var(--shadow-black);
 	position: fixed;
 	bottom: 60px;
 	right: 20px;
@@ -61,7 +60,6 @@
 	font-weight: bold;
 	background: rgba(255, 255, 255, 0.9);
 	backdrop-filter: blur(3px);
-	color: black;
 	position: absolute;
 	padding: 0px 18px;
 	z-index: 10;
@@ -70,7 +68,6 @@
 
 .display-container>.title-container.dark {
 	background: rgba(0, 0, 0, 0.8);
-	color: white;
 }
 
 .esc-button {
