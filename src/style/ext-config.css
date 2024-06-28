@@ -23,7 +23,6 @@
 }
 
 .ext-config-container>.title {
-	/* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
 	font-weight: bold;
 	padding: 0px 20px;
 	height: 45px;
@@ -58,11 +57,9 @@
 }
 
 .save-button {
-	/* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
 	font-weight: bold;
 	font-size: large;
-	background-color: var(--violet);
-	box-shadow: 0px 0px 3px var(--violet);
+	background: var(--violet);
 	color: white;
 	border: none;
 	outline: none;
