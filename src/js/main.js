@@ -268,8 +268,8 @@ const appState = Object.freeze((() => {
 			});
 		});
 		window.addEventListener('pathChanged', () => {
-			if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide');
-			else DOWNLOAD_BUTTON.classList.remove('hide');
+			if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
 		document.querySelector('form.data-container').addEventListener('submit', e => {
 			e.preventDefault();

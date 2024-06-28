@@ -17,8 +17,7 @@
 }
 
 .display-container {
-	background-color: white;
-	/* box-shadow: 0px 0px 5px var(--shadow-black); */
+	background: white;
 	width: calc(80vh /5*3);
 	height: 80vh;
 	max-width: 480px;
@@ -42,7 +41,6 @@
 .display-container.dark {
 	background: black;
 	border: 1px solid var(--shadow-white);
-	/* box-shadow: 0px 0px 5px var(--shadow-white); */
 }
 
 .display-container.hide {
@@ -61,7 +59,7 @@
 	align-items: center;
 	font-size: min(36px, 3.5vh);
 	font-weight: bold;
-	background-color: rgba(255, 255, 255, 0.9);
+	background: rgba(255, 255, 255, 0.9);
 	backdrop-filter: blur(3px);
 	color: black;
 	position: absolute;
@@ -71,7 +69,7 @@
 }
 
 .display-container>.title-container.dark {
-	background-color: rgba(0, 0, 0, 0.8);
+	background: rgba(0, 0, 0, 0.8);
 	color: white;
 }
 
@@ -119,7 +117,7 @@
 }
 
 .display-container>.photos-container>div>.overlay {
-	background-color: rgba(255, 255, 255, 0.2);
+	background: rgba(255, 255, 255, 0.2);
 	color: white;
 	pointer-events: none;
 	position: absolute;
@@ -151,7 +149,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.checked {
-	background-color: var(--blue)
+	background: var(--blue)
 }
 
 .display-container>.photos-container>div>.overlay.checked::before {
@@ -162,7 +160,7 @@
 }
 
 .display-container>.photos-container>div>.overlay.saved {
-	background-color: var(--green)
+	background: var(--green)
 }
 
 .display-container>.photos-container>div>.overlay.saved::before {
@@ -194,20 +192,14 @@
 	user-select: none;
 	-webkit-user-select: none;
 	cursor: pointer;
-	background-color: var(--violet);
-	/* box-shadow: 0px 0px 3px var(--violet); */
+	background: var(--violet);
 	transition: 0.3s;
 	z-index: 1000000;
 }
 
 .download-button.loading {
 	cursor: default;
-	background-color: var(--gray-violet);
-	box-shadow: 0px 0px 3px var(--gray-violet);
-}
-
-.download-button.hide {
-	display: none;
+	background: var(--gray-violet);
 }
 
 /* Support bottom navigation */
