@@ -176,7 +176,9 @@ const appState = Object.freeze((() => {
 		const DOWNLOAD_EVENT_KEYS = ['D'];
 		const SELECT_EVENT_KEYS = ['S', 's'];
 		function setTheme() {
-			const isDarkMode = document.documentElement.classList.contains('_aa4d');
+			const isDarkMode = localStorage.getItem('igt') === null ?
+				window.matchMedia('(prefers-color-scheme: dark)').matches :
+				localStorage.getItem('igt') === 'dark';
 			if (isDarkMode) {
 				DISPLAY_CONTAINER.classList.add('dark');
 				DISPLAY_CONTAINER.firstElementChild.classList.add('dark');
@@ -267,7 +269,7 @@ const appState = Object.freeze((() => {
 				media.src = media.src;
 			});
 		});
-		window.addEventListener('pathChanged', () => {
+		window.addEventListener('pathChange', () => {
 			if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
