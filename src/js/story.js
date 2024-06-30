@@ -26,26 +26,26 @@ async function getUserId(options, username) {
 	}
 }
 
-async function getStoryPhotos(userID, options) {
+async function getStoryPhotos(userId, options) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
-	apiURL.searchParams.set('reel_ids', userID);
+	apiURL.searchParams.set('reel_ids', userId);
 	try {
 		const respone = await fetch(apiURL.href, options);
 		const json = await respone.json();
-		return json.reels[userID];
+		return json.reels[userId];
 	} catch (error) {
 		console.log(error);
 		return null;
 	}
 }
 
-async function getHighlightStory(highlightsID, options) {
+async function getHighlightStory(highlightsId, options) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
-	apiURL.searchParams.set('reel_ids', `highlight:${highlightsID}`);
+	apiURL.searchParams.set('reel_ids', `highlight:${highlightsId}`);
 	try {
 		const respone = await fetch(apiURL.href, options);
 		const json = await respone.json();
-		return json.reels[`highlight:${highlightsID}`];
+		return json.reels[`highlight:${highlightsId}`];
 	} catch (error) {
 		console.log(error);
 		return null;
@@ -65,9 +65,9 @@ async function downloadStoryPhotos(type = 'stories') {
 	let json = null;
 	if (type === 'highlights') json = await getHighlightStory(appState.current.highlights, options);
 	else {
-		const userID = await getUserId(options);
-		if (!userID) return null;
-		json = await getStoryPhotos(userID, options);
+		const userId = await getUserId(options);
+		if (!userId) return null;
+		json = await getStoryPhotos(userId, options);
 	}
 	if (!json) return null;
 	data.user.username = json.user['username'];

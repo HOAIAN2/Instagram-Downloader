@@ -92,7 +92,7 @@ const appState = Object.freeze((() => {
 			const page = window.location.pathname.match(IG_STORY_REGEX);
 			if (page && page[2] !== 'highlights') current.username = page[2];
 		},
-		setCurrentHightlightsID() {
+		setCurrentHightlightsId() {
 			const page = window.location.pathname.match(IG_HIGHLIGHT_REGEX);
 			if (page) current.highlights = page[3];
 		},
@@ -105,11 +105,11 @@ const appState = Object.freeze((() => {
 			if (current.shortcode !== previous.shortcode) return 'post';
 			return 'none';
 		},
-		async setDefaultShortcode(profileID = '') {
+		async setDefaultShortcode(profileId = '') {
 			const apiURL = new URL('/graphql/query/', IG_BASE_URL);
 			apiURL.searchParams.set('query_hash', IG_PROFILE_HASH);
 			apiURL.searchParams.set('variables', JSON.stringify({
-				id: profileID,
+				id: profileId,
 				first: 1
 			}));
 			try {
