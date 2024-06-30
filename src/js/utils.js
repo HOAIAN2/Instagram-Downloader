@@ -114,7 +114,7 @@ async function saveZip() {
 function shouldDownload() {
 	appState.setCurrentShortcode();
 	appState.setCurrentUsername();
-	appState.setCurrentHightlightsID();
+	appState.setCurrentHightlightsId();
 	function getCurrentPage() {
 		const currentPath = window.location.pathname;
 		if (currentPath.match(IG_POST_REGEX)) return 'post';
@@ -256,15 +256,15 @@ async function setDefaultDownloadUser(username = '') {
 function handleLongClick(element, shortClickHandler = () => { }, longClickHandler = () => { }, delay = 400) {
 	element.addEventListener('mousedown', () => {
 		let count = 0;
-		const intervalID = setInterval(() => {
+		const intervalId = setInterval(() => {
 			count = count + 10;
 			if (count >= delay) {
-				clearInterval(intervalID);
+				clearInterval(intervalId);
 				longClickHandler();
 			}
 		}, 10);
 		element.addEventListener('mouseup', () => {
-			clearInterval(intervalID);
+			clearInterval(intervalId);
 			if (count < delay) shortClickHandler();
 		}, { once: true });
 	});
