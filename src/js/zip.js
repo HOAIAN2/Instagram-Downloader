@@ -156,7 +156,13 @@
 // }
 
 
-
+/**
+ * Asynchronously creates a ZIP file from an array of files.
+ * @param {Array<{ data: Blob, title: string }>} files - Array of files to be included in the ZIP.
+ *   Each file should have a 'data' property containing a Blob object representing file content,
+ *   and a 'title' property containing the filename.
+ * @returns {Promise<Blob>} A Promise that resolves to a Blob representing the created ZIP file.
+ */
 async function createZip(files) {
 	const crc32Table = createCRC32Table();
 	const localFileHeaders = [];
