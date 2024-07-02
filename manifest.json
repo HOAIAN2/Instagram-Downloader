@@ -26,7 +26,6 @@
 				"src/js/post.js",
 				"src/js/story.js",
 				"src/js/event.js",
-				"src/libs/jszip.min.js",
 				"src/js/zip.js"
 			],
 			"css": [
