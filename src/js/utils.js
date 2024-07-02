@@ -70,10 +70,10 @@ async function saveZip() {
 	DOWNLOAD_BUTTON.classList.add('loading');
 	DOWNLOAD_BUTTON.textContent = 'Loading...';
 	DOWNLOAD_BUTTON.disabled = true;
-	let count = 0;
 	const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
 	const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip';
 	async function fetchSelectedMedias() {
+		let count = 0;
 		const results = await Promise.allSettled(medias.map(async (media) => {
 			const res = await fetch(media.src);
 			const blob = await res.blob();
