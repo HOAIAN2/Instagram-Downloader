@@ -65,14 +65,12 @@ async function saveMedia(media, fileName) {
 		console.log(error);
 	}
 }
-
 async function saveZip() {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
 	DOWNLOAD_BUTTON.classList.add('loading');
 	DOWNLOAD_BUTTON.textContent = 'Loading...';
 	DOWNLOAD_BUTTON.disabled = true;
 	let count = 0;
-	const zip = new JSZip();
 	const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
 	const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip';
 	async function fetchSelectedMedias() {
@@ -91,14 +89,12 @@ async function saveZip() {
 		}));
 		results.forEach(promise => {
 			if (promise.status === 'rejected') throw new Error('Fail to fetch');
-			zip.file(promise.value.title, promise.value.data, { base64: true });
 		});
+		return results.map(promise => promise.value);
 	}
 	try {
-		await fetchSelectedMedias();
-		const blob = await zip.generateAsync({ type: 'blob' }, ((metadata) => {
-			DOWNLOAD_BUTTON.textContent = `${Math.floor(metadata.percent)} %`;
-		}));
+		const medias = await fetchSelectedMedias();
+		const blob = await createZip(medias);
 		saveFile(blob, zipFileName);
 		document.querySelectorAll('.overlay.checked').forEach(element => {
 			element.classList.remove('checked');
@@ -110,6 +106,53 @@ async function saveZip() {
 		resetDownloadState();
 	}
 }
+
+// async function saveZip() {
+// 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
+// 	DOWNLOAD_BUTTON.classList.add('loading');
+// 	DOWNLOAD_BUTTON.textContent = 'Loading...';
+// 	DOWNLOAD_BUTTON.disabled = true;
+// 	let count = 0;
+// 	const zip = new JSZip();
+// 	const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
+// 	const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip';
+// 	async function fetchSelectedMedias() {
+// 		const results = await Promise.allSettled(medias.map(async (media) => {
+// 			const res = await fetch(media.src);
+// 			const blob = await res.blob();
+// 			const data = {
+// 				title: media.title.split(' | ').slice(1, 5).join('_'),
+// 				data: blob
+// 			};
+// 			if (media.nodeName === 'VIDEO') data.title = `${data.title}.mp4`;
+// 			else data.title = `${data.title}.jpeg`;
+// 			count++;
+// 			DOWNLOAD_BUTTON.textContent = `${count}/${medias.length}`;
+// 			return data;
+// 		}));
+// 		results.forEach(promise => {
+// 			if (promise.status === 'rejected') throw new Error('Fail to fetch');
+// 			zip.file(promise.value.title, promise.value.data, { base64: true });
+// 		});
+// 	}
+// 	try {
+// 		await fetchSelectedMedias();
+// 		console.time();
+// 		const blob = await zip.generateAsync({ type: 'blob' }, ((metadata) => {
+// 			DOWNLOAD_BUTTON.textContent = `${Math.floor(metadata.percent)} %`;
+// 		}));
+// 		saveFile(blob, zipFileName);
+// 		document.querySelectorAll('.overlay.checked').forEach(element => {
+// 			element.classList.remove('checked');
+// 			element.classList.add('saved');
+// 		});
+// 		resetDownloadState();
+// 	} catch (error) {
+// 		console.log(error);
+// 		resetDownloadState();
+// 	}
+// 	console.timeEnd();
+// }
 
 function shouldDownload() {
 	appState.setCurrentShortcode();
