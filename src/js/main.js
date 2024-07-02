@@ -270,7 +270,10 @@ const appState = Object.freeze((() => {
 			});
 		});
 		window.addEventListener('pathChange', () => {
-			if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+			if (window.location.pathname.startsWith('/direct')) {
+				DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+				DISPLAY_CONTAINER.classList.add('hide');
+			}
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
 		document.querySelector('form.data-container').addEventListener('submit', e => {
@@ -284,13 +287,18 @@ const appState = Object.freeze((() => {
 			setDefaultDownloadUser(formData.get('default_download_username'))
 				.then(() => {
 					saveButton.textContent = 'Saved';
-					clearInterval(interval);
 					if (!appState.currentDisplay) appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id);
+				})
+				.finally(() => {
+					clearInterval(interval);
 				});
 			saveButton.textContent = '.';
 		});
 		setTheme();
-		if (window.location.pathname.startsWith('/direct')) DOWNLOAD_BUTTON.classList.add('hide');
+		if (window.location.pathname.startsWith('/direct')) {
+			DOWNLOAD_BUTTON.classList.add('hide');
+			DISPLAY_CONTAINER.classList.add('hide');
+		}
 	}
 	function run() {
 		DEFAULT_DOWNLOAD_USER.load();
