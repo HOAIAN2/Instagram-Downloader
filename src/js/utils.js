@@ -108,6 +108,9 @@ async function saveZip() {
 }
 
 function shouldDownload() {
+	if (window.location.pathname === '/' && appState.getFieldChange() !== 'none') {
+		return appState.getFieldChange();
+	}
 	appState.setCurrentShortcode();
 	appState.setCurrentUsername();
 	appState.setCurrentHightlightsId();

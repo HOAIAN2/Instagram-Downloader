@@ -55,6 +55,9 @@ const appState = Object.freeze((() => {
 		username: '',
 		highlights: '',
 	};
+	window.addEventListener('postIdChange', e => {
+		current.shortcode = convertToShortcode(e.detail.value);
+	});
 	return {
 		get currentDisplay() { return currentDisplay; },
 		set currentDisplay(value) { if (['post', 'stories', 'highlights'].includes(value)) currentDisplay = value; },

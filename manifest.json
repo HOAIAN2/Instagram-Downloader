@@ -32,6 +32,16 @@
 				"src/style/style.css",
 				"src/style/ext-config.css"
 			]
+		},
+		{
+			"matches": [
+				"https://www.instagram.com/*"
+			],
+			"js": [
+				"src/js/global/scroll-handler.js"
+			],
+			"css": [],
+			"world": "MAIN"
 		}
 	]
 }
