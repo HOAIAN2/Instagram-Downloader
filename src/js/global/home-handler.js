@@ -1,28 +1,4 @@
 // Different scope, have to redeclare: https://developer.chrome.com/docs/extensions/reference/api/scripting?hl=vi#type-ExecutionWorld
-// function findValueByKey(obj, key) {
-// 	if (typeof obj !== 'object' || obj === null) return null;
-// 	const stack = [obj];
-// 	while (stack.length > 0) {
-// 		const current = stack.pop();
-// 		if (Array.isArray(current)) {
-// 			for (const element of current) {
-// 				if (typeof element === 'object' && element !== null) {
-// 					stack.push(element);
-// 				}
-// 			}
-// 		} else {
-// 			if (current.hasOwnProperty(key)) {
-// 				return current[key];
-// 			}
-// 			for (const prop in current) {
-// 				if (current.hasOwnProperty(prop) && typeof current[prop] === 'object' && current[prop] !== null) {
-// 					stack.push(current[prop]);
-// 				}
-// 			}
-// 		}
-// 	}
-// 	return null;
-// }
 function findValueByKey(obj, key) {
 	if (typeof obj !== 'object' || obj === null) return null;
 	const stack = [obj];
