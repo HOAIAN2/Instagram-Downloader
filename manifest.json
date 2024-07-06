@@ -38,7 +38,7 @@
 				"https://www.instagram.com/*"
 			],
 			"js": [
-				"src/js/global/scroll-handler.js"
+				"src/js/global/home-handler.js"
 			],
 			"css": [],
 			"world": "MAIN"

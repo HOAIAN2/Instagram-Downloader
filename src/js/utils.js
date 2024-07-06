@@ -30,18 +30,12 @@ function getAuthOptions() {
 
 function findValueByKey(obj, key) {
 	if (typeof obj !== 'object' || obj === null) return null;
-	if (Array.isArray(obj)) {
-		for (const element of obj) {
-			const result = findValueByKey(element, key);
-			if (result !== null) return result;
-		}
-		return null;
-	}
-	if (obj.hasOwnProperty(key)) return obj[key];
-	for (const prop in obj) {
-		if (obj.hasOwnProperty(prop)) {
-			const result = findValueByKey(obj[prop], key);
-			if (result !== null) return result;
+	const stack = [obj];
+	while (stack.length) {
+		const current = stack.pop();
+		if (current[key] !== undefined) return current[key];
+		for (const value of Object.values(current)) {
+			if (typeof value === 'object' && value !== null) stack.push(value);
 		}
 	}
 	return null;
@@ -65,6 +59,7 @@ async function saveMedia(media, fileName) {
 		console.log(error);
 	}
 }
+
 async function saveZip() {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
 	DOWNLOAD_BUTTON.classList.add('loading');
