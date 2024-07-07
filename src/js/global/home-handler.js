@@ -11,6 +11,7 @@ function findValueByKey(obj, key) {
 	}
 	return null;
 }
+
 function homeScrollHandler() {
 	function getVisibleArea(element) {
 		const rect = element.getBoundingClientRect();
