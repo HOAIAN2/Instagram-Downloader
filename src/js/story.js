@@ -60,7 +60,7 @@ async function downloadStoryPhotos(type = 'stories') {
 			username: '',
 			fullName: '',
 		},
-		media: []
+		medias: []
 	};
 	let json = null;
 	if (type === 'highlights') json = await getHighlightStory(appState.current.highlights, options);
@@ -80,7 +80,7 @@ async function downloadStoryPhotos(type = 'stories') {
 			id: item.id.split('_')[0]
 		};
 		if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-		data.media.push(media);
+		data.medias.push(media);
 	});
 	return data;
 }

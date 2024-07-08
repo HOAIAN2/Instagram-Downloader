@@ -195,7 +195,7 @@ function renderMedias(data) {
 	PHOTOS_CONTAINER.replaceChildren();
 	if (!data) return;
 	const fragment = document.createDocumentFragment();
-	data.media.forEach(item => {
+	data.medias.forEach(item => {
 		const date = new Date(data.date * 1000).toISOString().split('T')[0];
 		const attributes = {
 			class: 'photos-item',

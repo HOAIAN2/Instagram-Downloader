@@ -62,7 +62,7 @@ async function downloadPostPhotos() {
 			username: '',
 			fullName: '',
 		},
-		media: []
+		medias: []
 	};
 	const json = await getPostPhotos(appState.current.shortcode, options);
 	if (!json) return null;
@@ -77,7 +77,7 @@ async function downloadPostPhotos() {
 				id: item.id.split('_')[0]
 			};
 			if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-			data.media.push(media);
+			data.medias.push(media);
 		});
 	}
 	else {
@@ -87,7 +87,7 @@ async function downloadPostPhotos() {
 			id: json.id.split('_')[0]
 		};
 		if (media.isVideo) media.thumbnail = json['image_versions2'].candidates[0]['url'];
-		data.media.push(media);
+		data.medias.push(media);
 	}
 	return data;
 }
