@@ -36,7 +36,7 @@ function homeScrollHandler() {
 		if (mediaFragmentKey) {
 			window.dispatchEvent(new CustomEvent('postIdChange', {
 				detail: {
-					value: mediaFragmentKey.pk
+					code: mediaFragmentKey.code
 				}
 			}));
 		}
