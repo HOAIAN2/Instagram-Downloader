@@ -13,6 +13,6 @@
 		}
 	});
 	observer.observe(document.body, {
-		attributes: true, childList: true, subtree: true
+		childList: true, subtree: true
 	});
 })();
