@@ -56,7 +56,7 @@ const appState = Object.freeze((() => {
 		highlights: '',
 	};
 	window.addEventListener('postIdChange', e => {
-		current.shortcode = convertToShortcode(e.detail.value);
+		current.shortcode = e.detail.code;
 	});
 	return {
 		get currentDisplay() { return currentDisplay; },
