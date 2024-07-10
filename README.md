@@ -22,7 +22,7 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 * Click on any photos/videos to save
 
-* Toggle multi select by click on ```Photos``` and select photos by click on them (or select all by click and hold on ```Photos```). Then click on ```Download``` to save zip file
+* Toggle multi select by click on `Photos` and select photos by click on them (or select all by click and hold on `Photos`). Then click on `Download` to save zip file
 
 ## Features
 
