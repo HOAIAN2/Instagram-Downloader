@@ -64,7 +64,8 @@ async function downloadPostPhotos() {
 		},
 		medias: []
 	};
-	const json = await getPostPhotos(appState.current.shortcode, options);
+	const shortcode = appState.current.shortcode || appState.defaultShortcode;
+	const json = await getPostPhotos(shortcode, options);
 	if (!json) return null;
 	data.user.username = json.user['username'];
 	data.user.fullName = json.user['full_name'];
