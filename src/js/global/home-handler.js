@@ -13,7 +13,14 @@ const findValueByKey = (obj, key) => {
 };
 
 (() => {
-	function homeScrollHandler() {
+	function debounce(func, delay) {
+		let timeout;
+		return (...args) => {
+			clearTimeout(timeout);
+			timeout = setTimeout(() => func.apply(this, args), delay);
+		};
+	};
+	const homeScrollHandler = debounce(() => {
 		function getVisibleArea(element) {
 			const rect = element.getBoundingClientRect();
 			const viewHeight = Math.max(document.documentElement.clientHeight, window.innerHeight);
@@ -23,15 +30,11 @@ const findValueByKey = (obj, key) => {
 			return height * width;
 		}
 		const postContainers = Array.from(document.querySelectorAll('article'));
-		let maxVisibleArea = 0;
-		let mostVisibleElement = null;
-		postContainers.forEach(container => {
+		const mostVisibleElement = postContainers.reduce((mostVisible, container) => {
 			const visibleArea = getVisibleArea(container);
-			if (visibleArea > maxVisibleArea) {
-				maxVisibleArea = visibleArea;
-				mostVisibleElement = container;
-			}
-		});
+			return visibleArea > mostVisible.area ? { element: container, area: visibleArea } : mostVisible;
+		}, { element: null, area: 0 }).element;
+
 		if (mostVisibleElement) {
 			const mediaFragmentKey = findValueByKey(mostVisibleElement, 'mediaFragmentKey');
 			if (mediaFragmentKey) {
@@ -42,9 +45,8 @@ const findValueByKey = (obj, key) => {
 				}));
 			}
 		}
-	}
+	}, 100);
 	const observer = new MutationObserver(homeScrollHandler);
-
 	function startObserve() {
 		const mainNode = document.querySelector('main');
 		if (mainNode) observer.observe(mainNode, {
@@ -52,16 +54,13 @@ const findValueByKey = (obj, key) => {
 		});
 		window.addEventListener('scroll', homeScrollHandler);
 	}
-
 	function stopObserve() {
 		observer.disconnect();
 		window.removeEventListener('scroll', homeScrollHandler);
 	}
-
 	window.addEventListener('pathChange', (e) => {
 		if (e.detail.currentPath === '/') startObserve();
 		else stopObserve();
 	});
-
 	if (window.location.pathname === '/') startObserve();
 })();
