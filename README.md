@@ -24,7 +24,7 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 * Toggle multi select by click on `Photos` and select photos by click on them (or select all by click and hold on `Photos`). Then click on `Download` to save zip file.
 
-* If you scroll on the home page, this app will auto detect the post you wanna download so you don't have to click to comment section to open modal. It's not work 100% because sometime Instagram take a couple time to fetch data so that not trigger scroll event.
+* If you scroll on the home page, this app will auto detect the post you wanna download so you don't have to click to comment section to open modal. It's not work 100%.
 
 ## Features
 
@@ -65,5 +65,3 @@ These features was deprecated for some reason.
 ## Here is Demo
 
 [Demo v5.1.0](https://github.com/HOAIAN2/Instagram-Downloader/assets/98139595/917369c9-cdbb-4315-8e6d-7a1632a8888b)
-
-
