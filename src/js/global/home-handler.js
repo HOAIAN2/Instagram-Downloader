@@ -45,7 +45,7 @@ const findValueByKey = (obj, key) => {
 	}
 	const observer = new MutationObserver(homeScrollHandler);
 
-	function runObserve() {
+	function startObserve() {
 		const mainNode = document.querySelector('main');
 		if (mainNode) observer.observe(mainNode, {
 			attributes: true, childList: true, subtree: true
@@ -53,15 +53,15 @@ const findValueByKey = (obj, key) => {
 		window.addEventListener('scroll', homeScrollHandler);
 	}
 
-	function disconnectObserve() {
+	function stopObserve() {
 		observer.disconnect();
 		window.removeEventListener('scroll', homeScrollHandler);
 	}
 
 	window.addEventListener('pathChange', (e) => {
-		if (e.detail.currentPath === '/') runObserve();
-		else disconnectObserve();
+		if (e.detail.currentPath === '/') startObserve();
+		else stopObserve();
 	});
 
-	if (window.location.pathname === '/') runObserve();
+	if (window.location.pathname === '/') startObserve();
 })();
