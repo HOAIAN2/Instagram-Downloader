@@ -28,8 +28,7 @@
 				"src/js/zip.js"
 			],
 			"css": [
-				"src/style/style.css",
-				"src/style/ext-config.css"
+				"src/style/style.css"
 			]
 		},
 		{

@@ -5,9 +5,6 @@ const IG_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 const IG_POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/;
 const IG_STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/;
 const IG_HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/;
-const APP_KEYS = Object.freeze({
-	_DEFAULT_DOWNLOAD_USER: '_DEFAULT_DOWNLOAD_USER',
-});
 const IG_APP_ID = (() => {
 	const jsons = Array.from(document.querySelectorAll('script[type="application/json"]'))
 		.find(item => item.innerText?.includes('X-IG-App-ID'))
@@ -16,36 +13,8 @@ const IG_APP_ID = (() => {
 	return jsonData ? findValueByKey(JSON.parse(jsons), 'X-IG-App-ID') : '936619743392459';
 })();
 
-const DEFAULT_DOWNLOAD_USER = Object.freeze((() => {
-	const data = {
-		username: '',
-		id: '',
-	};
-	const load = () => {
-		const localStorageData = isValidJson(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER)) ?
-			JSON.parse(localStorage.getItem(APP_KEYS._DEFAULT_DOWNLOAD_USER)) : null;
-		if (localStorageData && localStorageData.id && localStorageData.username) {
-			data.username = localStorageData.username;
-			data.id = localStorageData.id;
-		}
-		else save();
-	};
-	const save = () => {
-		localStorage.setItem(APP_KEYS._DEFAULT_DOWNLOAD_USER, JSON.stringify(data));
-	};
-	return {
-		get username() { return data.username; },
-		set username(value) { data.username = value; },
-		get id() { return data.id; },
-		set id(value) { data.id = value; },
-		load: load,
-		save: save
-	};
-})());
-
 const appState = Object.freeze((() => {
 	let currentDisplay = '';
-	let defaultShortcode = '';
 	const current = {
 		shortcode: '',
 		username: '',
@@ -56,11 +25,10 @@ const appState = Object.freeze((() => {
 		username: '',
 		highlights: '',
 	};
-	window.addEventListener('postIdChange', e => {
+	window.addEventListener('shortcodeChange', e => {
 		current.shortcode = e.detail.code;
 	});
 	return {
-		get defaultShortcode() { return defaultShortcode; },
 		get currentDisplay() { return currentDisplay; },
 		set currentDisplay(value) { if (['post', 'stories', 'highlights'].includes(value)) currentDisplay = value; },
 		current: Object.freeze({
@@ -144,37 +112,18 @@ const appState = Object.freeze((() => {
 					<span title="${manifestData.name} v${manifestData.version}">Photos</span>
 					<button class="esc-button">&times</button>
 				</div>
-				<div class="photos-container"></div>
+				<div class="medias-container">
+					<p style="position: absolute;top: 50%;transform: translate(0%, -50%);">
+						Not thing to download
+					</p>
+				</div>
 			</div>
 			<button class="download-button">Download</button>`));
-	}
-	function initExtConfigUI() {
-		document.body.appendChild(createElement(
-			`<dialog class="ext-config-container">
-				<div class="title">
-					<span>Config</span>
-					<form method="dialog">
-						<button class="esc-button">&times</button>
-					</form>
-				</div>
-				<form class="data-container">
-					<div class="group-inputs">
-						<label>Default download latest post from (username)</label>
-						<input
-							placeholder="Keep blank to get yourself"
-							name="default_download_username"
-							class="input-item"
-							value="${DEFAULT_DOWNLOAD_USER.username}"/>
-					</div>
-				<button class="save-button">Save</button>
-				</form>
-			</dialog>`));
 	}
 	function handleEvents() {
 		const ESC_BUTTON = document.querySelector('.esc-button');
 		const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild;
 		const DISPLAY_CONTAINER = document.querySelector('.display-container');
-		const EXT_CONFIG_CONTAINER = document.querySelector('.ext-config-container');
 		const DOWNLOAD_BUTTON = document.querySelector('.download-button');
 		const IGNORE_FOCUS_ELEMENTS = ['INPUT', 'TEXTAREA'];
 		const ESC_EVENT_KEYS = ['Escape', 'C', 'c'];
@@ -187,12 +136,10 @@ const appState = Object.freeze((() => {
 			if (isDarkMode) {
 				DISPLAY_CONTAINER.classList.add('dark');
 				DISPLAY_CONTAINER.firstElementChild.classList.add('dark');
-				document.querySelector('.ext-config-container')?.classList.add('dark');
 			}
 			else {
 				DISPLAY_CONTAINER.classList.remove('dark');
 				DISPLAY_CONTAINER.firstElementChild.classList.remove('dark');
-				document.querySelector('.ext-config-container')?.classList.remove('dark');
 			}
 		}
 		function pauseVideo() {
@@ -246,8 +193,7 @@ const appState = Object.freeze((() => {
 			if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return;
 			if (e.target.role === 'textbox') return;
 			if (DOWNLOAD_EVENT_KEYS.includes(e.key)) {
-				DOWNLOAD_BUTTON.dispatchEvent(new Event('mousedown'));
-				return DOWNLOAD_BUTTON.dispatchEvent(new Event('mouseup'));
+				return DOWNLOAD_BUTTON.click();
 			}
 			if (ESC_EVENT_KEYS.includes(e.key)) {
 				return ESC_BUTTON.click();
@@ -266,9 +212,7 @@ const appState = Object.freeze((() => {
 		handleLongClick(TITLE_CONTAINER, () => {
 			TITLE_CONTAINER.classList.toggle('multi-select');
 		}, handleSelectAll);
-		handleLongClick(DOWNLOAD_BUTTON, handleDownload, () => {
-			if (!EXT_CONFIG_CONTAINER.open) EXT_CONFIG_CONTAINER.showModal();
-		});
+		DOWNLOAD_BUTTON.addEventListener('click', handleDownload);
 		window.addEventListener('online', () => {
 			DISPLAY_CONTAINER.querySelectorAll('img , video').forEach(media => {
 				media.src = media.src;
@@ -281,24 +225,6 @@ const appState = Object.freeze((() => {
 			}
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
-		document.querySelector('form.data-container').addEventListener('submit', e => {
-			e.preventDefault();
-			const saveButton = document.querySelector('button.save-button');
-			const formData = new FormData(e.target);
-			const interval = setInterval(() => {
-				if (saveButton.textContent.length <= 3) saveButton.textContent += '.';
-				else saveButton.textContent = '.';
-			}, 200);
-			setDefaultDownloadUser(formData.get('default_download_username'))
-				.then(() => {
-					saveButton.textContent = 'Saved';
-					if (!appState.currentDisplay) appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id);
-				})
-				.finally(() => {
-					clearInterval(interval);
-				});
-			saveButton.textContent = '.';
-		});
 		setTheme();
 		if (window.location.pathname.startsWith('/direct')) {
 			DOWNLOAD_BUTTON.classList.add('hide');
@@ -306,13 +232,10 @@ const appState = Object.freeze((() => {
 		}
 	}
 	function run() {
-		DEFAULT_DOWNLOAD_USER.load();
-		document.querySelectorAll('.display-container, .download-button, .ext-config-container').forEach(node => {
+		document.querySelectorAll('.display-container, .download-button').forEach(node => {
 			node.remove();
 		});
 		initUI();
-		initExtConfigUI();
-		appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id);
 		handleEvents();
 	}
 	run();
