@@ -116,6 +116,7 @@ function shouldDownload() {
 			if (currentPath.match(IG_HIGHLIGHT_REGEX)) return 'highlights';
 			return 'stories';
 		}
+		if (currentPath === '/') return 'post';
 		return 'none';
 	}
 	const currentPage = getCurrentPage();

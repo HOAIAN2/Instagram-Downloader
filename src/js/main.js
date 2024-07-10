@@ -45,6 +45,7 @@ const DEFAULT_DOWNLOAD_USER = Object.freeze((() => {
 
 const appState = Object.freeze((() => {
 	let currentDisplay = '';
+	let defaultShortcode = '';
 	const current = {
 		shortcode: '',
 		username: '',
@@ -59,6 +60,7 @@ const appState = Object.freeze((() => {
 		current.shortcode = e.detail.code;
 	});
 	return {
+		get defaultShortcode() { return defaultShortcode; },
 		get currentDisplay() { return currentDisplay; },
 		set currentDisplay(value) { if (['post', 'stories', 'highlights'].includes(value)) currentDisplay = value; },
 		current: Object.freeze({
@@ -118,7 +120,7 @@ const appState = Object.freeze((() => {
 			try {
 				const respone = await fetch(apiURL.href);
 				const json = await respone.json();
-				current.shortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode;
+				defaultShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode;
 			} catch (error) {
 				console.log(error);
 			}
@@ -310,7 +312,7 @@ const appState = Object.freeze((() => {
 		});
 		initUI();
 		initExtConfigUI();
-		if (!appState.current.shortcode) appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id);
+		appState.setDefaultShortcode(DEFAULT_DOWNLOAD_USER.id);
 		handleEvents();
 	}
 	run();
