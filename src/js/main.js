@@ -114,7 +114,7 @@ const appState = Object.freeze((() => {
 				</div>
 				<div class="medias-container">
 					<p style="position: absolute;top: 50%;transform: translate(0%, -50%);">
-						Not thing to download
+						Nothing to download
 					</p>
 				</div>
 			</div>
