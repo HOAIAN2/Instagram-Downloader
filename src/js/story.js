@@ -63,7 +63,10 @@ async function downloadStoryPhotos(type = 'stories') {
 		medias: []
 	};
 	let json = null;
-	if (type === 'highlights') json = await getHighlightStory(appState.current.highlights, options);
+	if (type === 'highlights') {
+		if (!appState.current.highlights) return null;
+		json = await getHighlightStory(appState.current.highlights, options);
+	}
 	else {
 		const userId = await getUserId(options);
 		if (!userId) return null;

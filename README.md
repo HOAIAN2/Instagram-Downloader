@@ -18,7 +18,7 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 ## Usage
 
-* Click `Download` button to fetch data
+* Go to any `post`, `reels`, `stories`, etc. Then click `Download` button to fetch data. If you scroll on the home page, this app will auto detect the post you wanna download. It's not work 100% because sometime Instagram take a couple time to fetch data so that not trigger scroll event.
 
 * Click on any photos/videos to save
 
@@ -35,22 +35,14 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 ## Customize
 
-## Config default download
-
-Set default username, so extension can download their latest post when app first load.
-
-1. Hold the download button
-2. Change username in textbox
-3. Save and close.
-
 ### Edit Hide / Show Transition effects
 
 ```css
 .display-container.hide {
-    transform-origin: right bottom;
+    transform-origin: 85% bottom;
     transform: scale(0);
     pointer-events: none;
-    opacity: 0.1;
+    opacity: 0.6;
 }
 ```
 
@@ -59,7 +51,14 @@ Set default username, so extension can download their latest post when app first
 * Download: `D`
 * Close: `esc` `C` `c`
 * Select all `S` `s`
-* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` or any element with ```textbox``` role (ex: comment, search, ...)
+* Keyboard shortcut should work if you don't focus on special HTML Elements like `input` `textarea` or any element with `textbox` role (ex: comment, search, ...)
+
+## Deprecated features
+
+These features was deprecated for some reason.
+
+* V5.1.0
+  * Set fallback download to latest post from some user.
 
 ## Here is Demo
 

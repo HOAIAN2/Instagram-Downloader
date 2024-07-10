@@ -35,7 +35,7 @@ const findValueByKey = (obj, key) => {
 		if (mostVisibleElement) {
 			const mediaFragmentKey = findValueByKey(mostVisibleElement, 'mediaFragmentKey');
 			if (mediaFragmentKey) {
-				window.dispatchEvent(new CustomEvent('postIdChange', {
+				window.dispatchEvent(new CustomEvent('shortcodeChange', {
 					detail: {
 						code: mediaFragmentKey.code
 					}

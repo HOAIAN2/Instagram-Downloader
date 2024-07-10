@@ -83,7 +83,7 @@
 	opacity: 0.8;
 }
 
-.display-container>.photos-container {
+.display-container>.medias-container {
 	width: inherit;
 	height: inherit;
 	max-width: inherit;
@@ -96,11 +96,25 @@
 	z-index: 0;
 }
 
-.display-container>.photos-container::-webkit-scrollbar {
+.medias-container:empty::after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 40px;
+	height: 40px;
+	border: 4px solid #f3f3f3;
+	border-top: 4px solid var(--gray-violet);
+	border-radius: 50%;
+	animation: spin 2s linear infinite;
+	transform: translate(-50%, -50%);
+}
+
+.display-container>.medias-container::-webkit-scrollbar {
 	display: none;
 }
 
-.display-container>.photos-container>div {
+.display-container>.medias-container>div {
 	position: relative;
 	width: 90%;
 	height: fit-content;
@@ -109,11 +123,11 @@
 	transition-property: width, height, scale;
 }
 
-.display-container>.photos-container>div:hover {
+.display-container>.medias-container>div:hover {
 	scale: 1.01;
 }
 
-.display-container>.photos-container>div>.overlay {
+.display-container>.medias-container>div>.overlay {
 	background: rgba(255, 255, 255, 0.2);
 	color: white;
 	pointer-events: none;
@@ -129,11 +143,11 @@
 	transition: 0.1s;
 }
 
-.display-container>.photos-container>div>.overlay.show {
+.display-container>.medias-container>div>.overlay.show {
 	display: block;
 }
 
-.display-container>.photos-container>div>.overlay.show::before {
+.display-container>.medias-container>div>.overlay.show::before {
 	content: "";
 	position: absolute;
 	width: 100%;
@@ -145,29 +159,29 @@
 	transition: 0.1s;
 }
 
-.display-container>.photos-container>div>.overlay.checked {
+.display-container>.medias-container>div>.overlay.checked {
 	background: var(--blue)
 }
 
-.display-container>.photos-container>div>.overlay.checked::before {
+.display-container>.medias-container>div>.overlay.checked::before {
 	content: "";
 	width: 150%;
 	height: 150%;
 	border: 2px solid white;
 }
 
-.display-container>.photos-container>div>.overlay.saved {
+.display-container>.medias-container>div>.overlay.saved {
 	background: var(--green)
 }
 
-.display-container>.photos-container>div>.overlay.saved::before {
+.display-container>.medias-container>div>.overlay.saved::before {
 	content: "";
 	width: 150%;
 	height: 150%;
 	border: 2px solid white;
 }
 
-.display-container>.photos-container>div>.photos-item {
+.display-container>.medias-container>div>.medias-item {
 	position: relative;
 	width: 100%;
 	cursor: pointer;
@@ -231,5 +245,17 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
+	}
+}
+
+/*Loading Spin in photos conatiner*/
+
+@keyframes spin {
+	0% {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);
 	}
 }

@@ -125,13 +125,12 @@ function shouldDownload() {
 		if (currentPage === valueChange) return valueChange;
 		if (appState.currentDisplay !== currentPage) return currentPage;
 	}
-	if (!document.querySelector('.photos-container').childElementCount) return 'post';
 	return 'none';
 }
 
 function setDownloadState(state = 'ready') {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
-	const PHOTOS_CONTAINER = document.querySelector('.photos-container');
+	const PHOTOS_CONTAINER = document.querySelector('.medias-container');
 	const options = {
 		ready() {
 			DOWNLOAD_BUTTON.classList.add('loading');
@@ -192,14 +191,14 @@ async function handleDownload() {
 
 function renderMedias(data) {
 	const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild;
-	const PHOTOS_CONTAINER = document.querySelector('.photos-container');
+	const PHOTOS_CONTAINER = document.querySelector('.medias-container');
 	PHOTOS_CONTAINER.replaceChildren();
 	if (!data) return;
 	const fragment = document.createDocumentFragment();
 	data.medias.forEach(item => {
 		const date = new Date(data.date * 1000).toISOString().split('T')[0];
 		const attributes = {
-			class: 'photos-item',
+			class: 'medias-item',
 			src: item.url,
 			title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
 			controls: ''
@@ -227,25 +226,6 @@ function renderMedias(data) {
 	PHOTOS_CONTAINER.appendChild(fragment);
 	TITLE_CONTAINER.classList.remove('multi-select');
 	setDownloadState('success');
-}
-
-async function setDefaultDownloadUser(username = '') {
-	try {
-		if (!username) {
-			DEFAULT_DOWNLOAD_USER.username = '';
-			DEFAULT_DOWNLOAD_USER.id = '';
-			DEFAULT_DOWNLOAD_USER.save();
-			return;
-		}
-		const userId = await getUserId(getAuthOptions(), username);
-		if (userId) {
-			DEFAULT_DOWNLOAD_USER.username = username;
-			DEFAULT_DOWNLOAD_USER.id = userId;
-			DEFAULT_DOWNLOAD_USER.save();
-		}
-	} catch (error) {
-		console.log(error);
-	}
 }
 
 function handleLongClick(element, shortClickHandler = () => { }, longClickHandler = () => { }, delay = 400) {
