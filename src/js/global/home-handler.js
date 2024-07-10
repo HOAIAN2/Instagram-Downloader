@@ -17,7 +17,7 @@ const findValueByKey = (obj, key) => {
 		let timeout;
 		return (...args) => {
 			clearTimeout(timeout);
-			timeout = setTimeout(() => func.apply(this, args), delay);
+			timeout = setTimeout(() => { func(...args); }, delay);
 		};
 	};
 	const homeScrollHandler = debounce(() => {
