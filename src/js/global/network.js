@@ -23,7 +23,7 @@
 			const url = this._url ? this._url.toLowerCase() : this._url;
 			const match = urlPatterns.some(pattern => pattern.test(url));
 			if (!match) return;
-			window.dispatchEvent(new CustomEvent('requestSend', {
+			window.dispatchEvent(new CustomEvent('apiCall', {
 				detail: {
 					body: postData,
 					request: this
@@ -35,7 +35,7 @@
 
 })(XMLHttpRequest);
 
-window.addEventListener('requestSend', e => {
+window.addEventListener('apiCall', e => {
 	// if (e.detail.request._url.match(/api\/v1\/media\/\d*\/info\//)) {
 	// 	const response = JSON.parse(e.detail.request.response);
 	// 	console.log('post detail call');
@@ -48,8 +48,29 @@ window.addEventListener('requestSend', e => {
 		|| fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageGalleryPaginationQuery'
 	) {
 		const response = JSON.parse(e.detail.request.response);
-		response.data['xdt_api__v1__feed__reels_media__connection'].edges.forEach(node => {
-			window.dispatchEvent(new CustomEvent('userAvailable', {
+		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
+		nodes.forEach(node => {
+			const data = {
+				date: node.node.items[0].taken_at,
+				user: {
+					username: node.node.user.username,
+					fullName: '',
+				},
+				medias: []
+			};
+			node.node.items.forEach(item => {
+				const media = {
+					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+					isVideo: item['media_type'] === 1 ? false : true,
+					id: item.id.split('_')[0]
+				};
+				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+				data.medias.push(media);
+			});
+			window.dispatchEvent(new CustomEvent('storiesLoad', {
+				detail: data
+			}));
+			window.dispatchEvent(new CustomEvent('userLoad', {
 				detail: {
 					username: node.node.user.username,
 					id: node.node.user.pk
@@ -60,16 +81,65 @@ window.addEventListener('requestSend', e => {
 
 	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageStandaloneDirectQuery') {
 		const response = JSON.parse(e.detail.request.response);
-		response.data['xdt_api__v1__feed__reels_media']['reels_media'].forEach(node => {
-			window.dispatchEvent(new CustomEvent('userAvailable', {
+		const nodes = response.data['xdt_api__v1__feed__reels_media']['reels_media'];
+		nodes.forEach(node => {
+			window.dispatchEvent(new CustomEvent('userLoad', {
 				detail: {
 					username: node.user.username,
 					id: node.user.pk
 				}
 			}));
 		});
+		nodes.forEach(node => {
+			const data = {
+				date: node.items[0].taken_at,
+				user: {
+					username: node.user.username,
+					fullName: '',
+				},
+				medias: []
+			};
+			node.items.forEach(item => {
+				const media = {
+					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+					isVideo: item['media_type'] === 1 ? false : true,
+					id: item.id.split('_')[0]
+				};
+				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+				data.medias.push(media);
+			});
+			window.dispatchEvent(new CustomEvent('storiesLoad', {
+				detail: data
+			}));
+		});
 	}
 	if (fbApiReqFriendlyName === 'PolarisStoriesV3HighlightsPageQuery') {
-		// const response = JSON.parse(e.detail.request.response);
+		const response = JSON.parse(e.detail.request.response);
+		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
+		nodes.forEach(node => {
+			const data = {
+				date: node.node.items[0].taken_at,
+				user: {
+					username: node.node.user.username,
+					fullName: '',
+				},
+				medias: []
+			};
+			node.node.items.forEach(item => {
+				const media = {
+					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+					isVideo: item['media_type'] === 1 ? false : true,
+					id: item.id.split('_')[0]
+				};
+				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+				data.medias.push(media);
+			});
+			window.dispatchEvent(new CustomEvent('highlightsLoad', {
+				detail: {
+					id: node.node.id.split(':')[1],
+					data: data
+				}
+			}));
+		});
 	}
 });
