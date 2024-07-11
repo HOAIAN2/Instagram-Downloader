@@ -78,7 +78,9 @@ const appState = Object.freeze((() => {
 			if (current.shortcode !== previous.shortcode) return 'post';
 			return 'none';
 		},
-		userInfos: new Map()
+		userInfos: new Map(),
+		storiesCache: new Map(),
+		highlightsCache: new Map()
 	};
 })());
 
@@ -211,8 +213,14 @@ const appState = Object.freeze((() => {
 			}
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
-		window.addEventListener('userAvailable', e => {
+		window.addEventListener('userLoad', e => {
 			appState.userInfos.set(e.detail.username, e.detail.id);
+		});
+		window.addEventListener('storiesLoad', e => {
+			appState.storiesCache.set(e.detail.user.username, e.detail);
+		});
+		window.addEventListener('highlightsLoad', e => {
+			appState.highlightsCache.set(e.detail.id, e.detail.data);
 		});
 		setTheme();
 		if (window.location.pathname.startsWith('/direct')) {
