@@ -78,21 +78,7 @@ const appState = Object.freeze((() => {
 			if (current.shortcode !== previous.shortcode) return 'post';
 			return 'none';
 		},
-		async setDefaultShortcode(profileId = '') {
-			const apiURL = new URL('/graphql/query/', IG_BASE_URL);
-			apiURL.searchParams.set('query_hash', IG_PROFILE_HASH);
-			apiURL.searchParams.set('variables', JSON.stringify({
-				id: profileId,
-				first: 1
-			}));
-			try {
-				const respone = await fetch(apiURL.href);
-				const json = await respone.json();
-				defaultShortcode = json.data.user['edge_owner_to_timeline_media'].edges[0].node.shortcode;
-			} catch (error) {
-				console.log(error);
-			}
-		}
+		userInfos: new Map()
 	};
 })());
 
@@ -224,6 +210,9 @@ const appState = Object.freeze((() => {
 				DISPLAY_CONTAINER.classList.add('hide');
 			}
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
+		});
+		window.addEventListener('userAvailable', e => {
+			appState.userInfos.set(e.detail.username, e.detail.id);
 		});
 		setTheme();
 		if (window.location.pathname.startsWith('/direct')) {
