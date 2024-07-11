@@ -1,59 +1,28 @@
-(function (xhr) {
+((xhr) => {
 	const XHR = XMLHttpRequest.prototype;
 	const open = XHR.open;
 	const send = XHR.send;
-	let setRequestHeader = XHR.setRequestHeader;
+	const setRequestHeader = XHR.setRequestHeader;
 	const urlPatterns = [
 		/graphql\/query/,
 		// /api\/v1\/media\/\d*\/info\//
 	];
-
 	XHR.open = function (method, url) {
 		this._method = method;
 		this._url = url;
 		this._requestHeaders = {};
 		this._startTime = (new Date()).toISOString();
-
 		return open.apply(this, arguments);
 	};
-
 	XHR.setRequestHeader = function (header, value) {
 		this._requestHeaders[header] = value;
 		return setRequestHeader.apply(this, arguments);
 	};
-
 	XHR.send = function (postData) {
-		this.addEventListener('load', function () {
-			let endTime = (new Date()).toISOString();
-			let myUrl = this._url ? this._url.toLowerCase() : this._url;
-			let match = urlPatterns.some(pattern => pattern.test(myUrl));
-
-			if (!match) {
-				return;
-			}
-
-			if (postData) {
-				if (typeof postData === 'string') {
-					try {
-						this._requestHeaders = postData;
-					} catch (err) {
-						console.log('Request Header JSON decode failed, transfer_encoding field could be base64');
-						console.log(err);
-					}
-				} else if (typeof postData === 'object') {
-					// console.log('Request Payload:', JSON.stringify(postData, null, 2));
-				}
-			}
-			let responseHeaders = this.getAllResponseHeaders();
-			if (this.responseType != 'blob' && this.responseText) {
-				// ResponseText is string or null
-				try {
-					// let responseBody = this.responseText;
-				} catch (err) {
-					console.log("Error in responseType try catch");
-					console.log(err);
-				}
-			}
+		this.addEventListener('load', () => {
+			const url = this._url ? this._url.toLowerCase() : this._url;
+			const match = urlPatterns.some(pattern => pattern.test(url));
+			if (!match) return;
 			window.dispatchEvent(new CustomEvent('requestSend', {
 				detail: {
 					body: postData,
@@ -61,7 +30,6 @@
 				}
 			}));
 		});
-
 		return send.apply(this, arguments);
 	};
 
