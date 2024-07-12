@@ -1,5 +1,5 @@
 async function getUserIdFromSearch(username = appState.current.username) {
-	if (appState.userInfos.has(username)) return appState.userInfos.get(username);
+	if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
 	const apiURL = new URL('/web/search/topsearch/', IG_BASE_URL);
 	if (username) apiURL.searchParams.set('query', username);
 	else apiURL.searchParams.set('query', appState.current.username);
@@ -14,7 +14,7 @@ async function getUserIdFromSearch(username = appState.current.username) {
 }
 
 async function getUserId(options, username = appState.current.username) {
-	if (appState.userInfos.has(username)) return appState.userInfos.get(username);
+	if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
 	const apiURL = new URL('/api/v1/users/web_profile_info/', IG_BASE_URL);
 	if (username) apiURL.searchParams.set('username', username);
 	else apiURL.searchParams.set('username', appState.current.username);
@@ -67,11 +67,11 @@ async function downloadStoryPhotos(type = 'stories') {
 	let json = null;
 	if (type === 'highlights') {
 		if (!appState.current.highlights) return null;
-		if (appState.highlightsCache.has(appState.current.highlights)) return appState.highlightsCache.get(appState.current.highlights);
+		// if (appState.highlightsCache.has(appState.current.highlights)) return appState.highlightsCache.get(appState.current.highlights);
 		json = await getHighlightStory(appState.current.highlights, options);
 	}
 	else {
-		if (appState.storiesCache.has(appState.current.username)) return appState.storiesCache.get(appState.current.username);
+		// if (appState.storiesCache.has(appState.current.username)) return appState.storiesCache.get(appState.current.username);
 		const userId = await getUserId(options, appState.current.username);
 		if (!userId) return null;
 		json = await getStoryPhotos(userId, options);
