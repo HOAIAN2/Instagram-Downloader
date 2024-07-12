@@ -78,9 +78,10 @@ const appState = Object.freeze((() => {
 			if (current.shortcode !== previous.shortcode) return 'post';
 			return 'none';
 		},
-		userInfos: new Map(),
-		storiesCache: new Map(),
-		highlightsCache: new Map()
+		userIdsCache: new Map(),
+		// postsCache: new Map(),
+		// storiesCache: new Map(),
+		// highlightsCache: new Map()
 	};
 })());
 
@@ -214,14 +215,17 @@ const appState = Object.freeze((() => {
 			else DOWNLOAD_BUTTON.removeAttribute('hidden');
 		});
 		window.addEventListener('userLoad', e => {
-			appState.userInfos.set(e.detail.username, e.detail.id);
+			appState.userIdsCache.set(e.detail.username, e.detail.id);
 		});
-		window.addEventListener('storiesLoad', e => {
-			appState.storiesCache.set(e.detail.user.username, e.detail);
-		});
-		window.addEventListener('highlightsLoad', e => {
-			appState.highlightsCache.set(e.detail.id, e.detail.data);
-		});
+		// window.addEventListener('storiesLoad', e => {
+		// 	appState.storiesCache.set(e.detail.user.username, e.detail);
+		// });
+		// window.addEventListener('postLoad', e => {
+		// 	appState.postsCache.set(e.detail.shortcode, e.detail.data);
+		// });
+		// window.addEventListener('highlightsLoad', e => {
+		// 	appState.highlightsCache.set(e.detail.id, e.detail.data);
+		// });
 		setTheme();
 		if (window.location.pathname.startsWith('/direct')) {
 			DOWNLOAD_BUTTON.classList.add('hide');

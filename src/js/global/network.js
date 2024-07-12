@@ -36,52 +36,9 @@
 })(XMLHttpRequest);
 
 window.addEventListener('apiCall', e => {
-	// if (e.detail.request._url.match(/api\/v1\/media\/\d*\/info\//)) {
-	// 	const response = JSON.parse(e.detail.request.response);
-	// 	console.log('post detail call');
-	// 	console.log(response);
-	// }
 	const searchParams = new URLSearchParams(e.detail.body);
 	const fbApiReqFriendlyName = searchParams.get('fb_api_req_friendly_name');
-
-	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageGalleryQuery'
-		|| fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageGalleryPaginationQuery'
-	) {
-		const response = JSON.parse(e.detail.request.response);
-		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
-		nodes.forEach(node => {
-			const data = {
-				date: node.node.items[0].taken_at,
-				user: {
-					username: node.node.user.username,
-					fullName: '',
-				},
-				medias: []
-			};
-			node.node.items.forEach(item => {
-				const media = {
-					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
-					isVideo: item['media_type'] === 1 ? false : true,
-					id: item.id.split('_')[0]
-				};
-				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-				data.medias.push(media);
-			});
-			window.dispatchEvent(new CustomEvent('storiesLoad', {
-				detail: data
-			}));
-			window.dispatchEvent(new CustomEvent('userLoad', {
-				detail: {
-					username: node.node.user.username,
-					id: node.node.user.pk
-				}
-			}));
-		});
-	}
-
-	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageStandaloneDirectQuery') {
-		const response = JSON.parse(e.detail.request.response);
-		const nodes = response.data['xdt_api__v1__feed__reels_media']['reels_media'];
+	const handleNodes = (nodes) => {
 		nodes.forEach(node => {
 			window.dispatchEvent(new CustomEvent('userLoad', {
 				detail: {
@@ -90,56 +47,156 @@ window.addEventListener('apiCall', e => {
 				}
 			}));
 		});
-		nodes.forEach(node => {
-			const data = {
-				date: node.items[0].taken_at,
-				user: {
-					username: node.user.username,
-					fullName: '',
-				},
-				medias: []
-			};
-			node.items.forEach(item => {
-				const media = {
-					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
-					isVideo: item['media_type'] === 1 ? false : true,
-					id: item.id.split('_')[0]
-				};
-				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-				data.medias.push(media);
-			});
-			window.dispatchEvent(new CustomEvent('storiesLoad', {
-				detail: data
-			}));
-		});
+	};
+	const response = JSON.parse(e.detail.request.response);
+	if (['PolarisStoriesV3ReelPageGalleryQuery', 'PolarisStoriesV3ReelPageGalleryPaginationQuery'].includes(fbApiReqFriendlyName)) {
+		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges.map(edge => edge.node);
+		handleNodes(nodes);
 	}
-	if (fbApiReqFriendlyName === 'PolarisStoriesV3HighlightsPageQuery') {
-		const response = JSON.parse(e.detail.request.response);
-		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
-		nodes.forEach(node => {
-			const data = {
-				date: node.node.items[0].taken_at,
-				user: {
-					username: node.node.user.username,
-					fullName: '',
-				},
-				medias: []
-			};
-			node.node.items.forEach(item => {
-				const media = {
-					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
-					isVideo: item['media_type'] === 1 ? false : true,
-					id: item.id.split('_')[0]
-				};
-				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-				data.medias.push(media);
-			});
-			window.dispatchEvent(new CustomEvent('highlightsLoad', {
-				detail: {
-					id: node.node.id.split(':')[1],
-					data: data
-				}
-			}));
-		});
+	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageStandaloneDirectQuery') {
+		const nodes = response.data['xdt_api__v1__feed__reels_media']['reels_media'];
+		handleNodes(nodes);
 	}
 });
+
+// window.addEventListener('apiCall', e => {
+// 	if (e.detail.request._url.match(/api\/v1\/media\/\d*\/info\//)) {
+// 		const response = JSON.parse(e.detail.request.response);
+// 		const edges = response.items[0];
+// 		const data = {
+// 			date: '',
+// 			user: {
+// 				username: edges.user['username'],
+// 				fullName: edges.user['full_name'],
+// 			},
+// 			medias: []
+// 		};
+// 		data.date = edges['taken_at'];
+// 		if (edges['carousel_media']) {
+// 			edges['carousel_media'].forEach((item) => {
+// 				const media = {
+// 					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+// 					isVideo: item['media_type'] === 1 ? false : true,
+// 					id: item.id.split('_')[0]
+// 				};
+// 				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+// 				data.medias.push(media);
+// 			});
+// 		}
+// 		else {
+// 			const media = {
+// 				url: edges['media_type'] === 1 ? edges['image_versions2'].candidates[0]['url'] : edges['video_versions'][0].url,
+// 				isVideo: edges['media_type'] === 1 ? false : true,
+// 				id: edges.id.split('_')[0]
+// 			};
+// 			if (media.isVideo) media.thumbnail = edges['image_versions2'].candidates[0]['url'];
+// 			data.medias.push(media);
+// 		}
+// 		window.dispatchEvent(new CustomEvent('postLoad', {
+// 			detail: {
+// 				shortcode: edges.code,
+// 				data: data
+// 			}
+// 		}));
+// 	}
+
+// 	const searchParams = new URLSearchParams(e.detail.body);
+// 	const fbApiReqFriendlyName = searchParams.get('fb_api_req_friendly_name');
+
+// 	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageGalleryQuery'
+// 		|| fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageGalleryPaginationQuery'
+// 	) {
+// 		const response = JSON.parse(e.detail.request.response);
+// 		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
+// 		nodes.forEach(node => {
+// 			const data = {
+// 				date: node.node.items[0].taken_at,
+// 				user: {
+// 					username: node.node.user.username,
+// 					fullName: '',
+// 				},
+// 				medias: []
+// 			};
+// 			node.node.items.forEach(item => {
+// 				const media = {
+// 					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+// 					isVideo: item['media_type'] === 1 ? false : true,
+// 					id: item.id.split('_')[0]
+// 				};
+// 				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+// 				data.medias.push(media);
+// 			});
+// 			window.dispatchEvent(new CustomEvent('storiesLoad', {
+// 				detail: data
+// 			}));
+// 			window.dispatchEvent(new CustomEvent('userLoad', {
+// 				detail: {
+// 					username: node.node.user.username,
+// 					id: node.node.user.pk
+// 				}
+// 			}));
+// 		});
+// 	}
+
+// 	if (fbApiReqFriendlyName === 'PolarisStoriesV3ReelPageStandaloneDirectQuery') {
+// 		const response = JSON.parse(e.detail.request.response);
+// 		const nodes = response.data['xdt_api__v1__feed__reels_media']['reels_media'];
+// 		nodes.forEach(node => {
+// 			const data = {
+// 				date: node.items[0].taken_at,
+// 				user: {
+// 					username: node.user.username,
+// 					fullName: '',
+// 				},
+// 				medias: []
+// 			};
+// 			node.items.forEach(item => {
+// 				const media = {
+// 					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+// 					isVideo: item['media_type'] === 1 ? false : true,
+// 					id: item.id.split('_')[0]
+// 				};
+// 				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+// 				data.medias.push(media);
+// 			});
+// 			window.dispatchEvent(new CustomEvent('storiesLoad', {
+// 				detail: data
+// 			}));
+// 			window.dispatchEvent(new CustomEvent('userLoad', {
+// 				detail: {
+// 					username: node.user.username,
+// 					id: node.user.pk
+// 				}
+// 			}));
+// 		});
+// 	}
+// 	if (fbApiReqFriendlyName === 'PolarisStoriesV3HighlightsPageQuery') {
+// 		const response = JSON.parse(e.detail.request.response);
+// 		const nodes = response.data['xdt_api__v1__feed__reels_media__connection'].edges;
+// 		nodes.forEach(node => {
+// 			const data = {
+// 				date: node.node.items[0].taken_at,
+// 				user: {
+// 					username: node.node.user.username,
+// 					fullName: '',
+// 				},
+// 				medias: []
+// 			};
+// 			node.node.items.forEach(item => {
+// 				const media = {
+// 					url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
+// 					isVideo: item['media_type'] === 1 ? false : true,
+// 					id: item.id.split('_')[0]
+// 				};
+// 				if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
+// 				data.medias.push(media);
+// 			});
+// 			window.dispatchEvent(new CustomEvent('highlightsLoad', {
+// 				detail: {
+// 					id: node.node.id.split(':')[1],
+// 					data: data
+// 				}
+// 			}));
+// 		});
+// 	}
+// });
