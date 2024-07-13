@@ -67,11 +67,9 @@ async function downloadStoryPhotos(type = 'stories') {
 	let json = null;
 	if (type === 'highlights') {
 		if (!appState.current.highlights) return null;
-		// if (appState.highlightsCache.has(appState.current.highlights)) return appState.highlightsCache.get(appState.current.highlights);
 		json = await getHighlightStory(appState.current.highlights, options);
 	}
 	else {
-		// if (appState.storiesCache.has(appState.current.username)) return appState.storiesCache.get(appState.current.username);
 		const userId = await getUserId(options, appState.current.username);
 		if (!userId) return null;
 		json = await getStoryPhotos(userId, options);

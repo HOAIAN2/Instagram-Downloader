@@ -1,17 +1,3 @@
-// Different scope, have to redeclare: https://developer.chrome.com/docs/extensions/reference/api/scripting?hl=vi#type-ExecutionWorld
-const findValueByKey = (obj, key) => {
-	if (typeof obj !== 'object' || obj === null) return null;
-	const stack = [obj];
-	while (stack.length) {
-		const current = stack.pop();
-		if (current[key] !== undefined) return current[key];
-		for (const value of Object.values(current)) {
-			if (typeof value === 'object' && value !== null) stack.push(value);
-		}
-	}
-	return null;
-};
-
 (() => {
 	function debounce(func, delay) {
 		let timeout;
