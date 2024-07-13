@@ -70,25 +70,17 @@ async function downloadPostPhotos() {
 	data.user.username = json.user['username'];
 	data.user.fullName = json.user['full_name'];
 	data.date = json['taken_at'];
-	if (json['carousel_media']) {
-		json['carousel_media'].forEach((item) => {
-			const media = {
-				url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
-				isVideo: item['media_type'] === 1 ? false : true,
-				id: item.id.split('_')[0]
-			};
-			if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-			data.medias.push(media);
-		});
-	}
-	else {
+	function extractMediaData(item) {
+		const isVideo = item['media_type'] !== 1;
 		const media = {
-			url: json['media_type'] === 1 ? json['image_versions2'].candidates[0]['url'] : json['video_versions'][0].url,
-			isVideo: json['media_type'] === 1 ? false : true,
-			id: json.id.split('_')[0]
+			url: isVideo ? item['video_versions'][0].url : item['image_versions2'].candidates[0].url,
+			isVideo,
+			id: item.id.split('_')[0]
 		};
-		if (media.isVideo) media.thumbnail = json['image_versions2'].candidates[0]['url'];
-		data.medias.push(media);
-	}
+		if (isVideo) media.thumbnail = item['image_versions2'].candidates[0].url;
+		return media;
+	};
+	if (json.carousel_media) data.medias = json.carousel_media.map(extractMediaData);
+	else data.medias.push(extractMediaData(json));
 	return data;
 }
