@@ -28,18 +28,23 @@ function getAuthOptions() {
 	return options;
 }
 
-function findValueByKey(obj, key) {
+const findValueByKey = (obj, key) => {
 	if (typeof obj !== 'object' || obj === null) return null;
 	const stack = [obj];
+	const visited = new Set();
 	while (stack.length) {
 		const current = stack.pop();
+		if (visited.has(current)) continue;
+		visited.add(current);
 		if (current[key] !== undefined) return current[key];
 		for (const value of Object.values(current)) {
-			if (typeof value === 'object' && value !== null) stack.push(value);
+			if (typeof value === 'object' && value !== null) {
+				stack.push(value);
+			}
 		}
 	}
 	return null;
-}
+};
 
 function resetDownloadState() {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
