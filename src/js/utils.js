@@ -28,7 +28,7 @@ function getAuthOptions() {
 	return options;
 }
 
-const findValueByKey = (obj, key) => {
+function findValueByKey(obj, key) {
 	if (typeof obj !== 'object' || obj === null) return null;
 	const stack = [obj];
 	const visited = new Set();
