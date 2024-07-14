@@ -1,4 +1,4 @@
-async function getUserIdFromSearch(username = appState.current.username) {
+async function getUserIdFromSearch(username) {
 	if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
 	const apiURL = new URL('/web/search/topsearch/', IG_BASE_URL);
 	if (username) apiURL.searchParams.set('query', username);
@@ -13,13 +13,13 @@ async function getUserIdFromSearch(username = appState.current.username) {
 	}
 }
 
-async function getUserId(options, username = appState.current.username) {
+async function getUserId(username) {
 	if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
 	const apiURL = new URL('/api/v1/users/web_profile_info/', IG_BASE_URL);
 	if (username) apiURL.searchParams.set('username', username);
 	else apiURL.searchParams.set('username', appState.current.username);
 	try {
-		const respone = await fetch(apiURL.href, options);
+		const respone = await fetch(apiURL.href, getAuthOptions());
 		const json = await respone.json();
 		return json.data.user['id'];
 	} catch (error) {
@@ -28,11 +28,11 @@ async function getUserId(options, username = appState.current.username) {
 	}
 }
 
-async function getStoryPhotos(userId, options) {
+async function getStoryPhotos(userId) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
 	apiURL.searchParams.set('reel_ids', userId);
 	try {
-		const respone = await fetch(apiURL.href, options);
+		const respone = await fetch(apiURL.href, getAuthOptions());
 		const json = await respone.json();
 		return json.reels[userId];
 	} catch (error) {
@@ -41,11 +41,11 @@ async function getStoryPhotos(userId, options) {
 	}
 }
 
-async function getHighlightStory(highlightsId, options) {
+async function getHighlightStory(highlightsId) {
 	const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
 	apiURL.searchParams.set('reel_ids', `highlight:${highlightsId}`);
 	try {
-		const respone = await fetch(apiURL.href, options);
+		const respone = await fetch(apiURL.href, getAuthOptions());
 		const json = await respone.json();
 		return json.reels[`highlight:${highlightsId}`];
 	} catch (error) {
@@ -55,16 +55,15 @@ async function getHighlightStory(highlightsId, options) {
 }
 
 async function downloadStoryPhotos(type = 'stories') {
-	const options = getAuthOptions();
 	let json = null;
 	if (type === 'highlights') {
 		if (!appState.current.highlights) return null;
-		json = await getHighlightStory(appState.current.highlights, options);
+		json = await getHighlightStory(appState.current.highlights);
 	}
 	else {
-		const userId = await getUserId(options, appState.current.username);
+		const userId = await getUserId(appState.current.username);
 		if (!userId) return null;
-		json = await getStoryPhotos(userId, options);
+		json = await getStoryPhotos(userId);
 	}
 	if (!json) return null;
 	const data = {
