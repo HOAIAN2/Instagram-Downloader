@@ -56,20 +56,16 @@ async function getPostPhotos(shortcode, options) {
 
 async function downloadPostPhotos() {
 	const options = getAuthOptions();
-	const data = {
-		date: '',
-		user: {
-			username: '',
-			fullName: '',
-		},
-		medias: []
-	};
 	if (!appState.current.shortcode) return null;
 	const json = await getPostPhotos(appState.current.shortcode, options);
 	if (!json) return null;
-	data.user.username = json.user['username'];
-	data.user.fullName = json.user['full_name'];
-	data.date = json['taken_at'];
+	const data = {
+		date: json['taken_at'],
+		user: {
+			username: json.user['username'],
+		},
+		medias: []
+	};
 	function extractMediaData(item) {
 		const isVideo = item['media_type'] !== 1;
 		const media = {

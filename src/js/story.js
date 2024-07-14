@@ -56,14 +56,6 @@ async function getHighlightStory(highlightsId, options) {
 
 async function downloadStoryPhotos(type = 'stories') {
 	const options = getAuthOptions();
-	const data = {
-		date: '',
-		user: {
-			username: '',
-			fullName: '',
-		},
-		medias: []
-	};
 	let json = null;
 	if (type === 'highlights') {
 		if (!appState.current.highlights) return null;
@@ -75,9 +67,13 @@ async function downloadStoryPhotos(type = 'stories') {
 		json = await getStoryPhotos(userId, options);
 	}
 	if (!json) return null;
-	data.user.username = json.user['username'];
-	data.user.fullName = json.user['full_name'];
-	data.date = json.items[0]['taken_at'];
+	const data = {
+		date: json.items[0]['taken_at'],
+		user: {
+			username: json.user['username'],
+		},
+		medias: []
+	};
 	json.items.forEach((item) => {
 		const media = {
 			url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,

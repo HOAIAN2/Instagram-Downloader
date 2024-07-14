@@ -71,14 +71,14 @@ async function saveZip() {
 	DOWNLOAD_BUTTON.textContent = 'Loading...';
 	DOWNLOAD_BUTTON.disabled = true;
 	const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
-	const zipFileName = medias[0].title.split(' | ').slice(1, 5).join('_') + '.zip';
+	const zipFileName = medias[0].title.replaceAll(' | ', '_') + '.zip';
 	async function fetchSelectedMedias() {
 		let count = 0;
 		const results = await Promise.allSettled(medias.map(async (media) => {
 			const res = await fetch(media.src);
 			const blob = await res.blob();
 			const data = {
-				title: media.title.split(' | ').slice(1, 5).join('_'),
+				title: media.title.replaceAll(' | ', '_'),
 				data: blob
 			};
 			if (media.nodeName === 'VIDEO') data.title = `${data.title}.mp4`;
@@ -205,7 +205,7 @@ function renderMedias(data) {
 		const attributes = {
 			class: 'medias-item',
 			src: item.url,
-			title: `${data.user.fullName} | ${data.user.username} | ${item.id} | ${date}`,
+			title: `${data.user.username} | ${item.id} | ${date}`,
 			controls: ''
 		};
 		const ITEM_TEMPLATE =
@@ -225,7 +225,7 @@ function renderMedias(data) {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
 				selectBox.classList.toggle('checked');
 			}
-			else saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + `${item.isVideo ? '.mp4' : '.jpeg'}`);
+			else saveMedia(media, media.title.replaceAll(' | ', '_') + `${item.isVideo ? '.mp4' : '.jpeg'}`);
 		});
 	});
 	PHOTOS_CONTAINER.appendChild(fragment);
