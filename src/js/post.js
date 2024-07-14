@@ -35,17 +35,11 @@ async function getPostIdFromAPI() {
 	}
 }
 
-async function getPostPhotos(shortcode, options) {
+async function getPostPhotos(shortcode) {
 	const postId = convertToPostId(shortcode);
 	const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL);
 	try {
-		let respone = await fetch(apiURL.href, options);
-		if (respone.status === 400) {
-			const postId = await getPostIdFromAPI();
-			if (!postId) throw new Error('Network bug');
-			const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL);
-			respone = await fetch(apiURL.href, options);
-		}
+		const respone = await fetch(apiURL.href, getAuthOptions());
 		const json = await respone.json();
 		return json.items[0];
 	} catch (error) {
@@ -55,9 +49,8 @@ async function getPostPhotos(shortcode, options) {
 }
 
 async function downloadPostPhotos() {
-	const options = getAuthOptions();
 	if (!appState.current.shortcode) return null;
-	const json = await getPostPhotos(appState.current.shortcode, options);
+	const json = await getPostPhotos(appState.current.shortcode);
 	if (!json) return null;
 	const data = {
 		date: json['taken_at'],
