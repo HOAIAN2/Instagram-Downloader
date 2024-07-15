@@ -9,7 +9,7 @@ function saveFile(blob, fileName) {
 function getAuthOptions() {
 	const csrftoken = document.cookie.split(' ')[2].split('=')[1];
 	const claim = sessionStorage.getItem('www-claim-v2');
-	const options = {
+	return {
 		headers: {
 			// Hardcode variable: a="129477";f.ASBD_ID=a in JS, can be remove
 			// 'x-asbd-id': '129477',
@@ -25,7 +25,6 @@ function getAuthOptions() {
 		mode: 'cors',
 		credentials: 'include'
 	};
-	return options;
 }
 
 function findValueByKey(obj, key) {
@@ -81,8 +80,7 @@ async function saveZip() {
 				title: media.title.replaceAll(' | ', '_'),
 				data: blob
 			};
-			if (media.nodeName === 'VIDEO') data.title = `${data.title}.mp4`;
-			else data.title = `${data.title}.jpeg`;
+			data.title = media.nodeName === 'VIDEO' ? `${data.title}.mp4` : `${data.title}.jpeg`;
 			count++;
 			DOWNLOAD_BUTTON.textContent = `${count}/${medias.length}`;
 			return data;
@@ -220,8 +218,9 @@ function renderMedias(data) {
 			if (item.isVideo) media.setAttribute(key, attributes[key]);
 			else if (key !== 'controls') media.setAttribute(key, attributes[key]);
 		});
-		media.addEventListener('click', () => {
+		media.addEventListener('click', (e) => {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
+				if (item.isVideo) e.preventDefault();
 				selectBox.classList.toggle('checked');
 			}
 			else saveMedia(media, media.title.replaceAll(' | ', '_') + `${item.isVideo ? '.mp4' : '.jpeg'}`);
