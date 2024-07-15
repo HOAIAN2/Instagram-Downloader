@@ -95,7 +95,7 @@ const appState = Object.freeze((() => {
 		document.body.appendChild(createElement(
 			`<div class="display-container hide">
 				<div class="title-container">
-					<span title="${manifestData.name} v${manifestData.version}">Photos</span>
+					<span title="${manifestData.name} v${manifestData.version}">Medias</span>
 					<button class="esc-button">&times</button>
 				</div>
 				<div class="medias-container">
@@ -137,11 +137,13 @@ const appState = Object.freeze((() => {
 		}
 		function toggleSelectMode() {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
+				TITLE_CONTAINER.textContent = 'Select medias';
 				DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
 					element.classList.add('show');
 				});
 			}
 			else {
+				TITLE_CONTAINER.textContent = 'Medias';
 				DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
 					element.classList.remove('show');
 				});
