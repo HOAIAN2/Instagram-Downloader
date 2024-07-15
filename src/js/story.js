@@ -79,7 +79,6 @@ async function downloadStoryPhotos(type = 'stories') {
 			isVideo: item['media_type'] === 1 ? false : true,
 			id: item.pk
 		};
-		if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
 		data.medias.push(media);
 	});
 	return data;

@@ -66,7 +66,6 @@ async function downloadPostPhotos() {
 			isVideo,
 			id: item.pk
 		};
-		if (isVideo) media.thumbnail = item['image_versions2'].candidates[0].url;
 		return media;
 	};
 	if (json.carousel_media) data.medias = json.carousel_media.map(extractMediaData);

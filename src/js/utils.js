@@ -210,7 +210,7 @@ function renderMedias(data) {
 		};
 		const ITEM_TEMPLATE =
 			`<div>
-				${item.isVideo ? `<video preload="metadata" poster="${item.thumbnail}"></video>` : '<img/>'}
+				${item.isVideo ? `<video></video>` : '<img/>'}
 				<div class="overlay"></div>
 			</div>`;
 		const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild;
@@ -220,13 +220,13 @@ function renderMedias(data) {
 			if (item.isVideo) media.setAttribute(key, attributes[key]);
 			else if (key !== 'controls') media.setAttribute(key, attributes[key]);
 		});
-		fragment.appendChild(itemDOM);
 		media.addEventListener('click', () => {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
 				selectBox.classList.toggle('checked');
 			}
 			else saveMedia(media, media.title.replaceAll(' | ', '_') + `${item.isVideo ? '.mp4' : '.jpeg'}`);
 		});
+		fragment.appendChild(itemDOM);
 	});
 	PHOTOS_CONTAINER.appendChild(fragment);
 	TITLE_CONTAINER.classList.remove('multi-select');
