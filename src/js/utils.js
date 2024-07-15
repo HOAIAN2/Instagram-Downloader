@@ -200,8 +200,8 @@ function renderMedias(data) {
 	PHOTOS_CONTAINER.replaceChildren();
 	if (!data) return;
 	const fragment = document.createDocumentFragment();
+	const date = new Date(data.date * 1000).toISOString().split('T')[0];
 	data.medias.forEach(item => {
-		const date = new Date(data.date * 1000).toISOString().split('T')[0];
 		const attributes = {
 			class: 'medias-item',
 			src: item.url,
@@ -214,7 +214,7 @@ function renderMedias(data) {
 				<div class="overlay"></div>
 			</div>`;
 		const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild;
-		const media = itemDOM.firstElementChild;
+		const media = itemDOM.querySelector('img, video');
 		const selectBox = itemDOM.querySelector('.overlay');
 		Object.keys(attributes).forEach(key => {
 			if (item.isVideo) media.setAttribute(key, attributes[key]);
