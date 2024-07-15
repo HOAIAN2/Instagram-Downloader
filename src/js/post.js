@@ -64,7 +64,7 @@ async function downloadPostPhotos() {
 		const media = {
 			url: isVideo ? item['video_versions'][0].url : item['image_versions2'].candidates[0].url,
 			isVideo,
-			id: item.id.split('_')[0]
+			id: item.pk
 		};
 		if (isVideo) media.thumbnail = item['image_versions2'].candidates[0].url;
 		return media;
