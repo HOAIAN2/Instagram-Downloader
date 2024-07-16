@@ -12,6 +12,7 @@ const IG_APP_ID = (() => {
 	const jsonData = isValidJson(jsons) ? JSON.parse(jsons) : null;
 	return jsonData ? findValueByKey(JSON.parse(jsons), 'X-IG-App-ID') : '936619743392459';
 })();
+const APP_NAME = `${chrome.runtime.getManifest().name} v${chrome.runtime.getManifest().version}`;
 
 const appState = Object.freeze((() => {
 	let currentDisplay = '';
@@ -91,11 +92,10 @@ const appState = Object.freeze((() => {
 		return fragment;
 	}
 	function initUI() {
-		const manifestData = chrome.runtime.getManifest();
 		document.body.appendChild(createElement(
 			`<div class="display-container hide">
 				<div class="title-container">
-					<span title="${manifestData.name} v${manifestData.version}">Medias</span>
+					<span title="${APP_NAME}">Medias</span>
 					<button class="esc-button">&times</button>
 				</div>
 				<div class="medias-container">
@@ -137,13 +137,14 @@ const appState = Object.freeze((() => {
 		}
 		function toggleSelectMode() {
 			if (TITLE_CONTAINER.classList.contains('multi-select')) {
-				TITLE_CONTAINER.textContent = 'Select medias';
+				TITLE_CONTAINER.title = 'Hold to select / deselect all';
 				DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
 					element.classList.add('show');
 				});
 			}
 			else {
 				TITLE_CONTAINER.textContent = 'Medias';
+				TITLE_CONTAINER.title = APP_NAME;
 				DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
 					element.classList.remove('show');
 				});
@@ -151,16 +152,24 @@ const appState = Object.freeze((() => {
 		}
 		function handleSelectAll() {
 			if (!TITLE_CONTAINER.classList.contains('multi-select')) return;
-			const totalItem = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay:not(.saved)'));
+			const totalItem = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay'));
 			const totalItemChecked = Array.from(DISPLAY_CONTAINER.querySelectorAll('.overlay.checked'));
 			if (totalItemChecked.length !== totalItem.length) totalItem.forEach(item => {
 				if (!item.classList.contains('saved')) item.classList.add('checked');
 			});
-			else totalItem.forEach(item => { item.classList.remove('checked'); });
+			else {
+				totalItem.forEach(item => { item.classList.remove('checked'); });
+			}
+		}
+		function setSelectedMedias() {
+			if (TITLE_CONTAINER.classList.contains('multi-select')) {
+				TITLE_CONTAINER.textContent = `Selected ${DISPLAY_CONTAINER.querySelectorAll('.overlay.checked').length}`;
+			}
 		}
 		const handleTheme = new MutationObserver(setTheme);
 		const handleVideo = new MutationObserver(pauseVideo);
-		const selectHandler = new MutationObserver(toggleSelectMode);
+		const handleToggleSelectMode = new MutationObserver(toggleSelectMode);
+		const handleSelectMedia = new MutationObserver(setSelectedMedias);
 		handleTheme.observe(document.documentElement, {
 			attributes: true,
 			attributeFilter: ['class']
@@ -169,9 +178,12 @@ const appState = Object.freeze((() => {
 			attributes: true,
 			attributeFilter: ['class']
 		});
-		selectHandler.observe(TITLE_CONTAINER, {
+		handleToggleSelectMode.observe(TITLE_CONTAINER, {
 			attributes: true,
 			attributeFilter: ['class']
+		});
+		handleSelectMedia.observe(DISPLAY_CONTAINER.querySelector('.medias-container'), {
+			attributes: true, childList: true, subtree: true
 		});
 		ESC_BUTTON.addEventListener('click', () => {
 			DISPLAY_CONTAINER.classList.add('hide');

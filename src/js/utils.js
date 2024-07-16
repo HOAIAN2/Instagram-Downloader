@@ -58,7 +58,6 @@ async function saveMedia(media, fileName) {
 		const blob = await respone.blob();
 		saveFile(blob, fileName);
 		media.nextElementSibling.classList.remove('check');
-		media.nextElementSibling.classList.add('saved');
 	} catch (error) {
 		console.log(error);
 	}
@@ -94,9 +93,8 @@ async function saveZip() {
 		const medias = await fetchSelectedMedias();
 		const blob = await createZip(medias);
 		saveFile(blob, zipFileName);
-		document.querySelectorAll('.overlay.checked').forEach(element => {
+		document.querySelectorAll('.overlay').forEach(element => {
 			element.classList.remove('checked');
-			element.classList.add('saved');
 		});
 		resetDownloadState();
 	} catch (error) {
@@ -133,19 +131,19 @@ function shouldDownload() {
 
 function setDownloadState(state = 'ready') {
 	const DOWNLOAD_BUTTON = document.querySelector('.download-button');
-	const PHOTOS_CONTAINER = document.querySelector('.medias-container');
+	const MEDIAS_CONTAINER = document.querySelector('.medias-container');
 	const options = {
 		ready() {
 			DOWNLOAD_BUTTON.classList.add('loading');
 			DOWNLOAD_BUTTON.textContent = 'Loading...';
 			DOWNLOAD_BUTTON.disabled = true;
-			PHOTOS_CONTAINER.replaceChildren();
+			MEDIAS_CONTAINER.replaceChildren();
 		},
 		fail() { resetDownloadState(); },
 		success() {
 			DOWNLOAD_BUTTON.disabled = false;
 			appState.setPreviousValues();
-			const photosArray = PHOTOS_CONTAINER.querySelectorAll('img , video');
+			const photosArray = MEDIAS_CONTAINER.querySelectorAll('img , video');
 			let loadedPhotos = 0;
 			function countLoaded() {
 				loadedPhotos++;
@@ -176,12 +174,7 @@ async function handleDownload() {
 		&& !DISPLAY_CONTAINER.classList.contains('hide')
 		&& option === 'none'
 		&& totalItemChecked.length !== 0) {
-		if (totalItemChecked.length === 1) {
-			const media = totalItemChecked[0].previousElementSibling;
-			saveMedia(media, media.title.split(' | ').slice(1, 5).join('_') + `${media.nodeName === 'VIDEO' ? '.mp4' : '.jpeg'}`);
-		}
-		else saveZip();
-		return;
+		return saveZip();
 	}
 	requestAnimationFrame(() => { DISPLAY_CONTAINER.classList.remove('hide'); });
 	if (option === 'none') return;
@@ -194,8 +187,8 @@ async function handleDownload() {
 
 function renderMedias(data) {
 	const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild;
-	const PHOTOS_CONTAINER = document.querySelector('.medias-container');
-	PHOTOS_CONTAINER.replaceChildren();
+	const MEDIAS_CONTAINER = document.querySelector('.medias-container');
+	MEDIAS_CONTAINER.replaceChildren();
 	if (!data) return;
 	const fragment = document.createDocumentFragment();
 	const date = new Date(data.date * 1000).toISOString().split('T')[0];
@@ -209,7 +202,7 @@ function renderMedias(data) {
 		const ITEM_TEMPLATE =
 			`<div>
 				${item.isVideo ? `<video></video>` : '<img/>'}
-				<div class="overlay"></div>
+				<div class="overlay">✔</div>
 			</div>`;
 		const itemDOM = new DOMParser().parseFromString(ITEM_TEMPLATE, 'text/html').body.firstElementChild;
 		const media = itemDOM.querySelector('img, video');
@@ -227,7 +220,7 @@ function renderMedias(data) {
 		});
 		fragment.appendChild(itemDOM);
 	});
-	PHOTOS_CONTAINER.appendChild(fragment);
+	MEDIAS_CONTAINER.appendChild(fragment);
 	TITLE_CONTAINER.classList.remove('multi-select');
 	setDownloadState('success');
 }
