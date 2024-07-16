@@ -6,16 +6,20 @@ function saveFile(blob, fileName) {
 	URL.revokeObjectURL(a.href);
 }
 
+function getCookieValue(name) {
+	return document.cookie.split('; ')
+		.find(row => row.startsWith(`${name}=`))
+		?.split('=')[1];
+}
+
 function getAuthOptions() {
-	const csrftoken = document.cookie.split(' ')[2].split('=')[1];
-	const claim = sessionStorage.getItem('www-claim-v2');
 	return {
 		headers: {
 			// Hardcode variable: a="129477";f.ASBD_ID=a in JS, can be remove
 			// 'x-asbd-id': '129477',
-			'x-csrftoken': csrftoken,
-			'x-ig-app-id': IG_APP_ID,
-			'x-ig-www-claim': claim,
+			'x-csrftoken': getCookieValue('csrftoken'),
+			'x-ig-app-id': '936619743392459',
+			'x-ig-www-claim': sessionStorage.getItem('www-claim-v2'),
 			// 'x-instagram-ajax': '1006598911',
 			'x-requested-with': 'XMLHttpRequest'
 		},
