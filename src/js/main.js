@@ -5,13 +5,6 @@ const IG_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456
 const IG_POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/;
 const IG_STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/;
 const IG_HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/;
-const IG_APP_ID = (() => {
-	const jsons = Array.from(document.querySelectorAll('script[type="application/json"]'))
-		.find(item => item.innerText?.includes('X-IG-App-ID'))
-		?.innerText;
-	const jsonData = isValidJson(jsons) ? JSON.parse(jsons) : null;
-	return jsonData ? findValueByKey(JSON.parse(jsons), 'X-IG-App-ID') : '936619743392459';
-})();
 const APP_NAME = `${chrome.runtime.getManifest().name} v${chrome.runtime.getManifest().version}`;
 
 const appState = Object.freeze((() => {
