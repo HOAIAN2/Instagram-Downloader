@@ -225,7 +225,7 @@ function renderMedias(data) {
 	setDownloadState('success');
 }
 
-function handleLongClick(element, shortClickHandler = () => { }, longClickHandler = () => { }, delay = 400) {
+function handleLongClick(element, shortClickHandler, longClickHandler, delay = 400) {
 	element.addEventListener('mousedown', () => {
 		let count = 0;
 		const intervalId = setInterval(() => {
