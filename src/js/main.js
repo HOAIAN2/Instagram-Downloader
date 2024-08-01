@@ -185,6 +185,7 @@ const appState = Object.freeze((() => {
 			if (window.location.pathname.startsWith('/direct')) return;
 			if (IGNORE_FOCUS_ELEMENTS.includes(e.target.tagName)) return;
 			if (e.target.role === 'textbox') return;
+			if (e.ctrlKey) return;
 			if (DOWNLOAD_EVENT_KEYS.includes(e.key)) {
 				return DOWNLOAD_BUTTON.click();
 			}
