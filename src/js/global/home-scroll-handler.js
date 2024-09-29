@@ -31,7 +31,7 @@
                 }));
             }
         }
-    }, 100);
+    }, Math.floor(1000 / 60));
     const observer = new MutationObserver(homeScrollHandler);
     function startObserve() {
         const mainNode = document.querySelector('main');
