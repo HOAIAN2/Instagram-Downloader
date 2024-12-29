@@ -12,7 +12,7 @@ function getCookieValue(name) {
         ?.split('=')[1];
 }
 
-function getAuthOptions() {
+function getFetchOptions() {
     return {
         headers: {
             // Hardcode variable: a="129477";f.ASBD_ID=a in JS, can be remove
