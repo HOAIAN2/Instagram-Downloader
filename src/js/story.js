@@ -19,7 +19,7 @@ async function getUserId(username) {
     if (username) apiURL.searchParams.set('username', username);
     else apiURL.searchParams.set('username', appState.current.username);
     try {
-        const respone = await fetch(apiURL.href, getAuthOptions());
+        const respone = await fetch(apiURL.href, getFetchOptions());
         const json = await respone.json();
         return json.data.user['id'];
     } catch (error) {
@@ -32,7 +32,7 @@ async function getStoryPhotos(userId) {
     const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
     apiURL.searchParams.set('reel_ids', userId);
     try {
-        const respone = await fetch(apiURL.href, getAuthOptions());
+        const respone = await fetch(apiURL.href, getFetchOptions());
         const json = await respone.json();
         return json.reels[userId];
     } catch (error) {
@@ -45,7 +45,7 @@ async function getHighlightStory(highlightsId) {
     const apiURL = new URL('/api/v1/feed/reels_media/', IG_BASE_URL);
     apiURL.searchParams.set('reel_ids', `highlight:${highlightsId}`);
     try {
-        const respone = await fetch(apiURL.href, getAuthOptions());
+        const respone = await fetch(apiURL.href, getFetchOptions());
         const json = await respone.json();
         return json.reels[`highlight:${highlightsId}`];
     } catch (error) {

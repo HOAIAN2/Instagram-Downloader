@@ -21,14 +21,22 @@ function convertToShortcode(postId) {
 
 async function getPostIdFromAPI() {
     const apiURL = new URL('/graphql/query/', IG_BASE_URL);
-    apiURL.searchParams.set('query_hash', IG_POST_HASH);
-    apiURL.searchParams.set('variables', JSON.stringify({
-        shortcode: appState.current.shortcode
-    }));
+    const fetchOptions = getFetchOptions();
+    fetchOptions['method'] = 'POST';
+    fetchOptions.headers['content-type'] = 'application/x-www-form-urlencoded';
+    fetchOptions.headers['x-fb-friendly-name'] = 'PolarisPostActionLoadPostQueryQuery';
+    fetchOptions.body = new URLSearchParams({
+        fb_api_caller_class: 'RelayModern',
+        fb_api_req_friendly_name: 'PolarisPostActionLoadPostQueryQuery',
+        doc_id: '8845758582119845',
+        variables: JSON.stringify({
+            shortcode: appState.current.shortcode,
+        }),
+    }).toString();
     try {
-        const respone = await fetch(apiURL.href);
+        const respone = await fetch(apiURL.href, fetchOptions);
         const json = await respone.json();
-        return json.data['shortcode_media'].id;
+        return json.data['xdt_shortcode_media'].id;
     } catch (error) {
         console.log(error);
         return null;
@@ -39,7 +47,13 @@ async function getPostPhotos(shortcode) {
     const postId = convertToPostId(shortcode);
     const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL);
     try {
-        const respone = await fetch(apiURL.href, getAuthOptions());
+        let respone = await fetch(apiURL.href, getFetchOptions());
+        if (respone.status === 400) {
+            const postId = await getPostIdFromAPI();
+            if (!postId) throw new Error('Network bug');
+            const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL);
+            respone = await fetch(apiURL.href, getFetchOptions());
+        }
         const json = await respone.json();
         return json.items[0];
     } catch (error) {
