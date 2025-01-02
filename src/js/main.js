@@ -1,11 +1,36 @@
 const IG_BASE_URL = window.location.origin + '/';
+/**
+ * @deprecated
+ */
 const IG_PROFILE_HASH = '69cba40317214236af40e7efa697781d';
+/**
+ * @deprecated
+ */
 const IG_POST_HASH = '9f8827793ef34641b2fb195d4d41151c';
-const IG_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+const IG_SHORTCODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 const IG_POST_REGEX = /\/(p|tv|reel|reels)\/([A-Za-z0-9_-]*)(\/?)/;
 const IG_STORY_REGEX = /\/(stories)\/(.*?)\/(\d*)(\/?)/;
 const IG_HIGHLIGHT_REGEX = /\/(stories)\/(highlights)\/(\d*)(\/?)/;
+
 const APP_NAME = `${chrome.runtime.getManifest().name} v${chrome.runtime.getManifest().version}`;
+
+const appCache = Object.freeze({
+    /**
+     * Cache user id, reduce one api call to get id from username
+     * 
+     * username => id
+     */
+    userIdsCache: new Map(),
+    /**
+     * Cache post id, reduce one api call to get post id from shortcode.
+     * 
+     * Only for private profile, check out  post-view-handler.js
+     * 
+     * shortcode => post_id
+     */
+    postIdInfoCache: new Map(),
+});
 
 const appState = Object.freeze((() => {
     let currentDisplay = '';
@@ -72,7 +97,6 @@ const appState = Object.freeze((() => {
             if (current.shortcode !== previous.shortcode) return 'post';
             return 'none';
         },
-        userIdsCache: new Map(),
     };
 })());
 
@@ -220,7 +244,7 @@ const appState = Object.freeze((() => {
             else DOWNLOAD_BUTTON.removeAttribute('hidden');
         });
         window.addEventListener('userLoad', e => {
-            appState.userIdsCache.set(e.detail.username, e.detail.id);
+            appCache.userIdsCache.set(e.detail.username, e.detail.id);
         });
         setTheme();
         if (window.location.pathname.startsWith('/direct')) {

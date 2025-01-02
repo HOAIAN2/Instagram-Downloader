@@ -2,7 +2,7 @@ function convertToPostId(shortcode) {
     let id = BigInt(0);
     for (let i = 0; i < shortcode.length; i++) {
         let char = shortcode[i];
-        id = (id * BigInt(64)) + BigInt(IG_ALPHABET.indexOf(char));
+        id = (id * BigInt(64)) + BigInt(IG_SHORTCODE_ALPHABET.indexOf(char));
     }
     return id.toString(10);
 }
@@ -12,7 +12,7 @@ function convertToShortcode(postId) {
     let shortcode = '';
     while (id > BigInt(0)) {
         const remainder = id % BigInt(64);
-        shortcode = IG_ALPHABET[Number(remainder)] + shortcode;
+        shortcode = IG_SHORTCODE_ALPHABET[Number(remainder)] + shortcode;
         id = id / BigInt(64);
         id = id - (id % BigInt(1));
     }
@@ -20,6 +20,8 @@ function convertToShortcode(postId) {
 }
 
 async function getPostIdFromAPI() {
+    const cachedPostId = appState.postIdInfoCache.get(appState.current.shortcode);
+    if (cachedPostId) return cachedPostId;
     const apiURL = new URL('/graphql/query/', IG_BASE_URL);
     const fetchOptions = getFetchOptions();
     fetchOptions['method'] = 'POST';

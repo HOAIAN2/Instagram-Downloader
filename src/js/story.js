@@ -1,5 +1,5 @@
 async function getUserIdFromSearch(username) {
-    if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
+    if (appCache.userIdsCache.has(username)) return appCache.userIdsCache.get(username);
     const apiURL = new URL('/web/search/topsearch/', IG_BASE_URL);
     if (username) apiURL.searchParams.set('query', username);
     else apiURL.searchParams.set('query', appState.current.username);
@@ -14,7 +14,7 @@ async function getUserIdFromSearch(username) {
 }
 
 async function getUserId(username) {
-    if (appState.userIdsCache.has(username)) return appState.userIdsCache.get(username);
+    if (appCache.userIdsCache.has(username)) return appCache.userIdsCache.get(username);
     const apiURL = new URL('/api/v1/users/web_profile_info/', IG_BASE_URL);
     if (username) apiURL.searchParams.set('username', username);
     else apiURL.searchParams.set('username', appState.current.username);
