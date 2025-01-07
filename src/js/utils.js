@@ -31,7 +31,7 @@ function getFetchOptions() {
     };
 }
 
-function findValueByKey(obj, key) {
+function getValueByKey(obj, key) {
     if (typeof obj !== 'object' || obj === null) return null;
     const stack = [obj];
     const visited = new Set();
