@@ -25,7 +25,7 @@ const appCache = Object.freeze({
     /**
      * Cache post id, reduce one api call to get post id from shortcode.
      * 
-     * Only for private profile, check out  post-view-handler.js
+     * Only for private profile, check out  post-modal-view-handler.js
      * 
      * shortcode => post_id
      */
@@ -245,6 +245,13 @@ const appState = Object.freeze((() => {
         });
         window.addEventListener('userLoad', e => {
             appCache.userIdsCache.set(e.detail.username, e.detail.id);
+        });
+        window.addEventListener('postView', e => {
+            if (appCache.postIdInfoCache.has(e.detail.id)) return;
+            // Check valid shortcode
+            if (e.detail.code.startsWith(convertToShortcode(e.detail.id))) {
+                appCache.postIdInfoCache.set(e.detail.code, e.detail.id);
+            }
         });
         setTheme();
         if (window.location.pathname.startsWith('/direct')) {

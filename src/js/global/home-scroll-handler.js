@@ -22,10 +22,16 @@
         }, { element: null, area: 0 }).element;
 
         if (mostVisibleElement) {
-            const mediaFragmentKey = findValueByKey(mostVisibleElement, 'mediaFragmentKey');
+            const mediaFragmentKey = getValueByKey(mostVisibleElement, 'mediaFragmentKey');
             if (mediaFragmentKey) {
                 window.dispatchEvent(new CustomEvent('shortcodeChange', {
                     detail: {
+                        code: mediaFragmentKey.code
+                    }
+                }));
+                window.dispatchEvent(new CustomEvent('postView', {
+                    detail: {
+                        id: mediaFragmentKey.pk,
                         code: mediaFragmentKey.code
                     }
                 }));

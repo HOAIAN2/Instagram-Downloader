@@ -1,4 +1,10 @@
 /**
+ * This file is not include in manifest so it not run.
+ * If this file run, every network call with XHR will be tracked.
+ * So you don't need to call api to get data, just cacth the response somewhere.
+ */
+
+/**
  * I have the algorithm that Instagram use to convert between post id and post shortcode.
  * But if the post is from a private profile, they add some extra stuff to the shortcode.
  * And I don't know how to convert between them.

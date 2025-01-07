@@ -25,8 +25,7 @@
                 "src/js/main.js",
                 "src/js/post.js",
                 "src/js/story.js",
-                "src/js/zip.js",
-                "src/js/post-view-handler.js"
+                "src/js/zip.js"
             ],
             "css": [
                 "src/style/style.css"
@@ -40,7 +39,8 @@
                 "src/js/global/utils.js",
                 "src/js/global/event.js",
                 "src/js/global/home-scroll-handler.js",
-                "src/js/global/stories-view-handler.js"
+                "src/js/global/stories-view-handler.js",
+                "src/js/global/post-modal-view-handler.js"
             ],
             "css": [],
             "world": "MAIN"

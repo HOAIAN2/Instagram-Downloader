@@ -2,6 +2,10 @@
 
 ![icon](icons/icon128.png)
 
+## How this work
+
+With regex and some `ReactFiber` magic, I'm able to know which post you wanna download and fetch the api to download the photos for you.
+
 ## Browser compatibility
 
 This extension should work fine on the following browsers with `fetch()` API and Chromium base browser, tested Browser:
@@ -10,7 +14,7 @@ This extension should work fine on the following browsers with `fetch()` API and
 * MS Edge
 * FireFox
 
-## Install and usage
+## Download and install
 
 * Download [latest version](https://github.com/HOAIAN2/Instagram-Downloader/releases) and extract to a folder
 * Enable Chrome extensions developer mode
@@ -24,7 +28,7 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 * Toggle multi select by click on `Photos` and select photos by click on them (or select all by click and hold on `Photos`). Then click on `Download` to save zip file.
 
-* If you scroll on the home page, this app will auto detect the post you wanna download so you don't have to click to comment section to open modal. It's not work 100%.
+* If you scroll on the home page, this app will auto detect the post you wanna download so you don't have to click to comment section to open modal. Thanks to ReactFiber.
 
 ## Features
 
@@ -37,7 +41,9 @@ This extension should work fine on the following browsers with `fetch()` API and
 
 ## Customize
 
-### Edit Hide / Show Transition effects
+You can modify anything you want except some constants start with "IG_" that definitely gonna break this extension.
+
+Edit Hide / Show Transition effects
 
 ```css
 .display-container.hide {
