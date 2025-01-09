@@ -29,12 +29,14 @@
                         code: mediaFragmentKey.code
                     }
                 }));
-                window.dispatchEvent(new CustomEvent('postView', {
-                    detail: {
-                        id: mediaFragmentKey.pk,
-                        code: mediaFragmentKey.code
-                    }
-                }));
+                if (mediaFragmentKey.pk && mediaFragmentKey.code) {
+                    window.dispatchEvent(new CustomEvent('postView', {
+                        detail: {
+                            id: mediaFragmentKey.pk,
+                            code: mediaFragmentKey.code
+                        }
+                    }));
+                }
             }
         }
     }, Math.floor(1000 / 60));
