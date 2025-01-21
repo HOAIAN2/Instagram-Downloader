@@ -20,7 +20,7 @@ function convertToShortcode(postId) {
 }
 
 async function getPostIdFromAPI() {
-    const cachedPostId = appState.postIdInfoCache.get(appState.current.shortcode);
+    const cachedPostId = appCache.postIdInfoCache.get(appState.current.shortcode);
     if (cachedPostId) return cachedPostId;
     const apiURL = new URL('/graphql/query/', IG_BASE_URL);
     const fetchOptions = getFetchOptions();
