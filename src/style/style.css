@@ -6,24 +6,14 @@
     box-sizing: border-box;
 }
 
-:root {
-    --shadow-white: rgba(255, 255, 255, 0.3);
-    --shadow-black: rgba(0, 0, 0, 0.3);
-    --violet: rgb(138, 43, 226);
-    --gray-violet: rgb(161, 85, 231);
-    --green: rgba(0, 164, 0, 0.7);
-    --blue: rgba(0, 0, 255, 0.7);
-    --border-radius-low: 4px;
-}
-
 .display-container {
     background: white;
     width: calc(80vh /5*3);
     height: 80vh;
     max-width: 480px;
     max-height: 800px;
-    border-radius: var(--border-radius-low);
-    outline: 1px solid var(--shadow-black);
+    border-radius: 4px;
+    outline: 1px solid rgb(var(--ig-separator));
     position: fixed;
     bottom: 60px;
     right: 20px;
@@ -39,7 +29,6 @@
 
 .display-container.dark {
     background: black;
-    border: 1px solid var(--shadow-white);
 }
 
 .display-container.hide {
@@ -107,7 +96,7 @@
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--gray-violet);
+    border-top: 4px solid var(--primary-button-background);
     border-radius: 50%;
     animation: spin 2s linear infinite;
     transform: translate(-50%, -50%);
@@ -187,14 +176,14 @@
     user-select: none;
     -webkit-user-select: none;
     cursor: pointer;
-    background: var(--violet);
+    background-color: var(--primary-button-background);
     transition: 0.3s;
     z-index: 1000000;
 }
 
 .download-button.loading {
     cursor: default;
-    background: var(--gray-violet);
+    background-color: var(--primary-button-pressed);
 }
 
 /* Support bottom navigation */
