@@ -22,11 +22,7 @@
         }, { element: null, area: 0 }).element;
 
         if (mostVisibleElement) {
-            const mediaFragmentKey = {
-                pk: getValueByKey(mostVisibleElement, 'pk'),
-                code: getValueByKey(mostVisibleElement, 'code')
-            };
-            
+            const mediaFragmentKey = getValueByKey(mostVisibleElement.querySelector('[tabindex="0"][aria-hidden="true"]'), 'queryReference');
             if (mediaFragmentKey) {
                 window.dispatchEvent(new CustomEvent('shortcodeChange', {
                     detail: {
