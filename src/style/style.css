@@ -24,6 +24,7 @@
     transform: scale(1);
     transition: transform 0.5s cubic-bezier(0.82, -0.07, 0.25, 1.08), opacity 0.4s ease-in-out, transform-origin 0.5s ease-in-out;
     will-change: transform, transform-origin, opacity;
+    transition-property: transform, transform-origin, opacity, bottom;
     z-index: 1000000;
 }
 
@@ -177,7 +178,8 @@
     -webkit-user-select: none;
     cursor: pointer;
     background-color: var(--primary-button-background);
-    transition: 0.3s;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 12px 0 var(--shadow-2);
     z-index: 1000000;
 }
 
@@ -231,4 +233,14 @@
     100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }
+}
+
+/* Handle chat tab show in home page on new version of Instagram */
+
+.download-button.home {
+    bottom: 100px;
+}
+
+.display-container.home {
+    bottom: 140px;
 }

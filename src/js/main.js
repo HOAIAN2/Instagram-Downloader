@@ -111,17 +111,17 @@ const appState = Object.freeze((() => {
     function initUI() {
         document.body.appendChild(createElement(
             `<div class="display-container hide">
-				<div class="title-container">
-					<span title="${APP_NAME}">Medias</span>
-					<button class="esc-button">&times</button>
-				</div>
-				<div class="medias-container">
-					<p style="position: absolute;top: 50%;transform: translate(0%, -50%);">
-						Nothing to download
-					</p>
-				</div>
-			</div>
-			<button class="download-button">Download</button>`));
+                <div class="title-container">
+                    <span title="${APP_NAME}">Medias</span>
+                    <button class="esc-button">&times</button>
+                </div>
+                <div class="medias-container">
+                    <p style="position: absolute;top: 50%;transform: translate(0%, -50%);">
+                        Nothing to download
+                    </p>
+                </div>
+            </div>
+            <button class="download-button">Download</button>`));
     }
     function handleEvents() {
         const ESC_BUTTON = document.querySelector('.esc-button');
@@ -181,6 +181,56 @@ const appState = Object.freeze((() => {
         function setSelectedMedias() {
             if (TITLE_CONTAINER.classList.contains('multi-select')) {
                 TITLE_CONTAINER.textContent = `Selected ${DISPLAY_CONTAINER.querySelectorAll('.overlay.checked').length}`;
+            }
+        }
+        function handleChatTab() {
+            const sectionNode = document.querySelector('section');
+            let chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
+
+            const chatTabsRootContentObserver = new MutationObserver(() => {
+                if (window.location.pathname !== '/') {
+                    chatTabsRootContentObserver.disconnect();
+                    return;
+                }
+
+                const chatTabThreadList = chatTabsRootContent.querySelector('[data-pagelet="IGDChatTabThreadList"]')?.parentElement;
+                if (chatTabThreadList && chatTabThreadList.checkVisibility({ checkVisibilityCSS: true })) {
+                    DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+                    DISPLAY_CONTAINER.classList.add('hide');
+                }
+                else {
+                    DOWNLOAD_BUTTON.removeAttribute('hidden');
+                }
+            });
+
+            const mainObserver = new MutationObserver(() => {
+                if (!chatTabsRootContent) {
+                    chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
+                    if (!chatTabsRootContent) return;
+                    chatTabsRootContentObserver.observe(chatTabsRootContent, {
+                        attributes: true, childList: true, subtree: true
+                    });
+                    mainObserver.disconnect();
+                }
+                else {
+                    chatTabsRootContentObserver.observe(chatTabsRootContent, {
+                        attributes: true, childList: true, subtree: true
+                    });
+                    mainObserver.disconnect();
+                }
+            });
+
+            if (window.location.pathname === '/') {
+                DISPLAY_CONTAINER.classList.add('home');
+                DOWNLOAD_BUTTON.classList.add('home');
+                mainObserver.observe(sectionNode, {
+                    attributes: true, childList: true, subtree: true
+                });
+            }
+            else {
+                mainObserver.disconnect();
+                DISPLAY_CONTAINER.classList.remove('home');
+                DOWNLOAD_BUTTON.classList.remove('home');
             }
         }
         const handleTheme = new MutationObserver(setTheme);
@@ -243,6 +293,7 @@ const appState = Object.freeze((() => {
             }
             else DOWNLOAD_BUTTON.removeAttribute('hidden');
         });
+        window.addEventListener('pathChange', handleChatTab);
         window.addEventListener('userLoad', e => {
             appCache.userIdsCache.set(e.detail.username, e.detail.id);
         });
@@ -254,6 +305,7 @@ const appState = Object.freeze((() => {
             }
         });
         setTheme();
+        handleChatTab();
         if (window.location.pathname.startsWith('/direct')) {
             DOWNLOAD_BUTTON.classList.add('hide');
             DISPLAY_CONTAINER.classList.add('hide');
