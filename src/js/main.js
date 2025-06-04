@@ -203,32 +203,32 @@ const appState = Object.freeze((() => {
                 }
             });
 
-            const mainObserver = new MutationObserver(() => {
+            const sectionObserver = new MutationObserver(() => {
                 if (!chatTabsRootContent) {
                     chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
                     if (!chatTabsRootContent) return;
                     chatTabsRootContentObserver.observe(chatTabsRootContent, {
                         attributes: true, childList: true, subtree: true
                     });
-                    mainObserver.disconnect();
+                    sectionObserver.disconnect();
                 }
                 else {
                     chatTabsRootContentObserver.observe(chatTabsRootContent, {
                         attributes: true, childList: true, subtree: true
                     });
-                    mainObserver.disconnect();
+                    sectionObserver.disconnect();
                 }
             });
 
             if (window.location.pathname === '/') {
                 DISPLAY_CONTAINER.classList.add('home');
                 DOWNLOAD_BUTTON.classList.add('home');
-                mainObserver.observe(sectionNode, {
+                sectionObserver.observe(sectionNode, {
                     attributes: true, childList: true, subtree: true
                 });
             }
             else {
-                mainObserver.disconnect();
+                sectionObserver.disconnect();
                 DISPLAY_CONTAINER.classList.remove('home');
                 DOWNLOAD_BUTTON.classList.remove('home');
             }
