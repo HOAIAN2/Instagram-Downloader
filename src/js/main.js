@@ -188,11 +188,6 @@ const appState = Object.freeze((() => {
             let chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
 
             const chatTabsRootContentObserver = new MutationObserver(() => {
-                if (window.location.pathname !== '/') {
-                    chatTabsRootContentObserver.disconnect();
-                    return;
-                }
-
                 const chatTabThreadList = chatTabsRootContent.querySelector('[data-pagelet="IGDChatTabThreadList"]')?.parentElement;
                 if (chatTabThreadList && chatTabThreadList.checkVisibility({ checkVisibilityCSS: true })) {
                     DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
@@ -220,18 +215,9 @@ const appState = Object.freeze((() => {
                 }
             });
 
-            if (window.location.pathname === '/') {
-                DISPLAY_CONTAINER.classList.add('home');
-                DOWNLOAD_BUTTON.classList.add('home');
-                sectionObserver.observe(sectionNode, {
-                    attributes: true, childList: true, subtree: true
-                });
-            }
-            else {
-                sectionObserver.disconnect();
-                DISPLAY_CONTAINER.classList.remove('home');
-                DOWNLOAD_BUTTON.classList.remove('home');
-            }
+            sectionObserver.observe(sectionNode, {
+                attributes: true, childList: true, subtree: true
+            });
         }
         const handleTheme = new MutationObserver(setTheme);
         const handleVideo = new MutationObserver(pauseVideo);

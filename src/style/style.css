@@ -15,7 +15,7 @@
     border-radius: 4px;
     outline: 1px solid rgb(var(--ig-separator));
     position: fixed;
-    bottom: 60px;
+    bottom: 140px;
     right: 20px;
     overflow: hidden;
     user-select: none;
@@ -171,7 +171,7 @@
     border: none;
     border-radius: 15px;
     position: fixed;
-    bottom: 20px;
+    bottom: 100px;
     right: 20px;
     text-align: center;
     user-select: none;
@@ -233,14 +233,4 @@
     100% {
         transform: translate(-50%, -50%) rotate(360deg);
     }
-}
-
-/* Handle chat tab show in home page on new version of Instagram */
-
-.download-button.home {
-    bottom: 100px;
-}
-
-.display-container.home {
-    bottom: 140px;
 }
