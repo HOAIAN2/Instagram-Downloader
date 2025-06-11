@@ -184,39 +184,33 @@ const appState = Object.freeze((() => {
             }
         }
         function handleChatTab() {
-            const sectionNode = document.querySelector('section');
-            let chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
-
-            const chatTabsRootContentObserver = new MutationObserver(() => {
-                const chatTabThreadList = chatTabsRootContent.querySelector('[data-pagelet="IGDChatTabThreadList"]')?.parentElement;
-                if (chatTabThreadList && chatTabThreadList.checkVisibility({ checkVisibilityCSS: true })) {
-                    DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
-                    DISPLAY_CONTAINER.classList.add('hide');
+            const reactRoot = document.body.querySelector('[id]');
+            const rootObserver = new MutationObserver(() => {
+                const chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
+                if (!chatTabsRootContent) {
+                    return;
+                }
+                const tabChatWrapper = chatTabsRootContent.querySelector('[data-visualcompletion="ignore"]').childNodes[0];
+                if (tabChatWrapper.childNodes.length > 1) {
+                    const actualTabChat = tabChatWrapper.lastChild;
+                    if (actualTabChat.checkVisibility({ checkVisibilityCSS: true })) {
+                        DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+                        DISPLAY_CONTAINER.classList.add('hide');
+                    }
+                    else {
+                        DOWNLOAD_BUTTON.removeAttribute('hidden');
+                    }
                 }
                 else {
                     DOWNLOAD_BUTTON.removeAttribute('hidden');
                 }
+                return;
             });
 
-            const sectionObserver = new MutationObserver(() => {
-                if (!chatTabsRootContent) {
-                    chatTabsRootContent = document.querySelector('[data-pagelet="IGDChatTabsRootContent"]');
-                    if (!chatTabsRootContent) return;
-                    chatTabsRootContentObserver.observe(chatTabsRootContent, {
-                        attributes: true, childList: true, subtree: true
-                    });
-                    sectionObserver.disconnect();
-                }
-                else {
-                    chatTabsRootContentObserver.observe(chatTabsRootContent, {
-                        attributes: true, childList: true, subtree: true
-                    });
-                    sectionObserver.disconnect();
-                }
-            });
-
-            sectionObserver.observe(sectionNode, {
-                attributes: true, childList: true, subtree: true
+            rootObserver.observe(reactRoot, {
+                // attributes: true,
+                childList: true,
+                subtree: true
             });
         }
         const handleTheme = new MutationObserver(setTheme);
@@ -279,7 +273,6 @@ const appState = Object.freeze((() => {
             }
             else DOWNLOAD_BUTTON.removeAttribute('hidden');
         });
-        window.addEventListener('pathChange', handleChatTab);
         window.addEventListener('userLoad', e => {
             appCache.userIdsCache.set(e.detail.username, e.detail.id);
         });
