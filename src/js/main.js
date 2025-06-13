@@ -196,6 +196,10 @@ const appState = Object.freeze((() => {
                     if (actualTabChat.checkVisibility({ checkVisibilityCSS: true })) {
                         DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                         DISPLAY_CONTAINER.classList.add('hide');
+                        DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
+                        requestAnimationFrame(() => {
+                            DISPLAY_CONTAINER.removeAttribute('style');
+                        });
                     }
                     else {
                         DOWNLOAD_BUTTON.removeAttribute('hidden');
@@ -270,6 +274,10 @@ const appState = Object.freeze((() => {
             if (window.location.pathname.startsWith('/direct')) {
                 DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                 DISPLAY_CONTAINER.classList.add('hide');
+                DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
+                requestAnimationFrame(() => {
+                    DISPLAY_CONTAINER.removeAttribute('style');
+                });
             }
             else DOWNLOAD_BUTTON.removeAttribute('hidden');
         });
