@@ -286,7 +286,7 @@ const appState = Object.freeze((() => {
         setTheme();
         handleChatTab();
         if (window.location.pathname.startsWith('/direct')) {
-            DOWNLOAD_BUTTON.classList.add('hide');
+            DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
             DISPLAY_CONTAINER.classList.add('hide');
         }
     }
