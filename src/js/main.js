@@ -270,7 +270,7 @@ const appState = Object.freeze((() => {
                 media.src = media.src;
             });
         });
-        window.addEventListener('pathChange', () => {
+        window.addEventListener('pathChange', (e) => {
             if (window.location.pathname.startsWith('/direct')) {
                 DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                 DISPLAY_CONTAINER.classList.add('hide');
@@ -279,7 +279,10 @@ const appState = Object.freeze((() => {
                     DISPLAY_CONTAINER.removeAttribute('style');
                 });
             }
-            else DOWNLOAD_BUTTON.removeAttribute('hidden');
+            else {
+                // Have to check old path because Instagram now show message button on almost every page.
+                if (e.detail.oldPath.startsWith('/direct')) DOWNLOAD_BUTTON.removeAttribute('hidden');
+            }
         });
         window.addEventListener('userLoad', e => {
             appCache.userIdsCache.set(e.detail.username, e.detail.id);
