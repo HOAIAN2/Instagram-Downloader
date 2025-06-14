@@ -12,13 +12,13 @@
     const dispatchPathChangeEvent = () => {
         const newPath = window.location.pathname;
         if (newPath !== path) {
-            path = newPath;
             window.dispatchEvent(new CustomEvent('pathChange', {
                 detail: {
                     oldPath: path,
                     currentPath: newPath
                 }
             }));
+            path = newPath;
         }
     };
 
