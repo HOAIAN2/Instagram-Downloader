@@ -208,7 +208,6 @@ const appState = Object.freeze((() => {
                 else {
                     DOWNLOAD_BUTTON.removeAttribute('hidden');
                 }
-                return;
             });
 
             rootObserver.observe(reactRoot, {
