@@ -51,7 +51,7 @@ window.addEventListener('apiCall', e => {
                 username: edges.user['username'],
                 fullName: edges.user['full_name'],
             },
-            medias: []
+            media: []
         };
         data.date = edges['taken_at'];
         if (edges['carousel_media']) {
@@ -62,7 +62,7 @@ window.addEventListener('apiCall', e => {
                     id: item.id.split('_')[0]
                 };
                 if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-                data.medias.push(media);
+                data.media.push(media);
             });
         }
         else {
@@ -72,7 +72,7 @@ window.addEventListener('apiCall', e => {
                 id: edges.id.split('_')[0]
             };
             if (media.isVideo) media.thumbnail = edges['image_versions2'].candidates[0]['url'];
-            data.medias.push(media);
+            data.media.push(media);
         }
         window.dispatchEvent(new CustomEvent('postLoad', {
             detail: {
@@ -97,7 +97,7 @@ window.addEventListener('apiCall', e => {
                     username: node.node.user.username,
                     fullName: '',
                 },
-                medias: []
+                media: []
             };
             node.node.items.forEach(item => {
                 const media = {
@@ -106,7 +106,7 @@ window.addEventListener('apiCall', e => {
                     id: item.id.split('_')[0]
                 };
                 if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-                data.medias.push(media);
+                data.media.push(media);
             });
             window.dispatchEvent(new CustomEvent('storiesLoad', {
                 detail: data
@@ -130,7 +130,7 @@ window.addEventListener('apiCall', e => {
                     username: node.user.username,
                     fullName: '',
                 },
-                medias: []
+                media: []
             };
             node.items.forEach(item => {
                 const media = {
@@ -139,7 +139,7 @@ window.addEventListener('apiCall', e => {
                     id: item.id.split('_')[0]
                 };
                 if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-                data.medias.push(media);
+                data.media.push(media);
             });
             window.dispatchEvent(new CustomEvent('storiesLoad', {
                 detail: data
@@ -162,7 +162,7 @@ window.addEventListener('apiCall', e => {
                     username: node.node.user.username,
                     fullName: '',
                 },
-                medias: []
+                media: []
             };
             node.node.items.forEach(item => {
                 const media = {
@@ -171,7 +171,7 @@ window.addEventListener('apiCall', e => {
                     id: item.id.split('_')[0]
                 };
                 if (media.isVideo) media.thumbnail = item['image_versions2'].candidates[0]['url'];
-                data.medias.push(media);
+                data.media.push(media);
             });
             window.dispatchEvent(new CustomEvent('highlightsLoad', {
                 detail: {

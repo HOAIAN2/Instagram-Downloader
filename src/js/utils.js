@@ -77,11 +77,11 @@ async function saveZip() {
     DOWNLOAD_BUTTON.classList.add('loading');
     DOWNLOAD_BUTTON.textContent = 'Loading...';
     DOWNLOAD_BUTTON.disabled = true;
-    const medias = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
-    const zipFileName = medias[0].title.replaceAll(' | ', '_') + '.zip';
-    async function fetchSelectedMedias() {
+    const media = Array.from(document.querySelectorAll('.overlay.checked')).map(item => item.previousElementSibling);
+    const zipFileName = media[0].title.replaceAll(' | ', '_') + '.zip';
+    async function fetchSelectedMedia() {
         let count = 0;
-        const results = await Promise.allSettled(medias.map(async (media) => {
+        const results = await Promise.allSettled(media.map(async (media) => {
             const res = await fetch(media.src);
             const blob = await res.blob();
             const data = {
@@ -90,7 +90,7 @@ async function saveZip() {
             };
             data.title = media.nodeName === 'VIDEO' ? `${data.title}.mp4` : `${data.title}.jpeg`;
             count++;
-            DOWNLOAD_BUTTON.textContent = `${count}/${medias.length}`;
+            DOWNLOAD_BUTTON.textContent = `${count}/${media.length}`;
             return data;
         }));
         results.forEach(promise => {
@@ -99,8 +99,8 @@ async function saveZip() {
         return results.map(promise => promise.value);
     }
     try {
-        const medias = await fetchSelectedMedias();
-        const blob = await createZip(medias);
+        const media = await fetchSelectedMedia();
+        const blob = await createZip(media);
         saveFile(blob, zipFileName);
         document.querySelectorAll('.overlay').forEach(element => {
             element.classList.remove('checked');
@@ -140,19 +140,19 @@ function shouldDownload() {
 
 function setDownloadState(state = 'ready') {
     const DOWNLOAD_BUTTON = document.querySelector('.download-button');
-    const MEDIAS_CONTAINER = document.querySelector('.medias-container');
+    const MEDIA_CONTAINER = document.querySelector('.media-container');
     const options = {
         ready() {
             DOWNLOAD_BUTTON.classList.add('loading');
             DOWNLOAD_BUTTON.textContent = 'Loading...';
             DOWNLOAD_BUTTON.disabled = true;
-            MEDIAS_CONTAINER.replaceChildren();
+            MEDIA_CONTAINER.replaceChildren();
         },
         fail() { resetDownloadState(); },
         success() {
             DOWNLOAD_BUTTON.disabled = false;
             appState.setPreviousValues();
-            const photosArray = MEDIAS_CONTAINER.querySelectorAll('img , video');
+            const photosArray = MEDIA_CONTAINER.querySelectorAll('img , video');
             let loadedPhotos = 0;
             function countLoaded() {
                 loadedPhotos++;
@@ -191,19 +191,19 @@ async function handleDownload() {
     option === 'post' ? data = await downloadPostPhotos() : data = await downloadStoryPhotos(option);
     if (!data) return setDownloadState('fail');
     appState.currentDisplay = option;
-    renderMedias(data);
+    renderMedia(data);
 }
 
-function renderMedias(data) {
+function renderMedia(data) {
     const TITLE_CONTAINER = document.querySelector('.title-container').firstElementChild;
-    const MEDIAS_CONTAINER = document.querySelector('.medias-container');
-    MEDIAS_CONTAINER.replaceChildren();
+    const MEDIA_CONTAINER = document.querySelector('.media-container');
+    MEDIA_CONTAINER.replaceChildren();
     if (!data) return;
     const fragment = document.createDocumentFragment();
     const date = new Date(data.date * 1000).toISOString().split('T')[0];
-    data.medias.forEach(item => {
+    data.media.forEach(item => {
         const attributes = {
-            class: 'medias-item',
+            class: 'media-item',
             src: item.url,
             title: `${data.user.username} | ${item.id} | ${date}`,
             controls: ''
@@ -229,7 +229,7 @@ function renderMedias(data) {
         });
         fragment.appendChild(itemDOM);
     });
-    MEDIAS_CONTAINER.appendChild(fragment);
+    MEDIA_CONTAINER.appendChild(fragment);
     TITLE_CONTAINER.classList.remove('multi-select');
     setDownloadState('success');
 }

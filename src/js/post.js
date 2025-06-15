@@ -73,7 +73,7 @@ async function downloadPostPhotos() {
         user: {
             username: json.user['username'],
         },
-        medias: []
+        media: []
     };
     function extractMediaData(item) {
         const isVideo = item['media_type'] !== 1;
@@ -84,7 +84,7 @@ async function downloadPostPhotos() {
         };
         return media;
     };
-    if (json.carousel_media) data.medias = json.carousel_media.map(extractMediaData);
-    else data.medias.push(extractMediaData(json));
+    if (json.carousel_media) data.media = json.carousel_media.map(extractMediaData);
+    else data.media.push(extractMediaData(json));
     return data;
 }

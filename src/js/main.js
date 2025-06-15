@@ -55,7 +55,7 @@ const appState = Object.freeze((() => {
             set shortcode(value) {
                 current.shortcode = value;
                 downloadPostPhotos().then(data => {
-                    renderMedias(data);
+                    renderMedia(data);
                     currentDisplay = 'post';
                 });
             },
@@ -63,7 +63,7 @@ const appState = Object.freeze((() => {
             set username(value) {
                 current.username = value;
                 downloadStoryPhotos('stories').then(data => {
-                    renderMedias(data);
+                    renderMedia(data);
                     currentDisplay = 'stories';
                 });
             },
@@ -71,7 +71,7 @@ const appState = Object.freeze((() => {
             set highlights(value) {
                 current.highlights = value;
                 downloadStoryPhotos('highlights').then(data => {
-                    renderMedias(data);
+                    renderMedia(data);
                     currentDisplay = 'hightlights';
                 });
             },
@@ -112,10 +112,10 @@ const appState = Object.freeze((() => {
         document.body.appendChild(createElement(
             `<div class="display-container hide">
                 <div class="title-container">
-                    <span title="${APP_NAME}">Medias</span>
+                    <span title="${APP_NAME}">Media</span>
                     <button class="esc-button">&times</button>
                 </div>
-                <div class="medias-container">
+                <div class="media-container">
                     <p style="position: absolute;top: 50%;transform: translate(0%, -50%);">
                         Nothing to download
                     </p>
@@ -160,7 +160,7 @@ const appState = Object.freeze((() => {
                 });
             }
             else {
-                TITLE_CONTAINER.textContent = 'Medias';
+                TITLE_CONTAINER.textContent = 'Media';
                 TITLE_CONTAINER.title = APP_NAME;
                 DISPLAY_CONTAINER.querySelectorAll('.overlay').forEach(element => {
                     element.classList.remove('show');
@@ -178,7 +178,7 @@ const appState = Object.freeze((() => {
                 totalItem.forEach(item => { item.classList.remove('checked'); });
             }
         }
-        function setSelectedMedias() {
+        function setSelectedMedia() {
             if (TITLE_CONTAINER.classList.contains('multi-select')) {
                 TITLE_CONTAINER.textContent = `Selected ${DISPLAY_CONTAINER.querySelectorAll('.overlay.checked').length}`;
             }
@@ -220,7 +220,7 @@ const appState = Object.freeze((() => {
         const handleTheme = new MutationObserver(setTheme);
         const handleVideo = new MutationObserver(pauseVideo);
         const handleToggleSelectMode = new MutationObserver(toggleSelectMode);
-        const handleSelectMedia = new MutationObserver(setSelectedMedias);
+        const handleSelectMedia = new MutationObserver(setSelectedMedia);
         handleTheme.observe(document.documentElement, {
             attributes: true,
             attributeFilter: ['class']
@@ -233,7 +233,7 @@ const appState = Object.freeze((() => {
             attributes: true,
             attributeFilter: ['class']
         });
-        handleSelectMedia.observe(DISPLAY_CONTAINER.querySelector('.medias-container'), {
+        handleSelectMedia.observe(DISPLAY_CONTAINER.querySelector('.media-container'), {
             attributes: true, childList: true, subtree: true
         });
         ESC_BUTTON.addEventListener('click', () => {

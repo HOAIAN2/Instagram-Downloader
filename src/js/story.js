@@ -71,7 +71,7 @@ async function downloadStoryPhotos(type = 'stories') {
         user: {
             username: json.user['username'],
         },
-        medias: []
+        media: []
     };
     json.items.forEach((item) => {
         const media = {
@@ -79,7 +79,7 @@ async function downloadStoryPhotos(type = 'stories') {
             isVideo: item['media_type'] === 1 ? false : true,
             id: item.pk
         };
-        data.medias.push(media);
+        data.media.push(media);
     });
     return data;
 }

@@ -75,7 +75,7 @@
     opacity: 0.8;
 }
 
-.display-container>.medias-container {
+.display-container>.media-container {
     width: inherit;
     height: inherit;
     max-width: inherit;
@@ -88,7 +88,7 @@
     z-index: 0;
 }
 
-.medias-container:empty::after {
+.media-container:empty::after {
     content: "";
     position: absolute;
     top: 50%;
@@ -102,11 +102,11 @@
     transform: translate(-50%, -50%);
 }
 
-.display-container>.medias-container::-webkit-scrollbar {
+.display-container>.media-container::-webkit-scrollbar {
     display: none;
 }
 
-.display-container>.medias-container>div {
+.display-container>.media-container>div {
     position: relative;
     width: 90%;
     height: fit-content;
@@ -115,11 +115,11 @@
     transition-property: width, height, scale;
 }
 
-.display-container>.medias-container>div:hover {
+.display-container>.media-container>div:hover {
     scale: 1.01;
 }
 
-.display-container>.medias-container>div>.overlay {
+.display-container>.media-container>div>.overlay {
     background: rgba(0, 0, 0, 0.5);
     pointer-events: none;
     position: absolute;
@@ -134,24 +134,24 @@
     transition: 0.1s;
 }
 
-.display-container>.medias-container>div>.overlay>svg {
+.display-container>.media-container>div>.overlay>svg {
     display: none;
 }
 
-.display-container>.medias-container>div>.overlay.show {
+.display-container>.media-container>div>.overlay.show {
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 0px;
 }
 
-.display-container>.medias-container>div>.overlay.checked {
+.display-container>.media-container>div>.overlay.checked {
     border-color: black;
     background: white;
     font-size: 20px;
 }
 
-.display-container>.medias-container>div>.medias-item {
+.display-container>.media-container>div>.media-item {
     position: relative;
     width: 100%;
     cursor: pointer;
