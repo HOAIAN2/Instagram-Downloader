@@ -277,6 +277,7 @@ const appState = Object.freeze((() => {
         });
         window.addEventListener('pathChange', (e) => {
             const currentPath = e.detail.currentPath;
+            // Hide/Show Download button when user navigate
             if (currentPath.startsWith('/direct')) {
                 DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                 DISPLAY_CONTAINER.classList.add('hide');
@@ -285,11 +286,13 @@ const appState = Object.freeze((() => {
                     DISPLAY_CONTAINER.removeAttribute('style');
                 });
             }
-            else {
-                // Have to check old path because Instagram now show message button on almost every page.
-                if (e.detail.oldPath.startsWith('/direct')) DOWNLOAD_BUTTON.removeAttribute('hidden');
+            // Have to check old path because Instagram now show message button on almost every page.
+            else if (e.detail.oldPath.startsWith('/direct')) {
+                DOWNLOAD_BUTTON.removeAttribute('hidden');
             }
 
+            // Set z-index to Download button when navigate to downloadable url
+            // Download button z-index unset by default to prevent overlay over other element
             if (currentPath.match(IG_POST_REGEX) ||
                 currentPath.match(IG_STORY_REGEX) ||
                 currentPath.match(IG_HIGHLIGHT_REGEX)
