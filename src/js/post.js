@@ -84,7 +84,7 @@ async function downloadPostPhotos() {
         };
         return media;
     };
-    if (json.carousel_media) data.media = json.carousel_media.map(extractMediaData);
+    if (json['carousel_media']) data.media = json['carousel_media'].map(extractMediaData);
     else data.media.push(extractMediaData(json));
     return data;
 }
