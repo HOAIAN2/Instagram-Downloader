@@ -179,7 +179,7 @@
     background-color: var(--primary-button-background);
     transition: 0.3s ease;
     box-shadow: 0 4px 12px 0 var(--shadow-2);
-    z-index: 1000000;
+    /* z-index: 1000000; */
 }
 
 .download-button.loading {

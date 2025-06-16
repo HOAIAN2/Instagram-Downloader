@@ -204,6 +204,20 @@ const appState = Object.freeze((() => {
                     else {
                         DOWNLOAD_BUTTON.removeAttribute('hidden');
                     }
+
+                    // This tab will show when you view someone story and click on avatar on Message button
+                    const singleTabChat = actualTabChat.querySelector('[aria-label]');
+                    if (singleTabChat.checkVisibility({ checkVisibilityCSS: true })) {
+                        DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+                        DISPLAY_CONTAINER.classList.add('hide');
+                        DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
+                        requestAnimationFrame(() => {
+                            DISPLAY_CONTAINER.removeAttribute('style');
+                        });
+                    }
+                    else {
+                        DOWNLOAD_BUTTON.removeAttribute('hidden');
+                    }
                 }
                 else {
                     DOWNLOAD_BUTTON.removeAttribute('hidden');
@@ -270,7 +284,8 @@ const appState = Object.freeze((() => {
             });
         });
         window.addEventListener('pathChange', (e) => {
-            if (window.location.pathname.startsWith('/direct')) {
+            const currentPath = e.detail.currentPath;
+            if (currentPath.startsWith('/direct')) {
                 DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                 DISPLAY_CONTAINER.classList.add('hide');
                 DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
@@ -281,6 +296,15 @@ const appState = Object.freeze((() => {
             else {
                 // Have to check old path because Instagram now show message button on almost every page.
                 if (e.detail.oldPath.startsWith('/direct')) DOWNLOAD_BUTTON.removeAttribute('hidden');
+            }
+
+            if (currentPath.match(IG_POST_REGEX) ||
+                currentPath.match(IG_STORY_REGEX) ||
+                currentPath.match(IG_HIGHLIGHT_REGEX)) {
+                DOWNLOAD_BUTTON.setAttribute('style', 'z-index: 1000000;');
+            }
+            else {
+                DOWNLOAD_BUTTON.removeAttribute('style');
             }
         });
         window.addEventListener('userLoad', e => {
