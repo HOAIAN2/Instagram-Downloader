@@ -192,22 +192,14 @@ const appState = Object.freeze((() => {
                 }
                 const tabChatWrapper = chatTabsRootContent.querySelector('[data-visualcompletion="ignore"]').childNodes[0];
                 if (tabChatWrapper.childNodes.length > 1) {
+                    // This tab will show when you click on Message button
                     const actualTabChat = tabChatWrapper.lastChild;
-                    if (actualTabChat.checkVisibility({ checkVisibilityCSS: true })) {
-                        DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
-                        DISPLAY_CONTAINER.classList.add('hide');
-                        DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
-                        requestAnimationFrame(() => {
-                            DISPLAY_CONTAINER.removeAttribute('style');
-                        });
-                    }
-                    else {
-                        DOWNLOAD_BUTTON.removeAttribute('hidden');
-                    }
-
                     // This tab will show when you view someone story and click on avatar on Message button
                     const singleTabChat = actualTabChat.querySelector('[aria-label]');
-                    if (singleTabChat.checkVisibility({ checkVisibilityCSS: true })) {
+
+                    if (actualTabChat.checkVisibility({ checkVisibilityCSS: true }) ||
+                        singleTabChat.checkVisibility({ checkVisibilityCSS: true })
+                    ) {
                         DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
                         DISPLAY_CONTAINER.classList.add('hide');
                         DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
@@ -300,7 +292,8 @@ const appState = Object.freeze((() => {
 
             if (currentPath.match(IG_POST_REGEX) ||
                 currentPath.match(IG_STORY_REGEX) ||
-                currentPath.match(IG_HIGHLIGHT_REGEX)) {
+                currentPath.match(IG_HIGHLIGHT_REGEX)
+            ) {
                 DOWNLOAD_BUTTON.setAttribute('style', 'z-index: 1000000;');
             }
             else {
