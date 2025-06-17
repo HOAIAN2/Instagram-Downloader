@@ -235,7 +235,8 @@ function renderMedia(data) {
 }
 
 function handleLongClick(element, shortClickHandler, longClickHandler, delay = 400) {
-    element.addEventListener('mousedown', () => {
+    element.addEventListener('mousedown', (e) => {
+        if (e.button === 2) return;
         let count = 0;
         const intervalId = setInterval(() => {
             count = count + 10;
