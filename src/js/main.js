@@ -180,7 +180,9 @@ const appState = Object.freeze((() => {
         }
         function setSelectedMedia() {
             if (TITLE_CONTAINER.classList.contains('multi-select')) {
-                TITLE_CONTAINER.textContent = `Selected ${DISPLAY_CONTAINER.querySelectorAll('.overlay.checked').length}`;
+                const totalItemsCount = DISPLAY_CONTAINER.querySelectorAll('.overlay').length;
+                const selectedItemsCount = DISPLAY_CONTAINER.querySelectorAll('.overlay.checked').length;
+                TITLE_CONTAINER.textContent = `Selected ${selectedItemsCount} / ${totalItemsCount}`;
             }
         }
         function handleChatTab() {
