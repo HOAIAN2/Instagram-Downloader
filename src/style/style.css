@@ -9,10 +9,10 @@
 .display-container {
     background: white;
     width: calc(80vh /5*3);
-    height: 80vh;
+    height: 75vh;
     max-width: 480px;
     max-height: 800px;
-    border-radius: 4px;
+    border-radius: 12px;
     outline: 1px solid rgb(var(--ig-separator));
     position: fixed;
     bottom: 140px;
@@ -24,6 +24,7 @@
     transform: scale(1);
     transition: transform 0.5s cubic-bezier(0.82, -0.07, 0.25, 1.08), opacity 0.4s ease-in-out, transform-origin 0.5s ease-in-out;
     will-change: transform, transform-origin, opacity;
+    box-shadow: 0 4px 12px rgba(var(--web-always-black), .15);
     z-index: 1000000;
 }
 
@@ -45,7 +46,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: min(36px, 3.5vh);
+    font-size: min(36px, 2.5vh);
     font-family: var(--font-family-system);
     font-weight: 600;
     background: rgba(255, 255, 255, 0.9);
