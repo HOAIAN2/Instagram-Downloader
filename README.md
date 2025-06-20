@@ -56,6 +56,8 @@ Edit Hide / Show Transition effects
 
 ## Keyboard shortcut
 
+Some keyboard shortcuts will not work if you use an external application for typing.
+
 * Download: `D`
 * Close: `esc` `C` `c`
 * Select all `S` `s`
