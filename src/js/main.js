@@ -185,6 +185,18 @@ const appState = Object.freeze((() => {
                 TITLE_CONTAINER.textContent = `Selected ${selectedItemsCount} / ${totalItemsCount}`;
             }
         }
+        function hideExtension() {
+            DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
+            DISPLAY_CONTAINER.classList.add('hide');
+            DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
+            // Usage requestAnimationFrame to bypass transition attribute
+            requestAnimationFrame(() => {
+                DISPLAY_CONTAINER.removeAttribute('style');
+            });
+        }
+        function showExtension() {
+            DOWNLOAD_BUTTON.removeAttribute('hidden');
+        }
         function handleChatTab() {
             const reactRoot = document.body.querySelector('[id]');
             const rootObserver = new MutationObserver(() => {
@@ -202,19 +214,14 @@ const appState = Object.freeze((() => {
                     if (actualTabChat.checkVisibility({ checkVisibilityCSS: true }) ||
                         singleTabChat.checkVisibility({ checkVisibilityCSS: true })
                     ) {
-                        DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
-                        DISPLAY_CONTAINER.classList.add('hide');
-                        DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
-                        requestAnimationFrame(() => {
-                            DISPLAY_CONTAINER.removeAttribute('style');
-                        });
+                        hideExtension();
                     }
                     else {
-                        DOWNLOAD_BUTTON.removeAttribute('hidden');
+                        showExtension();
                     }
                 }
                 else {
-                    DOWNLOAD_BUTTON.removeAttribute('hidden');
+                    showExtension();
                 }
             });
 
@@ -281,16 +288,11 @@ const appState = Object.freeze((() => {
             const currentPath = e.detail.currentPath;
             // Hide/Show Download button when user navigate
             if (currentPath.startsWith('/direct')) {
-                DOWNLOAD_BUTTON.setAttribute('hidden', 'true');
-                DISPLAY_CONTAINER.classList.add('hide');
-                DISPLAY_CONTAINER.setAttribute('style', 'display: none;');
-                requestAnimationFrame(() => {
-                    DISPLAY_CONTAINER.removeAttribute('style');
-                });
+                hideExtension();
             }
             // Have to check old path because Instagram now show message button on almost every page.
             else if (e.detail.oldPath.startsWith('/direct')) {
-                DOWNLOAD_BUTTON.removeAttribute('hidden');
+                showExtension();
             }
 
             // Set z-index to Download button when navigate to downloadable url
