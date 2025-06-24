@@ -19,7 +19,7 @@ function convertToShortcode(postId) {
     return shortcode;
 }
 
-async function getPostIdFromAPI() {
+async function getPostIdFromApi() {
     const cachedPostId = appCache.postIdInfoCache.get(appState.current.shortcode);
     if (cachedPostId) return cachedPostId;
     const apiURL = new URL('/graphql/query/', IG_BASE_URL);
@@ -51,7 +51,7 @@ async function getPostPhotos(shortcode) {
     try {
         let respone = await fetch(apiURL.href, getFetchOptions());
         if (respone.status === 400) {
-            const postId = await getPostIdFromAPI();
+            const postId = await getPostIdFromApi();
             if (!postId) throw new Error('Network bug');
             const apiURL = new URL(`/api/v1/media/${postId}/info/`, IG_BASE_URL);
             respone = await fetch(apiURL.href, getFetchOptions());
