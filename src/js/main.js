@@ -291,7 +291,7 @@ const appState = Object.freeze((() => {
                 hideExtension();
             }
             // Have to check old path because Instagram now show message button on almost every page.
-            else if (e.detail.oldPath.startsWith('/direct')) {
+            else if (e.detail.previousPath.startsWith('/direct')) {
                 showExtension();
             }
 

@@ -14,7 +14,7 @@
         if (newPath !== path) {
             window.dispatchEvent(new CustomEvent('pathChange', {
                 detail: {
-                    oldPath: path,
+                    previousPath: path,
                     currentPath: newPath
                 }
             }));
