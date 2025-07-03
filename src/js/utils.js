@@ -66,7 +66,6 @@ async function saveMedia(media, fileName) {
         const respone = await fetch(media.src);
         const blob = await respone.blob();
         saveFile(blob, fileName);
-        media.nextElementSibling.classList.remove('check');
     } catch (error) {
         console.log(error);
     }
