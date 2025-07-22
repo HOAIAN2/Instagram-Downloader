@@ -72,7 +72,7 @@ These features was deprecated for some reason.
 
 ## Notes
 
-If you save extension on external partition or drive and your Linux Distro doesn't mount automaticly, extension will disappear. You have to mount that partition/drive and restart browser.
+If you save extension on external partition or drive and your Linux Distro doesn't mount automatically, extension will disappear. You have to mount that partition/drive and restart browser.
 
 ## Here is Demo
 
