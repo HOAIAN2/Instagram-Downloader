@@ -70,6 +70,10 @@ These features was deprecated for some reason.
 * V5.1.0
   * Set fallback download to latest post from some user.
 
+## Notes
+
+If you save extension on external partition or drive and your Linux Distro doesn't mount automaticly, extension will disappear. You have to mount that partition/drive and restart browser.
+
 ## Here is Demo
 
 [Demo v5.1.0](https://github.com/HOAIAN2/Instagram-Downloader/assets/98139595/917369c9-cdbb-4315-8e6d-7a1632a8888b)
