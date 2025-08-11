@@ -1,4 +1,6 @@
 /**
+ * Enable this file will cause Initiator only show this file send request.
+ * Only turn on this file to testing.
  * This file is not include in manifest so it not run.
  * If this file run, every network call with XHR will be tracked.
  * So you don't need to call api to get data, just cacth the response somewhere.
