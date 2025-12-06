@@ -29,7 +29,7 @@
 }
 
 .display-container.dark {
-    background: black;
+    background-color: rgb(var(--ig-primary-background));
 }
 
 .display-container.hide {
@@ -58,7 +58,7 @@
 }
 
 .display-container>.title-container.dark {
-    background: rgba(0, 0, 0, 0.8);
+    background-color: rgba(var(--ig-primary-background), 0.8);
 }
 
 .esc-button {
