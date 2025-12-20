@@ -180,7 +180,7 @@
 
 .download-button.loading {
     cursor: default;
-    background-color: var(--primary-button-pressed);
+    background-color: rgb(var(--ig-colors-button-primary-background--pressed));
 }
 
 /* Support bottom navigation */
