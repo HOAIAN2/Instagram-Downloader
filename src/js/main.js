@@ -308,7 +308,9 @@ const appState = Object.freeze((() => {
             }
         });
         window.addEventListener('userLoad', e => {
-            appCache.userIdsCache.set(e.detail.username, e.detail.id);
+            if (!appCache.userIdsCache.has(e.detail.username)) {
+                appCache.userIdsCache.set(e.detail.username, e.detail.id);
+            }
         });
         window.addEventListener('postView', e => {
             if (appCache.postIdInfoCache.has(e.detail.id)) return;
