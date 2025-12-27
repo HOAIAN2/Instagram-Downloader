@@ -167,7 +167,7 @@
     border-radius: 15px;
     position: fixed;
     bottom: 100px;
-    right: 20px;
+    inset-inline-end: 34px;
     text-align: center;
     user-select: none;
     -webkit-user-select: none;
@@ -176,6 +176,9 @@
     transition: 0.3s ease;
     box-shadow: 0 4px 12px 0 var(--shadow-2);
     /* z-index: 1000000; */
+}
+.download-button:hover {
+    background-color: rgb(var(--ig-colors-button-primary-background--hover));
 }
 
 .download-button.loading {
