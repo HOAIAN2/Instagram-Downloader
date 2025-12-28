@@ -77,8 +77,13 @@ async function downloadPostPhotos() {
     };
     function extractMediaData(item) {
         const isVideo = item['media_type'] !== 1;
+        const mediaItems = isVideo ? item['video_versions'] : item['image_versions2'].candidates;
+        const largestMediaItem = mediaItems.reduce((accumulator, currentValue) => {
+            if (accumulator.width > currentValue.width) return accumulator;
+            return currentValue;
+        }, mediaItems[0]);
         const media = {
-            url: isVideo ? item['video_versions'][0].url : item['image_versions2'].candidates[0].url,
+            url: largestMediaItem.url,
             isVideo,
             id: item.pk
         };

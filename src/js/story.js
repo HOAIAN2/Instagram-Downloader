@@ -74,9 +74,15 @@ async function downloadStoryPhotos(type = 'stories') {
         media: []
     };
     json.items.forEach((item) => {
+        const isVideo = item['media_type'] !== 1;
+        const mediaItems = isVideo ? item['video_versions'] : item['image_versions2'].candidates;
+        const largestMediaItem = mediaItems.reduce((accumulator, currentValue) => {
+            if (accumulator.width > currentValue.width) return accumulator;
+            return currentValue;
+        }, mediaItems[0]);
         const media = {
-            url: item['media_type'] === 1 ? item['image_versions2'].candidates[0]['url'] : item['video_versions'][0].url,
-            isVideo: item['media_type'] === 1 ? false : true,
+            url: largestMediaItem.url,
+            isVideo: isVideo,
             id: item.pk
         };
         data.media.push(media);
