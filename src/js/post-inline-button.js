@@ -240,37 +240,96 @@
         return [];
     }
 
-    function getCurrentPostMediaState(root) {
+    function getUrlCarouselIndex(shortcode) {
+        const match = window.location.pathname.match(IG_POST_REGEX);
+        if (!match || match[2] !== shortcode) return -1;
+        const value = Number(new URL(window.location.href).searchParams.get('img_index'));
+        return Number.isInteger(value) && value > 0 ? value - 1 : -1;
+    }
+
+    function getCarouselTrackIndex(media, shortcode) {
+        const slide = media?.closest('li');
+        if (!slide) return -1;
+
+        const match = slide.style.transform.match(/translateX\((-?[\d.]+)px\)/);
+        const slideWidth =
+            slide.firstElementChild?.getBoundingClientRect().width || slide.getBoundingClientRect().width;
+        if (!match || !Number.isFinite(slideWidth) || slideWidth <= 0) return -1;
+
+        const position = Math.abs(Number(match[1])) / slideWidth;
+        const index = Math.round(position);
+        if (!Number.isFinite(position) || Math.abs(position - index) > 0.01) return -1;
+
+        // The URL alone may be stale after SPA navigation, so only trust it when
+        // the rendered carousel track independently reports the same index.
+        return getUrlCarouselIndex(shortcode) === index ? index : -1;
+    }
+
+    function getCurrentPostMediaState(root, currentMedia, shortcode) {
         const activeSlide = root.querySelector('button[aria-current="step"]');
         const slideButtons = getSlideButtons(activeSlide);
         const activeIndex = slideButtons.indexOf(activeSlide);
         if (activeIndex >= 0) {
-            return { index: activeIndex, itemCount: slideButtons.length, indexConfident: true };
+            return { index: activeIndex, itemCount: slideButtons.length, indexConfident: true, indexSource: 'steps' };
         }
 
-        if (!isCarouselPost(root)) return { index: 0, itemCount: 1, indexConfident: true };
-        return { index: -1, itemCount: 0, indexConfident: false };
+        if (!isCarouselPost(root)) {
+            return { index: 0, itemCount: 1, indexConfident: true, indexSource: 'single' };
+        }
+
+        const trackIndex = getCarouselTrackIndex(currentMedia, shortcode);
+        if (trackIndex >= 0) {
+            return { index: trackIndex, itemCount: 0, indexConfident: true, indexSource: 'track' };
+        }
+
+        return { index: -1, itemCount: 0, indexConfident: false, indexSource: 'none' };
     }
 
-    function getVisiblePostMediaSource(root) {
+    function getVisiblePostMedia(root) {
+        const getClippedVisibleArea = (media) => {
+            const rect = media.getBoundingClientRect();
+            let left = Math.max(rect.left, 0);
+            let top = Math.max(rect.top, 0);
+            let right = Math.min(rect.right, innerWidth);
+            let bottom = Math.min(rect.bottom, innerHeight);
+
+            let container = media.parentElement;
+            while (container && root.contains(container)) {
+                const style = getComputedStyle(container);
+                const containerRect = container.getBoundingClientRect();
+                if (['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowX)) {
+                    left = Math.max(left, containerRect.left);
+                    right = Math.min(right, containerRect.right);
+                }
+                if (['hidden', 'clip', 'scroll', 'auto'].includes(style.overflowY)) {
+                    top = Math.max(top, containerRect.top);
+                    bottom = Math.min(bottom, containerRect.bottom);
+                }
+                if (right <= left || bottom <= top) return 0;
+                if (container === root) break;
+                container = container.parentElement;
+            }
+
+            return Math.max(0, right - left) * Math.max(0, bottom - top);
+        };
+
         const candidates = [...root.querySelectorAll('img, video')]
             .map((media) => {
                 const rect = media.getBoundingClientRect();
-                const visibleWidth = Math.max(0, Math.min(rect.right, innerWidth) - Math.max(rect.left, 0));
-                const visibleHeight = Math.max(0, Math.min(rect.bottom, innerHeight) - Math.max(rect.top, 0));
-                return { media, rect, visibleArea: visibleWidth * visibleHeight };
+                return { media, rect, visibleArea: getClippedVisibleArea(media) };
             })
             .filter(({ rect, visibleArea }) => rect.width >= 200 && rect.height >= 200 && visibleArea > 0)
             .sort((first, second) => second.visibleArea - first.visibleArea);
-        const currentMedia = candidates[0]?.media;
-        return currentMedia?.currentSrc || currentMedia?.src || '';
+        return candidates[0]?.media ?? null;
     }
 
     function readPostSelection(root) {
-        const mediaState = getCurrentPostMediaState(root);
+        const shortcode = getPostShortcode(root);
+        const currentMedia = getVisiblePostMedia(root);
+        const mediaState = getCurrentPostMediaState(root, currentMedia, shortcode);
         return {
-            shortcode: getPostShortcode(root),
-            sourceUrl: getVisiblePostMediaSource(root),
+            shortcode,
+            sourceUrl: currentMedia?.currentSrc || currentMedia?.src || '',
             ...mediaState,
         };
     }
@@ -280,7 +339,8 @@
             first.shortcode === second.shortcode &&
             first.sourceUrl === second.sourceUrl &&
             first.index === second.index &&
-            first.itemCount === second.itemCount
+            first.itemCount === second.itemCount &&
+            first.indexSource === second.indexSource
         );
     }
 
