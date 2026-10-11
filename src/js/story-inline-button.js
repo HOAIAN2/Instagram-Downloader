@@ -93,7 +93,7 @@
         return /^\d+$/.test(pathParts[2] ?? '') ? pathParts[2] : '';
     }
 
-    function getVisibleStoryMediaSource() {
+    function getVisibleStoryMedia() {
         const candidates = [...document.querySelectorAll('img, video')]
             .map((media) => ({ media, rect: media.getBoundingClientRect() }))
             .filter(
@@ -107,14 +107,18 @@
             )
             .sort((first, second) => second.rect.width * second.rect.height - first.rect.width * first.rect.height);
         const currentMedia = candidates[0]?.media;
-        return currentMedia?.currentSrc || currentMedia?.src || '';
+        return {
+            sourceUrl: currentMedia?.currentSrc || currentMedia?.src || '',
+            posterUrl: currentMedia instanceof HTMLVideoElement ? currentMedia.poster || '' : '',
+        };
     }
 
     function readStorySelection(toolbar, type) {
         const progress = getCurrentStoryProgress(toolbar);
+        const media = getVisibleStoryMedia();
         return {
             mediaId: getStoryMediaIdFromPath(type),
-            sourceUrl: getVisibleStoryMediaSource(),
+            ...media,
             index: progress.index,
             itemCount: progress.count,
             indexConfident: progress.confident,
@@ -125,24 +129,34 @@
         return (
             first.mediaId === second.mediaId &&
             first.sourceUrl === second.sourceUrl &&
+            first.posterUrl === second.posterUrl &&
             first.index === second.index &&
             first.itemCount === second.itemCount
         );
     }
 
     async function getStableStorySelection(toolbar, type) {
-        const first = readStorySelection(toolbar, type);
         /**
          * During navigation, Instagram can update the URL, carousel/progress indicators, and visible media across separate render frames.
-         * Waiting for one animation frame and verifying the selection again prevents us from downloading the previous item while the UI is still transitioning.
+         * Retry briefly until two consecutive reads agree instead of failing on the first transitional frame.
          */
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        const second = readStorySelection(toolbar, type);
+        let previous = readStorySelection(toolbar, type);
+        for (let attempt = 0; attempt < 5; attempt++) {
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const current = readStorySelection(toolbar, type);
+            if (selectionsMatch(previous, current)) {
+                return {
+                    ...current,
+                    stable: true,
+                    indexConfident: previous.indexConfident && current.indexConfident,
+                };
+            }
+            previous = current;
+        }
         return {
-            ...second,
-            stable: selectionsMatch(first, second),
-            indexConfident: first.indexConfident && second.indexConfident,
+            ...previous,
+            stable: false,
+            indexConfident: false,
         };
     }
 

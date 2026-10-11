@@ -317,8 +317,29 @@ function getMediaUrlPath(mediaUrl) {
     }
 }
 
+function findMediaByRenderedUrl(data, mediaUrl) {
+    const selectedCacheId = getMediaCacheId(mediaUrl);
+    if (selectedCacheId) {
+        const mediaByCacheId = data.media.find((item) =>
+            [item.url, item.previewUrl].some(
+                (candidateUrl) =>
+                    getMediaId(item.id) === selectedCacheId || getMediaCacheId(candidateUrl) === selectedCacheId,
+            ),
+        );
+        if (mediaByCacheId) return mediaByCacheId;
+    }
+
+    const selectedPath = getMediaUrlPath(mediaUrl);
+    if (!selectedPath) return null;
+    return (
+        data.media.find((item) =>
+            [item.url, item.previewUrl].some((candidateUrl) => getMediaUrlPath(candidateUrl) === selectedPath),
+        ) ?? null
+    );
+}
+
 function resolveSelectedStoryMedia(data, selection) {
-    if (!selection?.stable) return null;
+    if (!selection) return null;
 
     const selectedMediaId = getMediaId(selection.mediaId);
     if (selectedMediaId) {
@@ -326,19 +347,13 @@ function resolveSelectedStoryMedia(data, selection) {
         if (mediaById) return mediaById;
     }
 
-    const selectedCacheId = getMediaCacheId(selection.sourceUrl);
-    if (selectedCacheId) {
-        const mediaByCacheId = data.media.find(
-            (item) => getMediaId(item.id) === selectedCacheId || getMediaCacheId(item.url) === selectedCacheId,
-        );
-        if (mediaByCacheId) return mediaByCacheId;
-    }
+    const mediaBySource = findMediaByRenderedUrl(data, selection.sourceUrl);
+    if (mediaBySource) return mediaBySource;
 
-    const selectedPath = getMediaUrlPath(selection.sourceUrl);
-    if (selectedPath) {
-        const mediaByUrl = data.media.find((item) => getMediaUrlPath(item.url) === selectedPath);
-        if (mediaByUrl) return mediaByUrl;
-    }
+    const mediaByPoster = findMediaByRenderedUrl(data, selection.posterUrl);
+    if (mediaByPoster) return mediaByPoster;
+
+    if (!selection.stable) return null;
 
     const index = Number(selection.index);
     const itemCount = Number(selection.itemCount);
@@ -356,22 +371,13 @@ function resolveSelectedStoryMedia(data, selection) {
 }
 
 function resolveSelectedPostMedia(data, selection, shortcode) {
-    if (!selection?.stable || selection.shortcode !== shortcode) return null;
+    if (!selection || selection.shortcode !== shortcode) return null;
 
-    let mediaBySource = null;
-    const selectedCacheId = getMediaCacheId(selection.sourceUrl);
-    if (selectedCacheId) {
-        mediaBySource = data.media.find(
-            (item) => getMediaId(item.id) === selectedCacheId || getMediaCacheId(item.url) === selectedCacheId,
-        );
-    }
+    const mediaBySource =
+        findMediaByRenderedUrl(data, selection.sourceUrl) ?? findMediaByRenderedUrl(data, selection.posterUrl);
+    if (mediaBySource) return mediaBySource;
 
-    if (!mediaBySource) {
-        const selectedPath = getMediaUrlPath(selection.sourceUrl);
-        if (selectedPath) {
-            mediaBySource = data.media.find((item) => getMediaUrlPath(item.url) === selectedPath) ?? null;
-        }
-    }
+    if (!selection.stable) return null;
 
     const index = Number(selection.index);
     const itemCount = Number(selection.itemCount);
@@ -385,10 +391,7 @@ function resolveSelectedPostMedia(data, selection, shortcode) {
             ? data.media[index]
             : null;
 
-    // Both signals should agree. Abort safely if Instagram is still transitioning between slides.
-    if (mediaBySource && mediaByIndex && mediaBySource !== mediaByIndex) return null;
-
-    return mediaByIndex ?? mediaBySource;
+    return mediaByIndex;
 }
 
 async function downloadInlineMedia({
