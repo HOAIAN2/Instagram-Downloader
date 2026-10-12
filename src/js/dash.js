@@ -78,9 +78,11 @@ function extractMediaData(item) {
     const mediaItems = isVideo ? item['video_versions'] : item['image_versions2'].candidates;
     if (!mediaItems?.length) return null;
     const progressive = selectLargestProgressive(mediaItems);
+    const preview = isVideo ? selectLargestProgressive(item['image_versions2']?.candidates ?? []) : progressive;
     const dash = isVideo ? getBestDashMedia(item) : null;
     return {
         url: progressive.url,
+        previewUrl: preview?.url ?? '',
         isVideo,
         id: item.pk,
         originalFilename: getOriginalMediaFilename(progressive.url),

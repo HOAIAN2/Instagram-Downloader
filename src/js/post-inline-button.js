@@ -330,6 +330,7 @@
         return {
             shortcode,
             sourceUrl: currentMedia?.currentSrc || currentMedia?.src || '',
+            posterUrl: currentMedia instanceof HTMLVideoElement ? currentMedia.poster || '' : '',
             ...mediaState,
         };
     }
@@ -338,6 +339,7 @@
         return (
             first.shortcode === second.shortcode &&
             first.sourceUrl === second.sourceUrl &&
+            first.posterUrl === second.posterUrl &&
             first.index === second.index &&
             first.itemCount === second.itemCount &&
             first.indexSource === second.indexSource
@@ -345,18 +347,27 @@
     }
 
     async function getStablePostSelection(root) {
-        const first = readPostSelection(root);
         /**
          * During navigation, Instagram can update the URL, carousel/progress indicators, and visible media across separate render frames.
-         * Waiting for one animation frame and verifying the selection again prevents us from downloading the previous item while the UI is still transitioning.
+         * Retry briefly until two consecutive reads agree instead of failing on the first transitional frame.
          */
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        await new Promise((resolve) => requestAnimationFrame(resolve));
-        const second = readPostSelection(root);
+        let previous = readPostSelection(root);
+        for (let attempt = 0; attempt < 5; attempt++) {
+            await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+            const current = readPostSelection(root);
+            if (postSelectionsMatch(previous, current)) {
+                return {
+                    ...current,
+                    stable: true,
+                    indexConfident: previous.indexConfident && current.indexConfident,
+                };
+            }
+            previous = current;
+        }
         return {
-            ...second,
-            stable: postSelectionsMatch(first, second),
-            indexConfident: first.indexConfident && second.indexConfident,
+            ...previous,
+            stable: false,
+            indexConfident: false,
         };
     }
 
