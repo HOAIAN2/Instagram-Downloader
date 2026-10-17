@@ -252,6 +252,30 @@
                             </label>
                         </div>
                     </section>
+                    <section class="igd-settings-section">
+                        <label class="igd-settings-option">
+                            <input type="checkbox" name="igd-video-download-fallback">
+                            <span class="igd-settings-radio"></span>
+                            <span>
+                                <strong>Fall back when DASH fails</strong>
+                                <small>Try Instagram's progressive video if the highest-quality download fails. Enabled by default; fallback quality may be lower.</small>
+                            </span>
+                        </label>
+                    </section>
+                    <section class="igd-settings-section">
+                        <h3>Download notifications</h3>
+                        <label class="igd-notifications-option">
+                            <input type="checkbox" name="igd-download-notifications">
+                            <span>Show download summaries</span>
+                        </label>
+                        <p class="igd-settings-help">Off by default. Show downloaded / total items, resolutions, progressive downloads, skipped items and errors.</p>
+                        <div class="igd-notification-duration">
+                            <label for="igd-notification-duration">Notification duration</label>
+                            <output for="igd-notification-duration" class="igd-notification-duration-value">5 seconds</output>
+                            <input type="range" id="igd-notification-duration" min="1" max="15" step="1" value="5">
+                            <small class="igd-settings-help">1–15 seconds · Default: 5 seconds</small>
+                        </div>
+                    </section>
                     <section class="igd-settings-section igd-filename-settings">
                         <h3>File name templates</h3>
                         <p class="igd-settings-help">Drag variables into a row or click one to add it to the active row. Underscores are added automatically; unavailable values are skipped.</p>
@@ -312,8 +336,20 @@
         overlay.querySelectorAll('input[name="igd-download-ui-mode"]').forEach((input) => {
             input.addEventListener('change', () => downloadUiPreferences.setMode(input.value));
         });
+        overlay.querySelector('input[name="igd-download-notifications"]').addEventListener('change', (event) => {
+            downloadNotificationPreferences.setEnabled(event.target.checked);
+        });
+        overlay.querySelector('#igd-notification-duration').addEventListener('input', (event) => {
+            downloadNotificationPreferences.setDurationSeconds(event.target.value);
+            const seconds = downloadNotificationPreferences.durationSeconds;
+            overlay.querySelector('.igd-notification-duration-value').textContent =
+                `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
+        });
         overlay.querySelectorAll('input[name="igd-video-download-mode"]').forEach((input) => {
             input.addEventListener('change', () => videoDownloadPreferences.setMode(input.value));
+        });
+        overlay.querySelector('input[name="igd-video-download-fallback"]').addEventListener('change', (event) => {
+            videoDownloadPreferences.setFallbackEnabled(event.target.checked);
         });
         bindFilenameBuilder(overlay);
         document.addEventListener('keydown', (event) => {
@@ -333,10 +369,18 @@
             `input[name="igd-download-ui-mode"][value="${downloadUiPreferences.mode}"]`,
         );
         if (selectedUiMode) selectedUiMode.checked = true;
+        modal.querySelector('input[name="igd-download-notifications"]').checked =
+            downloadNotificationPreferences.enabled;
+        const seconds = downloadNotificationPreferences.durationSeconds;
+        modal.querySelector('#igd-notification-duration').value = seconds;
+        modal.querySelector('.igd-notification-duration-value').textContent =
+            `${seconds} ${seconds === 1 ? 'second' : 'seconds'}`;
         const selectedVideoMode = modal.querySelector(
             `input[name="igd-video-download-mode"][value="${videoDownloadPreferences.mode}"]`,
         );
         if (selectedVideoMode) selectedVideoMode.checked = true;
+        modal.querySelector('input[name="igd-video-download-fallback"]').checked =
+            videoDownloadPreferences.fallbackEnabled;
         const dateFormatSelect = modal.querySelector('.igd-date-format-select');
         if (dateFormatSelect) dateFormatSelect.value = downloadFilenamePreferences.dateFormat;
         Object.values(DOWNLOAD_FILENAME_SCOPES).forEach((scope) => renderFilenameRow(modal, scope));
